@@ -1,0 +1,196 @@
+{% extends 'base.html' %}
+
+{% block title %}Cart & Saved Designs - Vent Collection Atelier{% endblock %}
+
+{% block content %}
+<!-- Announcement Bar -->
+<div class="bg-[#f5f5f7] border-b border-[#d2d2d7]/60 py-3 px-4 text-center text-xs text-[#1d1d1f] font-['Space_Grotesk']">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-2 font-normal">
+        <span>Saved archival vintage finds and bespoke custom creations.</span>
+        <span class="hidden sm:inline text-[#86868b]">•</span>
+        <span class="font-medium flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-[#0071e3]"></span>
+            <span>Direct WhatsApp Atelier Ordering with 24-Hour Turnaround</span>
+        </span>
+    </div>
+</div>
+
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 font-['Space_Grotesk']">
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-8 border-b border-neutral-200">
+        <div>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black/5 text-[#1d1d1f] text-[11px] font-bold uppercase tracking-widest mb-2 font-['Plus_Jakarta_Sans']">
+                <i class="fa-solid fa-bag-shopping text-black"></i>
+                <span>Atelier Cart & Saved Archive</span>
+            </div>
+            <h1 class="text-3xl sm:text-5xl font-black text-black tracking-tight font-['Plus_Jakarta_Sans']">
+                Cart & Saved Designs
+            </h1>
+            <p class="text-neutral-500 text-sm mt-1 max-w-xl">
+                Review your saved vintage drops and bespoke custom apparel before sending your curated order directly to our studio on WhatsApp.
+            </p>
+        </div>
+        <div id="cartHeaderActions" class="hidden sm:flex items-center gap-3">
+            <button type="button" onclick="clearCart()" class="text-xs text-neutral-400 hover:text-red-600 transition-colors py-2 px-3 font-medium cursor-pointer">
+                <i class="fa-regular fa-trash-can mr-1"></i> Clear Cart
+            </button>
+            <button type="button" onclick="orderCartWhatsApp()" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#0071e3] hover:bg-[#0077ed] text-white text-xs font-semibold shadow-sm transition">
+                <i class="fa-brands fa-whatsapp text-sm"></i>
+                <span>Order on WhatsApp</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Dynamic Cart Container -->
+    <div id="cartContentWrapper" class="pt-8">
+        <!-- Filled State (Populated via JS) -->
+        <div id="cartFilledState" class="hidden">
+            <div class="flex flex-col lg:flex-row gap-10 items-start">
+                
+                <!-- Left: Items List -->
+                <div class="flex-1 w-full space-y-4" id="cartItemsList">
+                    <!-- Cards will be dynamically injected here -->
+                </div>
+
+                <!-- Right: Order Summary Sticky Card -->
+                <div class="w-full lg:w-[380px] lg:sticky lg:top-20">
+                    <div class="bg-[#f5f5f7] rounded-3xl p-6 sm:p-7 border border-neutral-200/80 shadow-sm space-y-5">
+                        <h3 class="text-lg font-black text-black font-['Plus_Jakarta_Sans'] tracking-tight">
+                            Order Summary
+                        </h3>
+
+                        <div class="space-y-3 text-sm border-b border-neutral-200 pb-5">
+                            <div class="flex justify-between text-neutral-600">
+                                <span>Total Saved Pieces</span>
+                                <span class="font-bold text-black" id="summaryTotalPieces">0</span>
+                            </div>
+                            <div class="flex justify-between text-neutral-600">
+                                <span>Estimated Subtotal</span>
+                                <span class="font-mono font-bold text-black" id="summarySubtotal">—</span>
+                            </div>
+                            <div class="flex justify-between text-neutral-600 text-xs">
+                                <span>Crafting & Dispatch</span>
+                                <span class="text-black font-medium">24-Hour Studio Turnaround</span>
+                            </div>
+                        </div>
+
+                        <!-- WhatsApp Action -->
+                        <div class="space-y-2.5 pt-1">
+                            <button type="button" onclick="orderCartWhatsApp()" class="w-full py-3.5 px-4 rounded-full bg-[#0071e3] hover:bg-[#0077ed] text-white font-semibold text-xs tracking-wide shadow-sm hover:shadow transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer">
+                                <i class="fa-brands fa-whatsapp text-base"></i>
+                                <span>Send Order to WhatsApp</span>
+                            </button>
+                            <p class="text-[11px] text-center text-neutral-400 font-medium">
+                                Directly transfers your saved pieces and specifications to our tailoring team.
+                            </p>
+                        </div>
+
+                        <div class="pt-3 border-t border-neutral-200/80 flex flex-col gap-2 text-center text-xs font-semibold">
+                            <a href="{{ url_for('vintage_gallery') }}" class="text-neutral-600 hover:text-black transition-colors">
+                                + Explore More Vintage Drops
+                            </a>
+                            <a href="{{ url_for('custom_studio') }}" class="text-[#0071e3] hover:text-[#0077ed] transition-colors">
+                                + Browse Custom Studio Polos
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div id="cartEmptyState" class="hidden py-16 sm:py-24 text-center max-w-md mx-auto">
+            <div class="w-16 h-16 rounded-full bg-[#f5f5f7] border border-neutral-200 flex items-center justify-center mx-auto mb-5 text-neutral-400">
+                <i class="fa-solid fa-bag-shopping text-2xl"></i>
+            </div>
+            <h2 class="text-2xl font-black text-black font-['Plus_Jakarta_Sans'] tracking-tight">
+                Your Cart is Empty
+            </h2>
+            <p class="text-neutral-500 text-xs sm:text-sm mt-2 leading-relaxed">
+                You haven't saved any pieces yet. Browse our handpicked vintage drops or explore the bespoke polo studio to save your favorite designs here.
+            </p>
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-3 mt-7">
+                <a href="{{ url_for('vintage_gallery') }}" class="w-full sm:w-auto px-6 py-3 rounded-full bg-black hover:bg-neutral-800 text-white text-xs font-semibold shadow-sm transition">
+                    Explore Vintage Drops
+                </a>
+                <a href="{{ url_for('custom_studio') }}" class="w-full sm:w-auto px-6 py-3 rounded-full bg-[#f5f5f7] hover:bg-neutral-200 text-black text-xs font-semibold border border-neutral-200 transition">
+                    Custom Studio Polos
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+window.renderCartPage = function() {
+    const cart = window.getVentCart();
+    const filledState = document.getElementById('cartFilledState');
+    const emptyState = document.getElementById('cartEmptyState');
+    const headerActions = document.getElementById('cartHeaderActions');
+    const itemsList = document.getElementById('cartItemsList');
+    const totalPieces = document.getElementById('summaryTotalPieces');
+    const subtotal = document.getElementById('summarySubtotal');
+
+    if (!cart || cart.length === 0) {
+        if (filledState) filledState.classList.add('hidden');
+        if (headerActions) headerActions.classList.add('hidden');
+        if (emptyState) emptyState.classList.remove('hidden');
+        return;
+    }
+
+    if (emptyState) emptyState.classList.add('hidden');
+    if (filledState) filledState.classList.remove('hidden');
+    if (headerActions) headerActions.classList.remove('hidden');
+
+    let totalCount = 0;
+    let html = '';
+
+    cart.forEach(item => {
+        totalCount += (item.quantity || 1);
+        html += `
+        <div class="flex flex-col sm:flex-row items-center gap-5 p-4 sm:p-5 rounded-3xl bg-white border border-neutral-200 hover:border-black/30 transition-all shadow-xs">
+            <div class="w-full sm:w-28 h-36 rounded-2xl overflow-hidden bg-neutral-100 flex-shrink-0">
+                <img src="${item.img || 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=900&auto=format&fit=crop&q=80'}" alt="${item.title}" class="w-full h-full object-cover">
+            </div>
+            <div class="flex-1 w-full space-y-1.5 text-left">
+                <div class="flex items-center justify-between gap-2">
+                    <span class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-neutral-100 text-neutral-600">
+                        ${item.type || 'Archival Piece'}
+                    </span>
+                    <button type="button" onclick="removeFromCart('${item.id}')" class="text-neutral-400 hover:text-red-600 transition-colors text-xs p-1" title="Remove piece">
+                        <i class="fa-regular fa-trash-can"></i>
+                    </button>
+                </div>
+                <h4 class="text-base sm:text-lg font-black text-black font-['Plus_Jakarta_Sans'] leading-tight">
+                    ${item.title}
+                </h4>
+                <p class="text-xs text-neutral-500 font-mono">
+                    ${item.details || 'Standard Atelier Sizing'}
+                </p>
+                <div class="flex items-center justify-between pt-2">
+                    <span class="font-mono font-bold text-base text-black">
+                        ${item.price}
+                    </span>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs text-neutral-500 font-medium">Qty: ${item.quantity || 1}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        `;
+    });
+
+    if (itemsList) itemsList.innerHTML = html;
+    if (totalPieces) totalPieces.textContent = totalCount;
+    if (subtotal) {
+        // Calculate rough sum if formatted with numbers
+        subtotal.textContent = `${totalCount} item${totalCount > 1 ? 's' : ''} in cart`;
+    }
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    window.renderCartPage();
+});
+</script>
+{% endblock %}

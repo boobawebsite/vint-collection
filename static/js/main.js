@@ -253,3 +253,113 @@ window.handleSidebarAuthSubmit = async function(event, action) {
         }
     }
 };
+
+// ===================================================
+// VENT ATELIER CART & SAVED DESIGNS SYSTEM
+// ===================================================
+window.getVentCart = function() {
+    try {
+        return JSON.parse(localStorage.getItem('vent_cart') || '[]');
+    } catch (e) {
+        return [];
+    }
+};
+
+window.saveVentCart = function(cart) {
+    try {
+        localStorage.setItem('vent_cart', JSON.stringify(cart));
+        window.updateCartBadge();
+    } catch (e) {
+        console.error("Cart save error", e);
+    }
+};
+
+window.updateCartBadge = function() {
+    const cart = window.getVentCart();
+    const count = cart.length;
+    const badges = document.querySelectorAll('#cartCountBadge, .cart-counter-badge');
+    badges.forEach(b => {
+        if (count > 0) {
+            b.textContent = count;
+            b.classList.remove('hidden');
+        } else {
+            b.classList.add('hidden');
+        }
+    });
+};
+
+window.showCartToast = function(message, title = '') {
+    let toast = document.getElementById('ventToastNotification');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'ventToastNotification';
+        toast.className = 'fixed bottom-6 right-6 z-50 flex items-center gap-3 bg-black text-white px-5 py-3.5 rounded-2xl shadow-2xl border border-white/10 text-xs font-semibold transform translate-y-20 opacity-0 transition-all duration-300 font-["Space_Grotesk"]';
+        document.body.appendChild(toast);
+    }
+    toast.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400 text-sm"></i> <div><span>${message}</span>${title ? `<p class="text-[10px] text-neutral-400 font-normal mt-0.5">${title}</p>` : ''}</div>`;
+    toast.classList.remove('translate-y-20', 'opacity-0');
+    toast.classList.add('translate-y-0', 'opacity-100');
+    setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-20', 'opacity-0');
+    }, 2800);
+};
+
+window.saveToCart = function(item) {
+    let cart = window.getVentCart();
+    const existingIndex = cart.findIndex(c => c.title === item.title && c.details === item.details);
+    if (existingIndex > -1) {
+        cart[existingIndex].quantity = (cart[existingIndex].quantity || 1) + 1;
+        window.showCartToast('Updated quantity in Cart', item.title);
+    } else {
+        item.id = 'cart_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4);
+        item.quantity = 1;
+        item.savedAt = new Date().toISOString();
+        cart.push(item);
+        window.showCartToast('Saved piece to Cart', item.title);
+    }
+    window.saveVentCart(cart);
+    if (typeof window.renderCartPage === 'function') {
+        window.renderCartPage();
+    }
+};
+
+window.removeFromCart = function(itemId) {
+    let cart = window.getVentCart();
+    cart = cart.filter(c => c.id !== itemId);
+    window.saveVentCart(cart);
+    window.showCartToast('Piece removed from Cart');
+    if (typeof window.renderCartPage === 'function') {
+        window.renderCartPage();
+    }
+};
+
+window.clearCart = function() {
+    window.saveVentCart([]);
+    window.showCartToast('Cart cleared');
+    if (typeof window.renderCartPage === 'function') {
+        window.renderCartPage();
+    }
+};
+
+window.orderCartWhatsApp = function() {
+    const cart = window.getVentCart();
+    if (!cart || cart.length === 0) return;
+    
+    let msg = "Hello Vent Collection! I have saved the following pieces in my Cart to order:\n\n";
+    cart.forEach((item, index) => {
+        msg += `${index + 1}. ${item.title}\n`;
+        msg += `   • Category: ${item.type || 'Custom Piece'}\n`;
+        msg += `   • Price: ${item.price}\n`;
+        if (item.details) msg += `   • Specifications: ${item.details}\n`;
+        if (item.quantity > 1) msg += `   • Quantity: ${item.quantity}\n`;
+        msg += `\n`;
+    });
+    msg += `Please confirm piece availability and atelier 24-hour turnaround dispatch.`;
+    
+    window.open(`https://wa.me/2348000000000?text=${encodeURIComponent(msg)}`, '_blank');
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    window.updateCartBadge();
+});

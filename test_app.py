@@ -165,6 +165,27 @@ class TestVentCollectionPlatform(unittest.TestCase):
         self.assertTrue(data['can_show_website'])
         self.assertEqual(data['website_url'], 'https://expresstech.shop')
 
+    def test_cart_page(self):
+        # 1. Test /cart endpoint
+        res = self.client.get('/cart')
+        self.assertEqual(res.status_code, 200)
+        self.assertIn(b'Cart & Saved Designs', res.data)
+        self.assertIn(b'Saved Pieces', res.data)
+        self.assertIn(b'Send Order to WhatsApp', res.data)
+        self.assertIn(b'getVentCart', res.data)
+
+        # 2. Test sidebar navigation contains Cart link and does not show Graphic Tees in navigation
+        home_res = self.client.get('/')
+        self.assertEqual(home_res.status_code, 200)
+        self.assertIn(b'Cart', home_res.data)
+        self.assertIn(b'/cart', home_res.data)
+        self.assertIn(b'cartCountBadge', home_res.data)
+        
+        # Verify sidebar nav specifically has Cart and not Graphic Tees
+        sidebar_part = home_res.data.split(b'id="sidebarNavView"')[1].split(b'</nav>')[0]
+        self.assertIn(b'Cart', sidebar_part)
+        self.assertNotIn(b'Graphic Tees', sidebar_part)
+
     def test_auto_generated_preview_store(self):
         res = self.client.get('/preview/WV-LX9032')
         self.assertEqual(res.status_code, 200)

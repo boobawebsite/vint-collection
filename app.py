@@ -84,6 +84,10 @@ def vintage_gallery():
 def custom_studio():
     return render_template('custom_studio.html')
 
+@app.route('/cart')
+def cart_view():
+    return render_template('cart.html')
+
 @app.route('/auth', methods=['GET', 'POST'])
 @app.route('/login', methods=['GET', 'POST'])
 @app.route('/signup', methods=['GET', 'POST'])
