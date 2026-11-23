@@ -20,11 +20,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const totalPlanets = planets.length;
     const angleStep = 360 / totalPlanets;
 
-    // Radius of orbit in pixels (responsive for tall, screen-filling boxes)
+    // Radius of orbit in pixels (dynamically responsive for all mobile, tablet, and desktop screens)
     function getRadius() {
-        if (window.innerWidth < 640) return 240; // Mobile
-        if (window.innerWidth < 1024) return 380; // Tablet
-        return 520; // Desktop
+        const w = window.innerWidth;
+        if (w < 380) return 145; // Small mobile (iPhone SE, Galaxy A)
+        if (w < 480) return 175; // Standard mobile
+        if (w < 640) return 215; // Large mobile
+        if (w < 768) return 270; // Small tablet
+        if (w < 1024) return 360; // Tablet
+        if (w < 1440) return 460; // Laptop
+        return 520; // Large desktop
     }
 
     // Tilt of the orbital plane
@@ -46,7 +51,8 @@ document.addEventListener('DOMContentLoaded', () => {
             // Scale & Depth calculations (closer planets are bigger, further are smaller)
             // Normalized Z from -1 (back) to +1 (front)
             const normZ = (z + (radius * 0.45)) / (radius * 0.9);
-            const scale = 0.75 + (normZ * 0.32); // between 0.75 and 1.07
+            const isSmall = window.innerWidth < 640;
+            const scale = isSmall ? (0.65 + (normZ * 0.35)) : (0.75 + (normZ * 0.32));
             const opacity = 0.42 + (normZ * 0.58); // between 0.42 and 1.0
             const zIndex = Math.floor(normZ * 100);
 

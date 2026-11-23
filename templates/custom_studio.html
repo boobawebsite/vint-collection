@@ -557,15 +557,15 @@
 <!-- ===================================================
      APPLE-STYLE QUICK VIEW MODAL
      =================================================== -->
-<div id="quickViewPoloModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-md flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300 font-['Space_Grotesk']">
-    <div class="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-10 border border-black/15 shadow-2xl relative transform scale-95 transition-transform duration-300 overflow-y-auto max-h-[90vh]">
+<div id="quickViewPoloModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 opacity-0 pointer-events-none transition-opacity duration-300 font-['Space_Grotesk']">
+    <div class="bg-white rounded-3xl max-w-2xl w-full p-5 sm:p-8 md:p-10 border border-black/15 shadow-2xl relative transform scale-95 transition-transform duration-300 overflow-y-auto max-h-[92vh] sm:max-h-[90vh]">
         <!-- Close Button -->
-        <button type="button" onclick="closeQuickViewPolo()" class="absolute top-6 right-6 w-8 h-8 rounded-full bg-black/10 hover:bg-black hover:text-white text-black flex items-center justify-center transition cursor-pointer">
+        <button type="button" onclick="closeQuickViewPolo()" class="absolute top-4 right-4 sm:top-6 sm:right-6 w-9 h-9 sm:w-8 sm:h-8 rounded-full bg-black/10 hover:bg-black hover:text-white text-black flex items-center justify-center transition cursor-pointer z-10" aria-label="Close Preview">
             <i class="fa-solid fa-xmark text-sm"></i>
         </button>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 items-center">
-            <div class="rounded-2xl overflow-hidden h-[300px] bg-neutral-100">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6 items-center">
+            <div class="rounded-2xl overflow-hidden h-[200px] sm:h-[260px] md:h-[300px] bg-neutral-100">
                 <img id="poloModalImg" src="" alt="Polo Preview" class="w-full h-full object-cover">
             </div>
             <div class="space-y-4">

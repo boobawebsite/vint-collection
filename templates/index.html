@@ -6,52 +6,52 @@
 <!-- ===================================================
      TOP SECTION: 3D SOLAR SYSTEM & PLANETARY CAROUSEL
      =================================================== -->
-<section class="relative pt-20 sm:pt-24 lg:pt-28 pb-8 bg-white overflow-visible min-h-[85vh] flex flex-col justify-center">
+<section class="relative pt-16 sm:pt-24 lg:pt-28 pb-8 bg-white overflow-hidden min-h-[75vh] sm:min-h-[85vh] flex flex-col justify-center">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center w-full">
         <!-- 3D Solar Viewport (Screen-Filling, Borderless & Floating in Real White Page) -->
-        <div id="solarViewport" class="solar-viewport relative w-full h-[620px] sm:h-[680px] lg:h-[720px] flex items-center justify-center cursor-grab select-none bg-transparent">
+        <div id="solarViewport" class="solar-viewport relative w-full h-[520px] sm:h-[620px] lg:h-[720px] flex items-center justify-center cursor-grab select-none bg-transparent">
             
             <!-- 3D Orbiting Stage (Unobstructed Open Center) -->
             <div id="solarStage" class="solar-stage relative w-0 h-0 flex items-center justify-center">
                 
                 <!-- Center Text: Inside the rotating group of pictures -->
                 <a href="{{ url_for('vintage_gallery') }}" id="solarCenterText" class="absolute pointer-events-auto text-center select-none flex flex-col items-center justify-center -translate-x-1/2 -translate-y-1/2 group cursor-pointer" style="z-index: 50;">
-                    <span class="text-3xl sm:text-5xl lg:text-6xl font-black text-black uppercase tracking-wider font-['Plus_Jakarta_Sans'] whitespace-nowrap group-hover:scale-105 transition-transform duration-300">
+                    <span class="text-2xl sm:text-4xl lg:text-6xl font-black text-black uppercase tracking-wider font-['Plus_Jakarta_Sans'] whitespace-nowrap group-hover:scale-105 transition-transform duration-300">
                         Choose One
                     </span>
-                    <span class="text-[11px] font-bold uppercase tracking-widest text-black/50 mt-1 flex items-center gap-1 group-hover:text-black transition-colors">
+                    <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-black/50 mt-1 flex items-center gap-1 group-hover:text-black transition-colors">
                         <span>Explore Collection</span>
                         <i class="fa-solid fa-arrow-right text-[10px]"></i>
                     </span>
                 </a>
 
                 <!-- 1: Rare Vintage Graphic Tees -->
-                <div class="planet-item absolute w-[260px] sm:w-[320px] lg:w-[360px] h-[450px] sm:h-[510px] lg:h-[560px] rounded-3xl bg-white border border-black/15 planet-glow-glassy cursor-pointer group shadow-2xl overflow-hidden" data-href="{{ url_for('vintage_gallery') }}?cat=tees" title="Rare Vintage Graphic Tees - Single-Stitch 90s Streetwear (Click to View Collection)">
+                <div class="planet-item absolute w-[210px] sm:w-[280px] md:w-[320px] lg:w-[360px] h-[370px] sm:h-[460px] lg:h-[540px] rounded-2xl sm:rounded-3xl bg-white border border-black/15 planet-glow-glassy cursor-pointer group shadow-2xl overflow-hidden" data-href="{{ url_for('vintage_gallery') }}?cat=tees" title="Rare Vintage Graphic Tees - Single-Stitch 90s Streetwear (Click to View Collection)">
                     <img src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=900&auto=format&fit=crop&q=80" alt="Rare Vintage Graphic Tees" class="w-full h-full object-cover grayscale contrast-105 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-300">
                 </div>
 
                 <!-- 2: Bespoke Custom T-Shirts -->
-                <div class="planet-item absolute w-[260px] sm:w-[320px] lg:w-[360px] h-[450px] sm:h-[510px] lg:h-[560px] rounded-3xl bg-white border-2 border-black planet-glow-glassy-pro cursor-pointer group shadow-2xl overflow-hidden" data-href="{{ url_for('vintage_gallery') }}?cat=custom" title="Bespoke Custom T-Shirts - Screenprinted & Embroidered Cotton (Click to View Collection)">
+                <div class="planet-item absolute w-[210px] sm:w-[280px] md:w-[320px] lg:w-[360px] h-[370px] sm:h-[460px] lg:h-[540px] rounded-2xl sm:rounded-3xl bg-white border-2 border-black planet-glow-glassy-pro cursor-pointer group shadow-2xl overflow-hidden" data-href="{{ url_for('vintage_gallery') }}?cat=custom" title="Bespoke Custom T-Shirts - Screenprinted & Embroidered Cotton (Click to View Collection)">
                     <img src="https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=900&auto=format&fit=crop&q=80" alt="Bespoke Custom T-Shirts" class="w-full h-full object-cover grayscale contrast-105 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-300">
                 </div>
 
                 <!-- 3: Vintage Denim & Heritage Jackets -->
-                <div class="planet-item absolute w-[260px] sm:w-[320px] lg:w-[360px] h-[450px] sm:h-[510px] lg:h-[560px] rounded-3xl bg-white border border-black/15 planet-glow-glassy cursor-pointer group shadow-2xl overflow-hidden" data-href="{{ url_for('vintage_gallery') }}?cat=denim" title="Vintage Denim & Jackets - Washed Archival Outerwear (Click to View Collection)">
+                <div class="planet-item absolute w-[210px] sm:w-[280px] md:w-[320px] lg:w-[360px] h-[370px] sm:h-[460px] lg:h-[540px] rounded-2xl sm:rounded-3xl bg-white border border-black/15 planet-glow-glassy cursor-pointer group shadow-2xl overflow-hidden" data-href="{{ url_for('vintage_gallery') }}?cat=denim" title="Vintage Denim & Jackets - Washed Archival Outerwear (Click to View Collection)">
                     <img src="https://images.unsplash.com/photo-1576995853123-5a10305d93c0?w=900&auto=format&fit=crop&q=80" alt="Vintage Denim & Jackets" class="w-full h-full object-cover grayscale contrast-105 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-300">
                 </div>
 
                 <!-- 4: Custom Streetwear Hoodies -->
-                <div class="planet-item absolute w-[260px] sm:w-[320px] lg:w-[360px] h-[450px] sm:h-[510px] lg:h-[560px] rounded-3xl bg-white border border-black/15 planet-glow-glassy cursor-pointer group shadow-2xl overflow-hidden" data-href="{{ url_for('vintage_gallery') }}?cat=hoodies" title="Custom Streetwear Hoodies - 450GSM French Terry (Click to View Collection)">
+                <div class="planet-item absolute w-[210px] sm:w-[280px] md:w-[320px] lg:w-[360px] h-[370px] sm:h-[460px] lg:h-[540px] rounded-2xl sm:rounded-3xl bg-white border border-black/15 planet-glow-glassy cursor-pointer group shadow-2xl overflow-hidden" data-href="{{ url_for('vintage_gallery') }}?cat=hoodies" title="Custom Streetwear Hoodies - 450GSM French Terry (Click to View Collection)">
                     <img src="https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=900&auto=format&fit=crop&q=80" alt="Custom Streetwear Hoodies" class="w-full h-full object-cover grayscale contrast-105 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-300">
                 </div>
 
                 <!-- 5: Archival Vintage Materials & Fabrics -->
-                <div class="planet-item absolute w-[260px] sm:w-[320px] lg:w-[360px] h-[450px] sm:h-[510px] lg:h-[560px] rounded-3xl bg-white border border-black/15 planet-glow-glassy cursor-pointer group shadow-2xl overflow-hidden" data-href="{{ url_for('vintage_gallery') }}?cat=fabrics" title="Vintage Materials & Fabrics - Rare Deadstock Textiles (Click to View Collection)">
+                <div class="planet-item absolute w-[210px] sm:w-[280px] md:w-[320px] lg:w-[360px] h-[370px] sm:h-[460px] lg:h-[540px] rounded-2xl sm:rounded-3xl bg-white border border-black/15 planet-glow-glassy cursor-pointer group shadow-2xl overflow-hidden" data-href="{{ url_for('vintage_gallery') }}?cat=fabrics" title="Vintage Materials & Fabrics - Rare Deadstock Textiles (Click to View Collection)">
                     <img src="https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=900&auto=format&fit=crop&q=80" alt="Vintage Materials & Sourced Fabrics" class="w-full h-full object-cover grayscale contrast-105 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-300">
                 </div>
 
                 <!-- 6: Custom Headwear & Totes -->
-                <div class="planet-item absolute w-[260px] sm:w-[320px] lg:w-[360px] h-[450px] sm:h-[510px] lg:h-[560px] rounded-3xl bg-white border-2 border-black planet-glow-glassy-pro cursor-pointer group shadow-2xl overflow-hidden" data-href="{{ url_for('vintage_gallery') }}?cat=accessories" title="Custom Headwear & Totes - Embroidered Caps & Canvas Bags (Click to View Collection)">
+                <div class="planet-item absolute w-[210px] sm:w-[280px] md:w-[320px] lg:w-[360px] h-[370px] sm:h-[460px] lg:h-[540px] rounded-2xl sm:rounded-3xl bg-white border-2 border-black planet-glow-glassy-pro cursor-pointer group shadow-2xl overflow-hidden" data-href="{{ url_for('vintage_gallery') }}?cat=accessories" title="Custom Headwear & Totes - Embroidered Caps & Canvas Bags (Click to View Collection)">
                     <img src="https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=900&auto=format&fit=crop&q=80" alt="Custom Headwear & Tote Bags" class="w-full h-full object-cover grayscale contrast-105 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-300">
                 </div>
 
@@ -72,33 +72,33 @@
     
     <!-- THE SHOWCASE CONTAINER: FULL-WIDTH EDGE-TO-EDGE IN VIEWPORT -->
     <div class="w-full">
-        <div id="imageClickedStage" class="relative w-full flex flex-col lg:flex-row items-stretch overflow-hidden border-t border-b border-neutral-200/80 shadow-xl bg-white lg:h-[520px] xl:h-[540px]">
+        <div id="imageClickedStage" class="relative w-full flex flex-col lg:flex-row items-stretch overflow-hidden border-t border-b border-neutral-200/80 shadow-xl bg-white min-h-[480px] lg:h-[520px] xl:h-[540px]">
             
             <!-- LEFT COLUMN: THE V-STUDIO PREVIEW (APPLE WARM-GRAY #f5f5f7) -->
-            <div class="lg:w-[42%] xl:w-[40%] bg-[#f5f5f7] text-[#1d1d1f] p-6 sm:p-8 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-neutral-200/80 relative z-20 h-full">
+            <div class="lg:w-[42%] xl:w-[40%] bg-[#f5f5f7] text-[#1d1d1f] p-5 sm:p-7 lg:p-8 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-neutral-200/80 relative z-20 h-full">
 
                 <!-- FLOATING HERO APPAREL PRESENTATION (BORDERLESS APPLE DESIGN) -->
                 <div class="relative w-full flex-1 flex items-center justify-center py-2 sm:py-4">
-                    <img id="spotlightImg" src="https://images.unsplash.com/photo-1586363104862-3a5e2ab60d99?w=900&auto=format&fit=crop&q=80" alt="Selected Custom Apparel Piece" class="max-h-[280px] sm:max-h-[320px] w-auto max-w-[90%] object-contain rounded-2xl drop-shadow-xl transition-all duration-500">
+                    <img id="spotlightImg" src="https://images.unsplash.com/photo-1586363104862-3a5e2ab60d99?w=900&auto=format&fit=crop&q=80" alt="Selected Custom Apparel Piece" class="max-h-[220px] sm:max-h-[280px] lg:max-h-[320px] w-auto max-w-[90%] object-contain rounded-2xl drop-shadow-xl transition-all duration-500">
                 </div>
 
                 <!-- MINIMALIST PRODUCT TITLE, PRICE & SIGNATURE APPLE BLUE CTA -->
                 <div class="pt-4 space-y-3">
-                    <div class="flex items-center justify-between gap-4">
-                        <h3 id="spotlightTitle" class="text-xl sm:text-2xl font-extrabold text-[#1d1d1f] tracking-tight font-['Plus_Jakarta_Sans']">
+                    <div class="flex items-center justify-between gap-3">
+                        <h3 id="spotlightTitle" class="text-lg sm:text-2xl font-extrabold text-[#1d1d1f] tracking-tight font-['Plus_Jakarta_Sans'] leading-snug">
                             Archival Heavyweight Piqué Polo
                         </h3>
-                        <span id="spotlightPrice" class="text-xl sm:text-2xl font-extrabold text-[#1d1d1f] tracking-tight whitespace-nowrap">
+                        <span id="spotlightPrice" class="text-lg sm:text-2xl font-extrabold text-[#1d1d1f] tracking-tight whitespace-nowrap">
                             ₦24,500
                         </span>
                     </div>
 
-                    <div class="flex items-center justify-between gap-3 pt-1">
-                        <a id="spotlightWhatsAppBtn" href="https://wa.me/2348000000000?text=Hello%20Vent%20Collection,%20I%20want%20to%20order%20the%20Archival%20Heavyweight%20Piqu%C3%A9%20Polo%20(N24,500)%20in%20Colorway:%20Onyx%20Black." target="_blank" class="inline-flex items-center justify-center gap-2 px-7 py-3 rounded-full bg-[#0071e3] hover:bg-[#0077ed] text-white font-semibold text-xs shadow-sm hover:shadow transition-all duration-300">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
+                        <a id="spotlightWhatsAppBtn" href="https://wa.me/2348000000000?text=Hello%20Vent%20Collection,%20I%20want%20to%20order%20the%20Archival%20Heavyweight%20Piqu%C3%A9%20Polo%20(N24,500)%20in%20Colorway:%20Onyx%20Black." target="_blank" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 sm:px-7 py-3 rounded-full bg-[#0071e3] hover:bg-[#0077ed] text-white font-semibold text-xs shadow-sm hover:shadow transition-all duration-300">
                             <i class="fa-brands fa-whatsapp text-sm"></i>
                             <span>Order on WhatsApp</span>
                         </a>
-                        <div class="flex items-center gap-1.5" id="colorwaySwatches"></div>
+                        <div class="flex items-center justify-center sm:justify-start gap-1.5" id="colorwaySwatches"></div>
                     </div>
                 </div>
 
@@ -107,9 +107,9 @@
             <!-- RIGHT COLUMN: THE SILHOUETTE CATALOG (DEEP APPLE BLACK #000000) -->
             <div class="lg:w-[58%] xl:w-[60%] bg-[#000000] text-white py-6 sm:py-8 lg:py-10 px-0 flex flex-col justify-between z-10 h-full overflow-hidden">
                 
-                <!-- Editorial Apple Headline in Space Grotesk (Strictly 1 Line with Studio Link) -->
-                <div class="pt-1 sm:pt-2 mb-4 sm:mb-6 px-6 sm:px-8 lg:px-10">
-                    <a href="{{ url_for('order') }}" class="group inline-flex items-center gap-2 text-2xl sm:text-3xl md:text-4xl lg:text-[2.6rem] xl:text-[3rem] font-black text-white hover:text-neutral-200 tracking-tighter font-['Space_Grotesk'] whitespace-nowrap leading-none transition-all duration-300" title="Customise your shirt with Vent">
+                <!-- Editorial Apple Headline in Space Grotesk -->
+                <div class="pt-1 sm:pt-2 mb-4 sm:mb-6 px-5 sm:px-8 lg:px-10">
+                    <a href="{{ url_for('order') }}" class="group inline-flex items-center gap-2 text-xl sm:text-3xl md:text-4xl lg:text-[2.6rem] xl:text-[3rem] font-black text-white hover:text-neutral-200 tracking-tighter font-['Space_Grotesk'] leading-tight sm:leading-none transition-all duration-300 break-words" title="Customise your shirt with Vent">
                         <span>Customise your shirt with vent</span>
                         <i class="fa-solid fa-arrow-right text-base sm:text-xl md:text-2xl text-[#0071e3] opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300"></i>
                     </a>
@@ -244,8 +244,8 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <!-- Section Header -->
-        <div class="text-center max-w-5xl mx-auto mb-16 sm:mb-24">
-            <h2 class="text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-black text-black tracking-tighter leading-none">
+        <div class="text-center max-w-5xl mx-auto mb-10 sm:mb-20">
+            <h2 class="text-3xl sm:text-6xl md:text-8xl lg:text-9xl font-black text-black tracking-tighter leading-tight sm:leading-none break-words">
                 Why Vent Collection?
             </h2>
         </div>
@@ -256,23 +256,23 @@
             <!-- POINT 1: HANDPICKED VINTAGE FINDS -->
             <div class="purpose-track relative">
                 <div class="purpose-sticky w-full">
-                    <div class="purpose-point grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center bg-white">
+                    <div class="purpose-point grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 lg:gap-14 items-center bg-white">
                 <!-- Left: Tall Portrait Image Card -->
                 <div class="lg:col-span-5 w-full">
-                    <div class="relative w-full h-[440px] sm:h-[520px] overflow-hidden bg-white group cursor-pointer" title="Handpicked Vintage Finds - Hover to view original colour">
+                    <div class="relative w-full h-[260px] sm:h-[380px] lg:h-[480px] rounded-2xl sm:rounded-3xl overflow-hidden bg-white group cursor-pointer" title="Handpicked Vintage Finds - Hover to view original colour">
                         <img src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=900&auto=format&fit=crop&q=80" alt="Handpicked rare vintage graphic t-shirts" class="w-full h-full object-cover grayscale contrast-105 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500">
                     </div>
                 </div>
                 <!-- Right: Explanatory Text -->
-                <div class="purpose-text-col lg:col-span-7 flex flex-col justify-center space-y-5">
-                    <h3 class="purpose-heading text-2xl sm:text-3xl lg:text-4xl font-black text-black tracking-tight leading-tight">
+                <div class="purpose-text-col lg:col-span-7 flex flex-col justify-center space-y-4 sm:space-y-5">
+                    <h3 class="purpose-heading text-xl sm:text-3xl lg:text-4xl font-black text-black tracking-tight leading-tight">
                         Every Vintage Piece Is Hand-Selected, Rare & 100% Authentic
                     </h3>
-                    <div class="purpose-body space-y-4">
-                        <p class="text-base sm:text-lg text-black/75 leading-relaxed font-normal">
+                    <div class="purpose-body space-y-3 sm:space-y-4">
+                        <p class="text-sm sm:text-lg text-black/75 leading-relaxed font-normal">
                         Instead of mass-produced, flimsy fast-fashion garments that shrink after one wash, Vent Collection sources genuine vintage apparel and heritage textiles with authentic soul and history.
                     </p>
-                        <p class="text-base sm:text-lg text-black/75 leading-relaxed font-normal">
+                        <p class="text-sm sm:text-lg text-black/75 leading-relaxed font-normal">
                         Every single-stitch graphic tee, washed denim jacket, and retro workwear piece in our drops is individually handpicked, inspected for genuine vintage patina, tag pedigree, and curated for timeless streetwear style.
                     </p>
                     </div>
@@ -284,23 +284,23 @@
             <!-- POINT 2: BESPOKE CUSTOM T-SHIRTS -->
             <div class="purpose-track relative">
                 <div class="purpose-sticky w-full">
-                    <div class="purpose-point grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center bg-white">
+                    <div class="purpose-point grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 lg:gap-14 items-center bg-white">
                 <!-- Left: Tall Portrait Image Card -->
                 <div class="lg:col-span-5 w-full">
-                    <div class="relative w-full h-[440px] sm:h-[520px] overflow-hidden bg-white group cursor-pointer" title="Custom T-Shirt Studio - Hover to view original colour">
+                    <div class="relative w-full h-[260px] sm:h-[380px] lg:h-[480px] rounded-2xl sm:rounded-3xl overflow-hidden bg-white group cursor-pointer" title="Custom T-Shirt Studio - Hover to view original colour">
                         <img src="https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=900&auto=format&fit=crop&q=80" alt="Bespoke custom t-shirts and apparel printing" class="w-full h-full object-cover grayscale contrast-105 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500">
                     </div>
                 </div>
                 <!-- Right: Explanatory Text -->
-                <div class="purpose-text-col lg:col-span-7 flex flex-col justify-center space-y-5">
-                    <h3 class="purpose-heading text-2xl sm:text-3xl lg:text-4xl font-black text-black tracking-tight leading-tight">
+                <div class="purpose-text-col lg:col-span-7 flex flex-col justify-center space-y-4 sm:space-y-5">
+                    <h3 class="purpose-heading text-xl sm:text-3xl lg:text-4xl font-black text-black tracking-tight leading-tight">
                         Your Vision, Printed & Customized on Premium Heavyweight Cotton
                     </h3>
-                    <div class="purpose-body space-y-4">
-                        <p class="text-base sm:text-lg text-black/75 leading-relaxed font-normal">
+                    <div class="purpose-body space-y-3 sm:space-y-4">
+                        <p class="text-sm sm:text-lg text-black/75 leading-relaxed font-normal">
                         Bring your creative identity to life. Whether it’s custom streetwear graphics, bold typography, band merchandise, or bespoke brand clothing, Vent customizes t-shirts and hoodies tailored exactly for you.
                     </p>
-                        <p class="text-base sm:text-lg text-black/75 leading-relaxed font-normal">
+                        <p class="text-sm sm:text-lg text-black/75 leading-relaxed font-normal">
                         We use premium 240GSM+ combed heavyweight cotton, tailored boxy cuts, and precision screen printing, puff ink, or high-density embroidery that looks high-end and never cracks or fades.
                     </p>
                     </div>
@@ -312,23 +312,23 @@
             <!-- POINT 3: RARE VINTAGE MATERIALS & SOURCING -->
             <div class="purpose-track relative">
                 <div class="purpose-sticky w-full">
-                    <div class="purpose-point grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center bg-white">
+                    <div class="purpose-point grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 lg:gap-14 items-center bg-white">
                 <!-- Left: Tall Portrait Image Card -->
                 <div class="lg:col-span-5 w-full">
-                    <div class="relative w-full h-[440px] sm:h-[520px] overflow-hidden bg-white group cursor-pointer" title="Archival Vintage Materials - Hover to view original colour">
+                    <div class="relative w-full h-[260px] sm:h-[380px] lg:h-[480px] rounded-2xl sm:rounded-3xl overflow-hidden bg-white group cursor-pointer" title="Archival Vintage Materials - Hover to view original colour">
                         <img src="https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=900&auto=format&fit=crop&q=80" alt="Rare vintage sourced materials and archival fabrics" class="w-full h-full object-cover grayscale contrast-105 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500">
                     </div>
                 </div>
                 <!-- Right: Explanatory Text -->
-                <div class="purpose-text-col lg:col-span-7 flex flex-col justify-center space-y-5">
-                    <h3 class="purpose-heading text-2xl sm:text-3xl lg:text-4xl font-black text-black tracking-tight leading-tight">
+                <div class="purpose-text-col lg:col-span-7 flex flex-col justify-center space-y-4 sm:space-y-5">
+                    <h3 class="purpose-heading text-xl sm:text-3xl lg:text-4xl font-black text-black tracking-tight leading-tight">
                         Sourcing Heritage Materials & Fabrics You Won't Find in Modern Malls
                     </h3>
-                    <div class="purpose-body space-y-4">
-                        <p class="text-base sm:text-lg text-black/75 leading-relaxed font-normal">
+                    <div class="purpose-body space-y-3 sm:space-y-4">
+                        <p class="text-sm sm:text-lg text-black/75 leading-relaxed font-normal">
                         We believe quality materials tell an authentic story. Vent hunts down rare vintage fabrics, archival selvedge denim weaves, deadstock canvas, and weathered textiles that modern assembly lines simply cannot replicate.
                     </p>
-                        <p class="text-base sm:text-lg text-black/75 leading-relaxed font-normal">
+                        <p class="text-sm sm:text-lg text-black/75 leading-relaxed font-normal">
                         Whether you are purchasing raw vintage materials for your own rework and creative projects or acquiring a finished Vent archival piece, you are getting genuine heritage durability and unmatched texture.
                     </p>
                     </div>
@@ -340,23 +340,23 @@
             <!-- POINT 4: RAPID 24-HOUR STUDIO CUSTOMIZATION -->
             <div class="purpose-track relative">
                 <div class="purpose-sticky w-full">
-                    <div class="purpose-point grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center bg-white">
+                    <div class="purpose-point grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 lg:gap-14 items-center bg-white">
                 <!-- Left: Tall Portrait Image Card -->
                 <div class="lg:col-span-5 w-full">
-                    <div class="relative w-full h-[440px] sm:h-[520px] overflow-hidden bg-white group cursor-pointer" title="24-Hour Studio Turnaround - Hover to view original colour">
+                    <div class="relative w-full h-[260px] sm:h-[380px] lg:h-[480px] rounded-2xl sm:rounded-3xl overflow-hidden bg-white group cursor-pointer" title="24-Hour Studio Turnaround - Hover to view original colour">
                         <img src="https://images.unsplash.com/photo-1508962914676-134849a727f0?w=900&auto=format&fit=crop&q=80" alt="24-hour studio customization turnaround" class="w-full h-full object-cover grayscale contrast-105 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500">
                     </div>
                 </div>
                 <!-- Right: Explanatory Text -->
-                <div class="purpose-text-col lg:col-span-7 flex flex-col justify-center space-y-5">
-                    <h3 class="purpose-heading text-2xl sm:text-3xl lg:text-4xl font-black text-black tracking-tight leading-tight">
+                <div class="purpose-text-col lg:col-span-7 flex flex-col justify-center space-y-4 sm:space-y-5">
+                    <h3 class="purpose-heading text-xl sm:text-3xl lg:text-4xl font-black text-black tracking-tight leading-tight">
                         Customized & Prepared in 24 Hours with Real-Time Studio Tracking
                     </h3>
-                    <div class="purpose-body space-y-4">
-                        <p class="text-base sm:text-lg text-black/75 leading-relaxed font-normal">
+                    <div class="purpose-body space-y-3 sm:space-y-4">
+                        <p class="text-sm sm:text-lg text-black/75 leading-relaxed font-normal">
                         Custom apparel normally means waiting weeks for slow factory queues. At Vent Collection, our dedicated studio customizes and dispatches your order with lightning 24-hour turnaround.
                     </p>
-                        <p class="text-base sm:text-lg text-black/75 leading-relaxed font-normal">
+                        <p class="text-sm sm:text-lg text-black/75 leading-relaxed font-normal">
                         Follow our live 24-hour countdown timer on your personalized status page as your garments are prepped, printed, quality-inspected, and packed for immediate delivery.
                     </p>
                     </div>
@@ -368,26 +368,30 @@
             <!-- POINT 5: SEAMLESS WHATSAPP ORDERING -->
             <div class="purpose-track relative">
                 <div class="purpose-sticky w-full">
-                    <div class="purpose-point grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center bg-white">
+                    <div class="purpose-point grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 lg:gap-14 items-center bg-white">
                 <!-- Left: Tall Portrait Image Card -->
                 <div class="lg:col-span-5 w-full">
-                    <div class="relative w-full h-[440px] sm:h-[520px] overflow-hidden bg-white group cursor-pointer" title="Direct WhatsApp Ordering - Hover to view original colour">
+                    <div class="relative w-full h-[260px] sm:h-[380px] lg:h-[480px] rounded-2xl sm:rounded-3xl overflow-hidden bg-white group cursor-pointer" title="Direct WhatsApp Ordering - Hover to view original colour">
                         <img src="https://images.unsplash.com/photo-1512428559087-560fa5ceab42?w=900&auto=format&fit=crop&q=80" alt="Direct 1-click WhatsApp order consultation" class="w-full h-full object-cover grayscale contrast-105 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500">
                     </div>
                 </div>
                 <!-- Right: Explanatory Text -->
-                <div class="purpose-text-col lg:col-span-7 flex flex-col justify-center space-y-5">
-                    <h3 class="purpose-heading text-2xl sm:text-3xl lg:text-4xl font-black text-black tracking-tight leading-tight">
+                <div class="purpose-text-col lg:col-span-7 flex flex-col justify-center space-y-4 sm:space-y-5">
+                    <h3 class="purpose-heading text-xl sm:text-3xl lg:text-4xl font-black text-black tracking-tight leading-tight">
                         Browse Our Drops & Order Directly on WhatsApp in 1-Click
                     </h3>
-                    <div class="purpose-body space-y-4">
-                        <p class="text-base sm:text-lg text-black/75 leading-relaxed font-normal">
+                    <div class="purpose-body space-y-3 sm:space-y-4">
+                        <p class="text-sm sm:text-lg text-black/75 leading-relaxed font-normal">
                         Shopping for vintage and custom pieces should be personal and direct. Browse our catalog, select your favorite style, and tap <strong>"Order on WhatsApp"</strong> to chat immediately with our studio team.
                     </p>
-                        <p class="text-base sm:text-lg text-black/75 leading-relaxed font-normal">
+                        <p class="text-sm sm:text-lg text-black/75 leading-relaxed font-normal">
                         Share your custom graphics, specify your size preferences, or get exact pit-to-pit measurements for vintage items. Your order summary arrives pre-filled in WhatsApp for seamless checkout.
                     </p>
                     </div>
+                </div>
+            </div>
+                </div>
+            </div>
                 </div>
             </div>
                 </div>

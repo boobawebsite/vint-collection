@@ -230,5 +230,19 @@ class TestVentCollectionPlatform(unittest.TestCase):
         # 5. Homepage reverts to "Sign In / Sign Up"
         self.assertIn(b'Sign In / Sign Up', logout_res.data)
 
+    def test_responsive_meta_and_layout(self):
+        # 1. Verify responsive viewport meta tag with viewport-fit=cover across pages
+        pages = ['/', '/vintage', '/polos', '/cart', '/order']
+        for page in pages:
+            res = self.client.get(page)
+            self.assertEqual(res.status_code, 200)
+            self.assertIn(b'name="viewport"', res.data)
+            self.assertIn(b'width=device-width', res.data)
+            self.assertIn(b'viewport-fit=cover', res.data)
+
+        # 2. Verify drawer max-w-[85vw] on homepage
+        home_res = self.client.get('/')
+        self.assertIn(b'max-w-[85vw]', home_res.data)
+
 if __name__ == '__main__':
     unittest.main()
