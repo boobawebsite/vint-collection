@@ -266,15 +266,24 @@ def update_order(order_id, update_dict):
 
 def search_orders(query):
     query = query.strip()
+    if not query:
+        return []
     # 1. Try Supabase
-    sb_result = _supabase_request('GET', f'vent_orders?or=(id.eq.{query},whatsapp_number.ilike.*{query}*)&select=*')
+    sb_result = _supabase_request('GET', f'vent_orders?or=(id.eq.{query},whatsapp_number.ilike.*{query}*,email.ilike.*{query}*,business_name.ilike.*{query}*)&select=*&order=created_at.desc')
     if sb_result and isinstance(sb_result, list) and len(sb_result) > 0:
         return sb_result
 
     # 2. Fall back to SQLite
     conn = get_db()
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM orders WHERE id = ? OR whatsapp_number LIKE ? ORDER BY created_at DESC", (query, f"%{query}%"))
+    cursor.execute("""
+        SELECT * FROM orders 
+        WHERE id = ? 
+           OR whatsapp_number LIKE ? 
+           OR email LIKE ? 
+           OR business_name LIKE ? 
+        ORDER BY created_at DESC
+    """, (query, f"%{query}%", f"%{query}%", f"%{query}%"))
     rows = cursor.fetchall()
     conn.close()
     return [dict(r) for r in rows]

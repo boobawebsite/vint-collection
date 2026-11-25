@@ -64,9 +64,43 @@ def parse_order_row(row):
         total_seconds = int(diff.total_seconds())
         d['seconds_left'] = max(0, total_seconds)
         d['is_expired'] = total_seconds <= 0
+        d['hours_left'] = d['seconds_left'] // 3600
+        d['minutes_left'] = (d['seconds_left'] % 3600) // 60
+        d['seconds_only'] = d['seconds_left'] % 60
     except Exception as e:
         d['seconds_left'] = 0
         d['is_expired'] = True
+        d['hours_left'] = 0
+        d['minutes_left'] = 0
+        d['seconds_only'] = 0
+
+    # Format created date
+    try:
+        c_str = d.get('created_at', '')
+        if c_str.endswith('Z'):
+            c_str = c_str[:-1] + '+00:00'
+        c_dt = datetime.fromisoformat(c_str)
+        d['created_formatted'] = c_dt.strftime('%b %d, %Y · %I:%M %p')
+        d['created_date_short'] = c_dt.strftime('%b %d, %Y')
+    except Exception:
+        d['created_formatted'] = d.get('created_at', '')
+        d['created_date_short'] = d.get('created_at', '')
+
+    # Status & Delivery Progress Stage
+    status_lower = str(d.get('status', 'submitted')).lower()
+    d['is_delivered'] = status_lower in ('delivered', 'completed')
+    if d['is_delivered']:
+        d['progress_stage'] = 4
+        d['stage_label'] = 'Delivered & Received'
+    elif status_lower in ('dispatched', 'shipped', 'out_for_delivery'):
+        d['progress_stage'] = 3
+        d['stage_label'] = 'Out for Delivery / In Transit'
+    elif status_lower in ('in_progress', 'printing', 'ready'):
+        d['progress_stage'] = 2
+        d['stage_label'] = 'Atelier Crafting & Quality Inspection'
+    else:
+        d['progress_stage'] = 1
+        d['stage_label'] = 'Order Confirmed · In 24h Queue'
 
     # Check whether the website link is ready to be shown to the vendor:
     # Condition: Admin provided a link AND (publish_mode == 'immediate' OR (publish_mode == 'countdown' and 24h expired))
@@ -387,19 +421,31 @@ def api_status(order_id):
 
 @app.route('/track', methods=['GET', 'POST'])
 def track():
+    query = request.args.get('query', '').strip() or request.args.get('order_id', '').strip()
     if request.method == 'POST':
-        query = request.form.get('query', '').strip()
-        if not query:
-            flash("Please enter an Order ID or your WhatsApp Number.", "error")
-            return render_template('track.html')
+        query = request.form.get('query', '').strip() or query
 
-        orders = search_orders(query)
-        if orders:
-            return redirect(url_for('status', order_id=orders[0]['id']))
-        else:
-            flash("No order found matching your inquiry. Please double-check your Order ID or phone number.", "error")
+    user = get_current_user()
+    # Auto-load orders if user is signed in
+    if not query and user:
+        query = (user.get('phone') or user.get('email') or '').strip()
 
-    return render_template('track.html')
+    orders = []
+    has_searched = bool(query)
+    if query:
+        raw_rows = search_orders(query)
+        orders = [parse_order_row(r) for r in raw_rows if r]
+
+    # Split into active deliveries (package not yet delivered) and past transactions
+    active_orders = [o for o in orders if not o.get('is_delivered')]
+    past_orders = [o for o in orders if o.get('is_delivered')]
+
+    return render_template('track.html', 
+                           query=query, 
+                           orders=orders, 
+                           active_orders=active_orders, 
+                           past_orders=past_orders,
+                           has_searched=has_searched)
 
 # ----------------- Admin Management Routes -----------------
 

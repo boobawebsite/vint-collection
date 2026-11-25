@@ -1,48 +1,306 @@
 {% extends 'base.html' %}
 
-{% block title %}Track 24-Hour Website Status - Vent Collection{% endblock %}
+{% block title %}Track Order & Purchase History - Vent Collection{% endblock %}
 
 {% block content %}
-<div class="max-w-2xl mx-auto px-4 sm:px-6 py-16 bg-white">
-    <div class="text-center mb-8">
-        <div class="w-14 h-14 rounded-2xl bg-black text-white flex items-center justify-center text-2xl mx-auto mb-4 shadow-sm">
-            <i class="fa-solid fa-hourglass-half"></i>
-        </div>
-        <h1 class="text-3xl font-extrabold text-black font-['Plus_Jakarta_Sans']">Track Your 24-Hour Website</h1>
-        <p class="text-black/70 text-sm mt-2">
-            Enter your Order ID or the WhatsApp phone number you submitted to check the countdown timer and get your website link.
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 bg-white font-['Space_Grotesk']">
+    
+    <!-- HEADER -->
+    <div class="text-center max-w-2xl mx-auto mb-8 sm:mb-10">
+        <h1 class="text-3xl sm:text-5xl font-black text-black tracking-tight font-['Space_Grotesk'] leading-tight">
+            Track Order & Purchases
+        </h1>
+        <p class="text-neutral-500 text-xs sm:text-sm mt-2 max-w-lg mx-auto font-normal">
+            View your order history, purchased pieces, and real-time delivery countdown for packages in transit.
         </p>
     </div>
 
-    <div class="p-8 rounded-3xl bg-white border border-black/20 shadow-md">
-        <form action="{{ url_for('track') }}" method="POST" class="space-y-6">
-            <div>
-                <label class="block text-xs font-bold uppercase tracking-wider text-black mb-2">
-                    Order Reference ID or WhatsApp Number
-                </label>
-                <div class="relative">
-                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-black/40">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                    </span>
-                    <input type="text" name="query" required placeholder="e.g. V24-AB1234 or +1234567890" class="w-full pl-11 pr-4 py-3.5 rounded-xl bg-white border border-black/20 text-black placeholder-black/40 text-sm focus:outline-none focus:border-black transition shadow-sm">
-                </div>
-                <p class="text-[11px] text-black/60 mt-2">
-                    You can find your Order ID on your confirmation screen, or simply type the WhatsApp number you used during checkout.
-                </p>
+    <!-- LOOKUP SEARCH BAR -->
+    <div class="max-w-2xl mx-auto mb-10">
+        <form action="{{ url_for('track') }}" method="GET" class="p-2 sm:p-2.5 rounded-2xl sm:rounded-full bg-[#f5f5f7] border border-black/10 shadow-sm flex flex-col sm:flex-row items-center gap-2">
+            <div class="relative w-full flex-1">
+                <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-neutral-400">
+                    <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                </span>
+                <input type="text" name="query" value="{{ query or '' }}" placeholder="Enter WhatsApp Phone, Email, or Order ID (e.g. V24-...)" class="w-full pl-10 pr-4 py-3 rounded-full bg-white border border-black/10 text-xs font-medium text-black placeholder-neutral-400 focus:outline-none focus:border-black transition">
             </div>
-
-            <button type="submit" class="w-full py-4 rounded-xl text-white font-extrabold text-sm bg-black hover:bg-neutral-800 shadow-md shadow-black/20 transition flex items-center justify-center gap-2 border border-black">
-                <i class="fa-solid fa-bolt text-white"></i>
-                <span>Check Countdown & Website Link</span>
+            <button type="submit" class="w-full sm:w-auto px-6 py-3 rounded-full bg-black hover:bg-neutral-800 text-white font-bold text-xs shadow transition-all duration-200 cursor-pointer flex items-center justify-center gap-2">
+                <span>Look Up</span>
+                <i class="fa-solid fa-arrow-right text-[10px]"></i>
             </button>
         </form>
-
-        <div class="mt-8 pt-6 border-t border-black/10 text-center">
-            <p class="text-xs text-black/60">
-                Haven't created your website yet?
-                <a href="{{ url_for('order') }}" class="text-black hover:underline font-bold">Start for as low as $2/month &rarr;</a>
-            </p>
-        </div>
     </div>
+
+    <!-- MAIN RESULTS CONTENT -->
+    {% if orders %}
+        
+        <!-- ================= 1. RECENT ACTIVE PACKAGE (NOT YET DELIVERED) ================= -->
+        {% if active_orders %}
+            <div class="mb-12">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-[#0071e3] animate-ping"></span>
+                        <h2 class="text-base sm:text-lg font-black text-black tracking-tight">Recent Package In Transit</h2>
+                    </div>
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-neutral-500">
+                        {{ active_orders|length }} Active Delivery
+                    </span>
+                </div>
+
+                {% for active in active_orders %}
+                <div class="p-6 sm:p-8 rounded-3xl bg-[#121212] text-white border border-white/10 shadow-2xl mb-6 space-y-6">
+                    
+                    <!-- Header Info -->
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-white/10">
+                        <div>
+                            <div class="flex flex-wrap items-center gap-2 mb-1.5">
+                                <span class="px-2.5 py-0.5 rounded-full bg-white text-black font-mono font-bold text-xs">
+                                    {{ active.id }}
+                                </span>
+                                <span class="text-xs text-neutral-400">
+                                    Placed on {{ active.created_formatted }}
+                                </span>
+                            </div>
+                            <h3 class="text-lg sm:text-xl font-bold text-white tracking-tight">
+                                {{ active.plan_name }}
+                            </h3>
+                        </div>
+
+                        <!-- LIVE REMAINING DELIVERY COUNTDOWN BOX -->
+                        <div class="bg-neutral-900 border border-white/15 px-4 py-3 rounded-2xl flex items-center gap-3 self-start sm:self-auto">
+                            <div class="w-9 h-9 rounded-xl bg-white/10 text-[#0071e3] flex items-center justify-center text-lg">
+                                <i class="fa-solid fa-clock"></i>
+                            </div>
+                            <div>
+                                <span class="text-[10px] uppercase font-bold tracking-widest text-neutral-400 block">
+                                    Goods Arriving In
+                                </span>
+                                <div class="text-base sm:text-lg font-black text-white font-mono countdown-timer" data-seconds="{{ active.seconds_left }}">
+                                    <span class="timer-display">{{ active.hours_left }}h {{ active.minutes_left }}m {{ active.seconds_only }}s</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4-STAGE DELIVERY PROGRESS TIMELINE -->
+                    <div class="py-2">
+                        <div class="flex items-center justify-between text-[11px] font-bold text-neutral-400 uppercase tracking-wider mb-3">
+                            <span>Delivery Status: <strong class="text-white">{{ active.stage_label }}</strong></span>
+                            <span>Destination: <strong class="text-white">{{ active.address or 'Standard Atelier Dispatch' }}</strong></span>
+                        </div>
+
+                        <!-- Progress Bar & Nodes -->
+                        <div class="relative w-full pt-2 pb-1">
+                            <div class="h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
+                                <div class="h-full bg-[#0071e3] rounded-full transition-all duration-500" 
+                                     style="width: {% if active.progress_stage == 1 %}25%{% elif active.progress_stage == 2 %}55%{% elif active.progress_stage == 3 %}85%{% else %}100%{% endif %};">
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-4 gap-2 pt-3 text-center">
+                                <div class="space-y-1">
+                                    <span class="inline-block w-4 h-4 rounded-full {% if active.progress_stage >= 1 %}bg-[#0071e3] text-white{% else %}bg-neutral-800 text-neutral-500{% endif %} text-[9px] font-bold leading-4">✓</span>
+                                    <p class="text-[10px] font-semibold {% if active.progress_stage >= 1 %}text-white{% else %}text-neutral-500{% endif %}">Confirmed</p>
+                                </div>
+                                <div class="space-y-1">
+                                    <span class="inline-block w-4 h-4 rounded-full {% if active.progress_stage >= 2 %}bg-[#0071e3] text-white{% else %}bg-neutral-800 text-neutral-500{% endif %} text-[9px] font-bold leading-4">✓</span>
+                                    <p class="text-[10px] font-semibold {% if active.progress_stage >= 2 %}text-white{% else %}text-neutral-500{% endif %}">Atelier Crafting</p>
+                                </div>
+                                <div class="space-y-1">
+                                    <span class="inline-block w-4 h-4 rounded-full {% if active.progress_stage >= 3 %}bg-[#0071e3] text-white{% else %}bg-neutral-800 text-neutral-500{% endif %} text-[9px] font-bold leading-4">✓</span>
+                                    <p class="text-[10px] font-semibold {% if active.progress_stage >= 3 %}text-white{% else %}text-neutral-500{% endif %}">Dispatched</p>
+                                </div>
+                                <div class="space-y-1">
+                                    <span class="inline-block w-4 h-4 rounded-full {% if active.progress_stage >= 4 %}bg-[#0071e3] text-white{% else %}bg-neutral-800 text-neutral-500{% endif %} text-[9px] font-bold leading-4">✓</span>
+                                    <p class="text-[10px] font-semibold {% if active.progress_stage >= 4 %}text-white{% else %}text-neutral-500{% endif %}">Delivered</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ITEMS IN THIS RECENT PACKAGE -->
+                    <div class="pt-2 border-t border-white/10">
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-neutral-400 block mb-3">Items in This Package:</span>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            {% for item in active.products %}
+                            <div class="p-3 rounded-2xl bg-neutral-900/90 border border-white/10 flex items-center gap-3">
+                                <div class="w-14 h-16 rounded-xl overflow-hidden bg-black shrink-0 border border-white/10">
+                                    <img src="{{ item.image or 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500&auto=format&fit=crop&q=60' }}" alt="{{ item.name }}" class="w-full h-full object-cover">
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h4 class="font-bold text-xs text-white truncate">{{ item.name }}</h4>
+                                    <p class="text-[11px] text-neutral-400 truncate mt-0.5">{{ item.desc }}</p>
+                                    <div class="flex items-center justify-between mt-1 pt-1 border-t border-white/10 text-[11px]">
+                                        <span class="font-mono text-white font-bold">{{ active.currency }}{{ item.price }}</span>
+                                        <span class="text-neutral-400">Qty: {{ item.quantity or 1 }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Action Footer -->
+                    <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-white/10 text-xs">
+                        <div class="text-neutral-400 text-[11px]">
+                            <span>Recipient: <strong class="text-white">{{ active.vendor_name or active.business_name }}</strong> ({{ active.whatsapp_number }})</span>
+                        </div>
+                        <a href="https://wa.me/2348000000000?text={{ ('Hello Vent Collection, I am tracking my active order #' ~ active.id ~ '. Please update me on delivery dispatch.')|urlencode }}" target="_blank" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-[#0071e3] hover:bg-[#0077ed] text-white font-bold text-xs transition-colors shadow">
+                            <i class="fa-brands fa-whatsapp text-sm"></i>
+                            <span>Chat with Atelier Dispatch on WhatsApp</span>
+                        </a>
+                    </div>
+
+                </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- ================= 2. ALL PURCHASES & TRANSACTION HISTORY ================= -->
+        <div>
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-base sm:text-lg font-black text-black tracking-tight">
+                    All Transactions & Purchased Pieces ({{ orders|length }})
+                </h2>
+                <span class="text-xs text-neutral-500 font-medium">Vent Collection Atelier</span>
+            </div>
+
+            <div class="space-y-4">
+                {% for ord in orders %}
+                <div class="p-5 sm:p-6 rounded-2xl bg-[#f5f5f7] border border-neutral-200 hover:border-black transition-colors shadow-xs">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-black/10">
+                        <div>
+                            <div class="flex flex-wrap items-center gap-2">
+                                <span class="font-mono font-bold text-xs text-black px-2 py-0.5 rounded bg-white border border-black/10">
+                                    {{ ord.id }}
+                                </span>
+                                <span class="text-xs text-neutral-500">
+                                    {{ ord.created_formatted }}
+                                </span>
+                            </div>
+                            <h3 class="text-sm font-extrabold text-black mt-1">
+                                {{ ord.plan_name }}
+                            </h3>
+                        </div>
+
+                        <!-- Status Badge -->
+                        <div class="flex items-center gap-2 self-start sm:self-auto">
+                            {% if ord.is_delivered %}
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-bold border border-emerald-200">
+                                    <i class="fa-solid fa-circle-check text-xs text-emerald-600"></i> Delivered
+                                </span>
+                            {% else %}
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-100 text-[#0071e3] text-[11px] font-bold border border-blue-200">
+                                    <i class="fa-solid fa-clock text-xs"></i> In Progress ({{ ord.hours_left }}h left)
+                                </span>
+                            {% endif %}
+                            <span class="font-black text-sm text-black ml-2 whitespace-nowrap">
+                                {{ ord.currency }}{{ ord.plan_price }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Items Grid -->
+                    <div class="pt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                        {% for item in ord.products %}
+                        <div class="flex items-center gap-3 p-2.5 rounded-xl bg-white border border-black/5">
+                            <div class="w-12 h-14 rounded-lg overflow-hidden bg-neutral-100 shrink-0 border border-black/10">
+                                <img src="{{ item.image or 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500&auto=format&fit=crop&q=60' }}" alt="{{ item.name }}" class="w-full h-full object-cover">
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h4 class="font-bold text-xs text-black truncate">{{ item.name }}</h4>
+                                <p class="text-[10px] text-neutral-500 truncate mt-0.5">{{ item.desc }}</p>
+                                <span class="text-[11px] font-mono font-bold text-black">{{ ord.currency }}{{ item.price }}</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Order Action Link -->
+                    <div class="mt-4 pt-3 border-t border-black/5 flex items-center justify-between text-xs text-neutral-600">
+                        <span>Recipient: <strong>{{ ord.vendor_name or ord.business_name }}</strong></span>
+                        <a href="https://wa.me/2348000000000?text={{ ('Hello Vent Collection, inquiry regarding Order #' ~ ord.id)|urlencode }}" target="_blank" class="text-black hover:text-[#0071e3] font-bold flex items-center gap-1 transition-colors">
+                            <span>WhatsApp Support / Receipt</span>
+                            <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+    {% elif has_searched %}
+        
+        <!-- EMPTY SEARCH RESULTS -->
+        <div class="max-w-md mx-auto text-center py-12 px-6 rounded-3xl bg-[#f5f5f7] border border-black/10 space-y-4">
+            <div class="w-12 h-12 rounded-2xl bg-neutral-200 text-neutral-500 flex items-center justify-center mx-auto text-xl">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </div>
+            <div>
+                <h3 class="text-base font-bold text-black">No Orders Found</h3>
+                <p class="text-xs text-neutral-500 mt-1">
+                    No transactions found for "<span class="font-semibold text-black">{{ query }}</span>". Please ensure you entered the WhatsApp phone number or Order Reference ID used during checkout.
+                </p>
+            </div>
+            <div class="pt-2">
+                <a href="{{ url_for('track') }}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-black text-white text-xs font-bold hover:bg-neutral-800 transition">
+                    <span>Try Another Search</span>
+                </a>
+            </div>
+        </div>
+
+    {% else %}
+        
+        <!-- DEFAULT HELPFUL STATE (BEFORE SEARCHING) -->
+        <div class="max-w-lg mx-auto text-center py-12 px-6 rounded-3xl bg-[#f5f5f7] border border-black/10 space-y-4">
+            <div class="w-14 h-14 rounded-2xl bg-black text-white flex items-center justify-center mx-auto text-2xl shadow-sm">
+                <i class="fa-solid fa-box-open"></i>
+            </div>
+            <div>
+                <h3 class="text-lg font-black text-black tracking-tight">View Your Purchases & Deliveries</h3>
+                <p class="text-xs text-neutral-500 mt-1.5 leading-relaxed">
+                    Enter the WhatsApp phone number or Order ID you used when placing your order to see all your past transactions and track live delivery countdowns.
+                </p>
+            </div>
+            <div class="flex items-center justify-center gap-3 pt-2">
+                <a href="{{ url_for('vintage_gallery') }}" class="px-4 py-2 rounded-full border border-black/20 text-xs font-bold text-black hover:border-black transition">
+                    Browse Vintage Drops
+                </a>
+                <a href="{{ url_for('order') }}" class="px-4 py-2 rounded-full bg-[#0071e3] text-white text-xs font-bold hover:bg-[#0077ed] transition">
+                    Customise a T-Shirt
+                </a>
+            </div>
+        </div>
+
+    {% endif %}
+
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Live ticking countdown for active delivery timers
+    document.addEventListener('DOMContentLoaded', () => {
+        const timers = document.querySelectorAll('.countdown-timer');
+        if (timers.length === 0) return;
+
+        timers.forEach(timer => {
+            let seconds = parseInt(timer.dataset.seconds) || 0;
+            const display = timer.querySelector('.timer-display');
+
+            const interval = setInterval(() => {
+                if (seconds <= 0) {
+                    display.textContent = 'Package Arriving Now';
+                    clearInterval(interval);
+                    return;
+                }
+                seconds--;
+                const h = Math.floor(seconds / 3600);
+                const m = Math.floor((seconds % 3600) / 60);
+                const s = seconds % 60;
+                display.textContent = `${h}h ${m}m ${s}s remaining`;
+            }, 1000);
+        });
+    });
+</script>
 {% endblock %}
