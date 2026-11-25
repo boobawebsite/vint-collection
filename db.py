@@ -269,7 +269,7 @@ def search_orders(query):
     if not query:
         return []
     # 1. Try Supabase
-    sb_result = _supabase_request('GET', f'vent_orders?or=(id.eq.{query},whatsapp_number.ilike.*{query}*,email.ilike.*{query}*,business_name.ilike.*{query}*)&select=*&order=created_at.desc')
+    sb_result = _supabase_request('GET', f'vent_orders?or=(id.ilike.*{query}*,whatsapp_number.ilike.*{query}*,email.ilike.*{query}*,business_name.ilike.*{query}*)&select=*&order=created_at.desc')
     if sb_result and isinstance(sb_result, list) and len(sb_result) > 0:
         return sb_result
 
@@ -278,12 +278,12 @@ def search_orders(query):
     cursor = conn.cursor()
     cursor.execute("""
         SELECT * FROM orders 
-        WHERE id = ? 
+        WHERE id LIKE ? 
            OR whatsapp_number LIKE ? 
            OR email LIKE ? 
            OR business_name LIKE ? 
         ORDER BY created_at DESC
-    """, (query, f"%{query}%", f"%{query}%", f"%{query}%"))
+    """, (f"%{query}%", f"%{query}%", f"%{query}%", f"%{query}%"))
     rows = cursor.fetchall()
     conn.close()
     return [dict(r) for r in rows]
