@@ -11,7 +11,12 @@ from db import (
     get_setting, set_setting, is_supabase_enabled
 )
 
-app = Flask(__name__)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+app = Flask(
+    __name__,
+    template_folder=os.path.join(BASE_DIR, 'templates'),
+    static_folder=os.path.join(BASE_DIR, 'static')
+)
 app.secret_key = os.environ.get('SECRET_KEY', 'xol_super_secret_whatsapp_store_key_2026')
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 
