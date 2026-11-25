@@ -1,86 +1,12 @@
 {% extends 'base.html' %}
 
-{% block title %}Vintage Collection - Vent Collection Atelier{% endblock %}
+{% block title %}Vintage Drops - Vent Collection Atelier{% endblock %}
 
 {% block content %}
 <!-- ===================================================
-     APPLE-STYLE ANNOUNCEMENT BANNER
+     CLOTHING SHOWCASE GRID
      =================================================== -->
-<div class="bg-[#f5f5f7] border-b border-[#d2d2d7]/60 py-3 px-4 text-center text-xs text-[#1d1d1f]">
-    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-2 font-normal">
-        <span>Handpicked authentic vintage materials & bespoke custom t-shirts.</span>
-        <span class="hidden sm:inline text-[#86868b]">•</span>
-        <span class="font-medium flex items-center gap-1.5">
-            <span class="w-2 h-2 rounded-full bg-black animate-ping"></span>
-            <span>24-Hour Studio Crafting & Worldwide Express Dispatch</span>
-        </span>
-    </div>
-</div>
-
-<!-- ===================================================
-     APPLE-STYLE STICKY CATEGORY NAV BAR
-     =================================================== -->
-<div class="sticky top-0 z-30 bg-white/90 backdrop-blur-xl border-b border-[#d2d2d7]/50 py-3.5 shadow-sm">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
-        
-        <!-- Horizontal Category Pills -->
-        <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
-            <button type="button" onclick="filterVintage('all')" class="cat-pill active text-xs font-semibold px-4 py-2 rounded-full bg-black text-white cursor-pointer transition-all duration-200 shrink-0">
-                All Pieces (18)
-            </button>
-            <button type="button" onclick="filterVintage('tees')" class="cat-pill text-xs font-medium px-4 py-2 rounded-full bg-[#f5f5f7] text-[#1d1d1f] hover:bg-black/10 cursor-pointer transition-all duration-200 shrink-0">
-                Vintage Tees
-            </button>
-            <button type="button" onclick="filterVintage('custom')" class="cat-pill text-xs font-medium px-4 py-2 rounded-full bg-[#f5f5f7] text-[#1d1d1f] hover:bg-black/10 cursor-pointer transition-all duration-200 shrink-0">
-                Custom Apparel
-            </button>
-            <button type="button" onclick="filterVintage('denim')" class="cat-pill text-xs font-medium px-4 py-2 rounded-full bg-[#f5f5f7] text-[#1d1d1f] hover:bg-black/10 cursor-pointer transition-all duration-200 shrink-0">
-                Denim & Jackets
-            </button>
-            <button type="button" onclick="filterVintage('hoodies')" class="cat-pill text-xs font-medium px-4 py-2 rounded-full bg-[#f5f5f7] text-[#1d1d1f] hover:bg-black/10 cursor-pointer transition-all duration-200 shrink-0">
-                Custom Hoodies
-            </button>
-            <button type="button" onclick="filterVintage('fabrics')" class="cat-pill text-xs font-medium px-4 py-2 rounded-full bg-[#f5f5f7] text-[#1d1d1f] hover:bg-black/10 cursor-pointer transition-all duration-200 shrink-0">
-                Archival Fabrics
-            </button>
-            <button type="button" onclick="filterVintage('accessories')" class="cat-pill text-xs font-medium px-4 py-2 rounded-full bg-[#f5f5f7] text-[#1d1d1f] hover:bg-black/10 cursor-pointer transition-all duration-200 shrink-0">
-                Caps & Totes
-            </button>
-        </div>
-
-        <!-- Right Quick Action -->
-        <a href="{{ url_for('order') }}" class="hidden lg:inline-flex items-center gap-2 text-xs font-semibold bg-[#0071e3] hover:bg-[#0077ed] text-white px-4 py-2 rounded-full transition shadow-sm shrink-0">
-            <span>Request Custom Piece</span>
-            <i class="fa-solid fa-chevron-right text-[10px]"></i>
-        </a>
-    </div>
-</div>
-
-<!-- ===================================================
-     HERO HEADER
-     =================================================== -->
-<section class="pt-12 pb-8 sm:pt-16 sm:pb-12 text-center px-4 max-w-4xl mx-auto font-['Plus_Jakarta_Sans']">
-    <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-black/5 text-[#1d1d1f] text-xs font-semibold uppercase tracking-widest mb-3">
-        <i class="fa-solid fa-gem text-black"></i>
-        <span>Vent Archival Studio & Custom Workshop</span>
-    </div>
-    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-[#1d1d1f] leading-tight">
-        Vintage Drops.
-    </h1>
-    <p class="text-base sm:text-lg text-[#86868b] font-normal mt-3 max-w-2xl mx-auto leading-relaxed">
-        Handpicked authentic vintage materials, rare one-of-a-kind streetwear pieces, and bespoke custom apparel crafted with 24-hour studio precision.
-    </p>
-</section>
-
-<!-- ===================================================
-     3-PER-ROW EXACT BOX SIZE CLOTHING SHOWCASE GRID
-     Matching the exact portrait box size and ratio from the homepage showcase:
-     - 3 boxes per row on desktop (lg:grid-cols-3)
-     - High vertical portrait aspect ratio (h-[470px] sm:h-[510px] lg:h-[540px])
-     - Smooth rounded-3xl borders, shadow, and grayscale image reveal
-     - Scrolling down reveals more rows of 3!
-     =================================================== -->
-<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-28">
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 lg:pt-10 pb-28">
     <div id="vintageGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 lg:gap-8">
 
         <!-- 1: 1994 World Tour Vintage Band Tee -->
