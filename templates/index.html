@@ -6,16 +6,32 @@
 <!-- ===================================================
      TOP SECTION: 3D SOLAR SYSTEM & PLANETARY CAROUSEL
      =================================================== -->
-<section class="relative pt-16 sm:pt-24 lg:pt-28 pb-8 bg-white overflow-hidden min-h-[75vh] sm:min-h-[85vh] flex flex-col justify-center">
+<section class="relative pt-12 sm:pt-20 md:pt-24 lg:pt-28 pb-4 md:pb-8 bg-white overflow-hidden md:min-h-[75vh] lg:min-h-[85vh] flex flex-col justify-center">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center w-full">
-        <!-- 3D Solar Viewport (Screen-Filling, Borderless & Floating in Real White Page) -->
-        <div id="solarViewport" class="solar-viewport relative w-full h-[520px] sm:h-[620px] lg:h-[720px] flex items-center justify-center cursor-grab select-none bg-transparent">
+        
+        <!-- Mobile Editorial Header (Visible on Mobile Screens only, Hidden on Desktop) -->
+        <div class="block md:hidden text-center mb-2 px-2">
+            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-neutral-100 border border-black/5 text-[9px] font-bold uppercase tracking-widest text-neutral-600 mb-1.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-black animate-pulse"></span>
+                <span>Archival & Bespoke</span>
+            </div>
+            <h2 class="text-2xl xs:text-3xl font-black text-black uppercase tracking-tight font-['Plus_Jakarta_Sans'] leading-tight">
+                Choose One
+            </h2>
+            <p class="text-[11px] text-neutral-400 mt-0.5 flex items-center justify-center gap-1.5 font-medium">
+                <span>Swipe to inspect rare silhouettes</span>
+                <i class="fa-solid fa-arrow-right text-[8px] text-neutral-400"></i>
+            </p>
+        </div>
+
+        <!-- 3D Solar Viewport (Responsive height: tightly framed on mobile, spacious on desktop) -->
+        <div id="solarViewport" class="solar-viewport relative w-full h-[280px] xs:h-[305px] sm:h-[380px] md:h-[620px] lg:h-[720px] flex items-center justify-center cursor-grab select-none bg-transparent">
             
             <!-- 3D Orbiting Stage (Unobstructed Open Center) -->
             <div id="solarStage" class="solar-stage relative w-0 h-0 flex items-center justify-center">
                 
-                <!-- Center Text: Inside the rotating group of pictures -->
-                <a href="{{ url_for('vintage_gallery') }}" id="solarCenterText" class="absolute pointer-events-auto text-center select-none flex flex-col items-center justify-center -translate-x-1/2 -translate-y-1/2 group cursor-pointer" style="z-index: 50;">
+                <!-- Desktop Center Text: Inside the rotating group of pictures (Desktop Only) -->
+                <a href="{{ url_for('vintage_gallery') }}" id="solarCenterText" class="hidden md:flex absolute pointer-events-auto text-center select-none flex-col items-center justify-center -translate-x-1/2 -translate-y-1/2 group cursor-pointer" style="z-index: 50;">
                     <span class="text-2xl sm:text-4xl lg:text-6xl font-black text-black uppercase tracking-wider font-['Plus_Jakarta_Sans'] whitespace-nowrap group-hover:scale-105 transition-transform duration-300">
                         Choose One
                     </span>
@@ -26,37 +42,95 @@
                 </a>
 
                 <!-- 1: Rare Vintage Graphic Tees -->
-                <div class="planet-item absolute w-[210px] sm:w-[280px] md:w-[320px] lg:w-[360px] h-[370px] sm:h-[460px] lg:h-[540px] rounded-2xl sm:rounded-3xl bg-white border border-black/15 planet-glow-glassy cursor-pointer group shadow-2xl overflow-hidden" data-href="{{ url_for('vintage_gallery') }}?cat=tees" title="Rare Vintage Graphic Tees - Single-Stitch 90s Streetwear (Click to View Collection)">
+                <div class="planet-item absolute w-[160px] xs:w-[178px] sm:w-[240px] md:w-[320px] lg:w-[360px] h-[235px] xs:h-[260px] sm:h-[350px] md:h-[460px] lg:h-[540px] rounded-2xl md:rounded-3xl bg-white border border-black/15 planet-glow-glassy cursor-pointer group shadow-xl md:shadow-2xl overflow-hidden" 
+                     data-href="{{ url_for('vintage_gallery') }}?cat=tees" 
+                     data-title="Rare Vintage Graphic Tees" 
+                     data-subtitle="Single-Stitch 90s Streetwear" 
+                     data-index="0"
+                     title="Rare Vintage Graphic Tees - Single-Stitch 90s Streetwear (Click to View Collection)">
                     <img src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=900&auto=format&fit=crop&q=80" alt="Rare Vintage Graphic Tees" class="w-full h-full object-cover grayscale contrast-105 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-300">
                 </div>
 
                 <!-- 2: Bespoke Custom T-Shirts -->
-                <div class="planet-item absolute w-[210px] sm:w-[280px] md:w-[320px] lg:w-[360px] h-[370px] sm:h-[460px] lg:h-[540px] rounded-2xl sm:rounded-3xl bg-white border-2 border-black planet-glow-glassy-pro cursor-pointer group shadow-2xl overflow-hidden" data-href="{{ url_for('vintage_gallery') }}?cat=custom" title="Bespoke Custom T-Shirts - Screenprinted & Embroidered Cotton (Click to View Collection)">
+                <div class="planet-item absolute w-[160px] xs:w-[178px] sm:w-[240px] md:w-[320px] lg:w-[360px] h-[235px] xs:h-[260px] sm:h-[350px] md:h-[460px] lg:h-[540px] rounded-2xl md:rounded-3xl bg-white border-2 border-black planet-glow-glassy-pro cursor-pointer group shadow-xl md:shadow-2xl overflow-hidden" 
+                     data-href="{{ url_for('vintage_gallery') }}?cat=custom" 
+                     data-title="Bespoke Custom T-Shirts" 
+                     data-subtitle="Screenprinted & Embroidered Cotton" 
+                     data-index="1"
+                     title="Bespoke Custom T-Shirts - Screenprinted & Embroidered Cotton (Click to View Collection)">
                     <img src="https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=900&auto=format&fit=crop&q=80" alt="Bespoke Custom T-Shirts" class="w-full h-full object-cover grayscale contrast-105 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-300">
                 </div>
 
                 <!-- 3: Vintage Denim & Heritage Jackets -->
-                <div class="planet-item absolute w-[210px] sm:w-[280px] md:w-[320px] lg:w-[360px] h-[370px] sm:h-[460px] lg:h-[540px] rounded-2xl sm:rounded-3xl bg-white border border-black/15 planet-glow-glassy cursor-pointer group shadow-2xl overflow-hidden" data-href="{{ url_for('vintage_gallery') }}?cat=denim" title="Vintage Denim & Jackets - Washed Archival Outerwear (Click to View Collection)">
+                <div class="planet-item absolute w-[160px] xs:w-[178px] sm:w-[240px] md:w-[320px] lg:w-[360px] h-[235px] xs:h-[260px] sm:h-[350px] md:h-[460px] lg:h-[540px] rounded-2xl md:rounded-3xl bg-white border border-black/15 planet-glow-glassy cursor-pointer group shadow-xl md:shadow-2xl overflow-hidden" 
+                     data-href="{{ url_for('vintage_gallery') }}?cat=denim" 
+                     data-title="Vintage Denim & Jackets" 
+                     data-subtitle="Washed Archival Outerwear" 
+                     data-index="2"
+                     title="Vintage Denim & Jackets - Washed Archival Outerwear (Click to View Collection)">
                     <img src="https://images.unsplash.com/photo-1576995853123-5a10305d93c0?w=900&auto=format&fit=crop&q=80" alt="Vintage Denim & Jackets" class="w-full h-full object-cover grayscale contrast-105 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-300">
                 </div>
 
                 <!-- 4: Custom Streetwear Hoodies -->
-                <div class="planet-item absolute w-[210px] sm:w-[280px] md:w-[320px] lg:w-[360px] h-[370px] sm:h-[460px] lg:h-[540px] rounded-2xl sm:rounded-3xl bg-white border border-black/15 planet-glow-glassy cursor-pointer group shadow-2xl overflow-hidden" data-href="{{ url_for('vintage_gallery') }}?cat=hoodies" title="Custom Streetwear Hoodies - 450GSM French Terry (Click to View Collection)">
+                <div class="planet-item absolute w-[160px] xs:w-[178px] sm:w-[240px] md:w-[320px] lg:w-[360px] h-[235px] xs:h-[260px] sm:h-[350px] md:h-[460px] lg:h-[540px] rounded-2xl md:rounded-3xl bg-white border border-black/15 planet-glow-glassy cursor-pointer group shadow-xl md:shadow-2xl overflow-hidden" 
+                     data-href="{{ url_for('vintage_gallery') }}?cat=hoodies" 
+                     data-title="Custom Streetwear Hoodies" 
+                     data-subtitle="450GSM Heavy French Terry" 
+                     data-index="3"
+                     title="Custom Streetwear Hoodies - 450GSM French Terry (Click to View Collection)">
                     <img src="https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=900&auto=format&fit=crop&q=80" alt="Custom Streetwear Hoodies" class="w-full h-full object-cover grayscale contrast-105 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-300">
                 </div>
 
                 <!-- 5: Archival Vintage Materials & Fabrics -->
-                <div class="planet-item absolute w-[210px] sm:w-[280px] md:w-[320px] lg:w-[360px] h-[370px] sm:h-[460px] lg:h-[540px] rounded-2xl sm:rounded-3xl bg-white border border-black/15 planet-glow-glassy cursor-pointer group shadow-2xl overflow-hidden" data-href="{{ url_for('vintage_gallery') }}?cat=fabrics" title="Vintage Materials & Fabrics - Rare Deadstock Textiles (Click to View Collection)">
+                <div class="planet-item absolute w-[160px] xs:w-[178px] sm:w-[240px] md:w-[320px] lg:w-[360px] h-[235px] xs:h-[260px] sm:h-[350px] md:h-[460px] lg:h-[540px] rounded-2xl md:rounded-3xl bg-white border border-black/15 planet-glow-glassy cursor-pointer group shadow-xl md:shadow-2xl overflow-hidden" 
+                     data-href="{{ url_for('vintage_gallery') }}?cat=fabrics" 
+                     data-title="Vintage Materials & Fabrics" 
+                     data-subtitle="Rare Deadstock Textiles & Trims" 
+                     data-index="4"
+                     title="Vintage Materials & Fabrics - Rare Deadstock Textiles (Click to View Collection)">
                     <img src="https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=900&auto=format&fit=crop&q=80" alt="Vintage Materials & Sourced Fabrics" class="w-full h-full object-cover grayscale contrast-105 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-300">
                 </div>
 
                 <!-- 6: Custom Headwear & Totes -->
-                <div class="planet-item absolute w-[210px] sm:w-[280px] md:w-[320px] lg:w-[360px] h-[370px] sm:h-[460px] lg:h-[540px] rounded-2xl sm:rounded-3xl bg-white border-2 border-black planet-glow-glassy-pro cursor-pointer group shadow-2xl overflow-hidden" data-href="{{ url_for('vintage_gallery') }}?cat=accessories" title="Custom Headwear & Totes - Embroidered Caps & Canvas Bags (Click to View Collection)">
+                <div class="planet-item absolute w-[160px] xs:w-[178px] sm:w-[240px] md:w-[320px] lg:w-[360px] h-[235px] xs:h-[260px] sm:h-[350px] md:h-[460px] lg:h-[540px] rounded-2xl md:rounded-3xl bg-white border-2 border-black planet-glow-glassy-pro cursor-pointer group shadow-xl md:shadow-2xl overflow-hidden" 
+                     data-href="{{ url_for('vintage_gallery') }}?cat=accessories" 
+                     data-title="Custom Headwear & Totes" 
+                     data-subtitle="Embroidered Caps & Canvas Bags" 
+                     data-index="5"
+                     title="Custom Headwear & Totes - Embroidered Caps & Canvas Bags (Click to View Collection)">
                     <img src="https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=900&auto=format&fit=crop&q=80" alt="Custom Headwear & Tote Bags" class="w-full h-full object-cover grayscale contrast-105 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-300">
                 </div>
 
             </div>
         </div>
+
+        <!-- Mobile Interactive Dock: Synchronized piece title, category, dots & direct explore action (Mobile Only) -->
+        <div id="solarMobileDock" class="block md:hidden mt-2 px-3 w-full max-w-sm mx-auto">
+            <!-- Active Card Details -->
+            <div class="text-center min-h-[42px] flex flex-col items-center justify-center">
+                <h3 id="solarActiveTitle" class="text-sm font-extrabold text-black font-['Plus_Jakarta_Sans'] tracking-tight transition-all duration-200">
+                    Rare Vintage Graphic Tees
+                </h3>
+                <p id="solarActiveSubtitle" class="text-[11px] text-neutral-500 font-medium transition-all duration-200 mt-0.5">
+                    Single-Stitch 90s Streetwear
+                </p>
+            </div>
+
+            <!-- Dots & Action Button -->
+            <div class="flex items-center justify-between gap-3 mt-2 pt-2 border-t border-neutral-100">
+                <!-- 6 Interactive Pagination Dots -->
+                <div id="solarDotsContainer" class="flex items-center gap-1.5" aria-label="Collection indicators">
+                    <!-- Dots dynamically synced by solar.js -->
+                </div>
+
+                <!-- Explore Action Pill -->
+                <a id="solarActiveCta" href="{{ url_for('vintage_gallery') }}?cat=tees" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-black text-white text-[10px] font-bold tracking-wider uppercase hover:bg-neutral-800 transition-all duration-200 shadow-xs active:scale-95">
+                    <span>Explore</span>
+                    <i class="fa-solid fa-arrow-right text-[8px]"></i>
+                </a>
+            </div>
+        </div>
+
     </div>
 </section>
 

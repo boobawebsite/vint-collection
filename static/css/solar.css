@@ -88,3 +88,51 @@
 .planet-item.show-color img {
     filter: grayscale(0%) contrast(100%) !important;
 }
+
+/* ===================================================
+   MOBILE-SPECIFIC REFINEMENTS (< 768px)
+   DESKTOP (>= 768px) REMAINS STRICTLY UNTOUCHED
+   =================================================== */
+@media (max-width: 767px) {
+    .solar-viewport {
+        perspective: 800px;
+        perspective-origin: 50% 50%;
+        touch-action: pan-y;
+    }
+
+    /* Elevate and spotlight the focused active card on mobile */
+    .planet-item.is-focused {
+        border-color: #000000 !important;
+        box-shadow: 
+            0 20px 45px -10px rgba(0, 0, 0, 0.35),
+            0 6px 16px -4px rgba(0, 0, 0, 0.12),
+            0 0 0 2px #000000 !important;
+    }
+
+    .planet-item.is-focused img {
+        filter: grayscale(0%) contrast(100%) !important;
+    }
+
+    /* Subtle pagination dots styling */
+    .solar-dot {
+        height: 6px;
+        border-radius: 9999px;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        cursor: pointer;
+    }
+
+    .solar-dot.active {
+        width: 22px;
+        background-color: #000000;
+    }
+
+    .solar-dot:not(.active) {
+        width: 6px;
+        background-color: #d4d4d8;
+    }
+
+    .solar-dot:not(.active):hover {
+        background-color: #71717a;
+    }
+}
+
