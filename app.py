@@ -5,7 +5,11 @@ import string
 from datetime import datetime, timedelta, timezone
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify, flash
 from werkzeug.security import generate_password_hash, check_password_hash
-from db import get_db, init_db
+from db import (
+    get_db, init_db, create_user, get_user_by_email, get_user_by_id,
+    create_order, get_order, get_all_orders, update_order, delete_order, search_orders,
+    get_setting, set_setting, is_supabase_enabled
+)
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'xol_super_secret_whatsapp_store_key_2026')
@@ -99,8 +103,6 @@ def auth():
     
     if request.method == 'POST':
         action = request.form.get('action', 'signin')
-        conn = get_db()
-        cursor = conn.cursor()
         
         if action == 'signup':
             name = request.form.get('name', '').strip()
@@ -112,19 +114,13 @@ def auth():
                 flash("Please fill in all required fields (Name, Email, Password).", "error")
                 return render_template('auth.html', tab='signup', name=name, email=email, phone=phone)
             
-            cursor.execute("SELECT id FROM users WHERE email = ?", (email,))
-            if cursor.fetchone():
+            existing = get_user_by_email(email)
+            if existing:
                 flash("An account with this email already exists. Please sign in.", "error")
                 return render_template('auth.html', tab='signin', email=email)
             
             pw_hash = generate_password_hash(password)
-            now_str = datetime.now(timezone.utc).isoformat()
-            cursor.execute(
-                "INSERT INTO users (name, email, phone, password_hash, created_at) VALUES (?, ?, ?, ?, ?)",
-                (name, email, phone, pw_hash, now_str)
-            )
-            conn.commit()
-            user_id = cursor.lastrowid
+            user_id = create_user(name, email, phone, pw_hash)
             
             session['user_id'] = user_id
             session['user_name'] = name
@@ -142,8 +138,7 @@ def auth():
                 flash("Please provide both email and password.", "error")
                 return render_template('auth.html', tab='signin', email=email)
             
-            cursor.execute("SELECT id, name, email, password_hash FROM users WHERE email = ?", (email,))
-            user = cursor.fetchone()
+            user = get_user_by_email(email)
             
             if not user or not check_password_hash(user['password_hash'], password):
                 flash("Invalid email or password. Please try again.", "error")
@@ -171,8 +166,6 @@ def user_logout():
 def api_auth():
     data = request.get_json(silent=True) or request.form
     action = data.get('action', 'signin')
-    conn = get_db()
-    cursor = conn.cursor()
     
     if action == 'signup':
         name = data.get('name', '').strip()
@@ -183,18 +176,12 @@ def api_auth():
         if not name or not email or not password:
             return jsonify({'success': False, 'message': 'Please provide Name, Email, and Password.'}), 400
         
-        cursor.execute("SELECT id FROM users WHERE email = ?", (email,))
-        if cursor.fetchone():
+        existing = get_user_by_email(email)
+        if existing:
             return jsonify({'success': False, 'message': 'Email already registered. Please sign in.'}), 400
         
         pw_hash = generate_password_hash(password)
-        now_str = datetime.now(timezone.utc).isoformat()
-        cursor.execute(
-            "INSERT INTO users (name, email, phone, password_hash, created_at) VALUES (?, ?, ?, ?, ?)",
-            (name, email, phone, pw_hash, now_str)
-        )
-        conn.commit()
-        user_id = cursor.lastrowid
+        user_id = create_user(name, email, phone, pw_hash)
         session['user_id'] = user_id
         session['user_name'] = name
         session['user_email'] = email
@@ -204,8 +191,7 @@ def api_auth():
         password = data.get('password', '')
         if not email or not password:
             return jsonify({'success': False, 'message': 'Email and Password required.'}), 400
-        cursor.execute("SELECT id, name, email, password_hash FROM users WHERE email = ?", (email,))
-        user = cursor.fetchone()
+        user = get_user_by_email(email)
         if not user or not check_password_hash(user['password_hash'], password):
             return jsonify({'success': False, 'message': 'Invalid email or password.'}), 401
         session['user_id'] = user['id']
@@ -286,52 +272,38 @@ def order():
     created_at = datetime.now(timezone.utc)
     target_delivery = created_at + timedelta(hours=24)
 
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute('''
-    INSERT INTO orders (
-        id, created_at, target_delivery_at, plan_type, plan_name, plan_price,
-        business_name, vendor_name, whatsapp_number, email, category, currency,
-        tagline, about_text, address, instagram, facebook, tiktok,
-        products_json, status, website_url, publish_mode, is_published
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    ''', (
-        order_id,
-        created_at.isoformat(),
-        target_delivery.isoformat(),
-        plan_type,
-        plan_name,
-        plan_price,
-        business_name,
-        vendor_name or business_name,
-        whatsapp_number,
-        email,
-        category,
-        currency,
-        tagline,
-        about_text,
-        address,
-        instagram,
-        facebook,
-        tiktok,
-        json.dumps(products),
-        'submitted',
-        '', # website_url will be filled by admin
-        'countdown',
-        0
-    ))
-    conn.commit()
-    conn.close()
+    order_dict = {
+        'id': order_id,
+        'created_at': created_at.isoformat(),
+        'target_delivery_at': target_delivery.isoformat(),
+        'plan_type': plan_type,
+        'plan_name': plan_name,
+        'plan_price': plan_price,
+        'business_name': business_name,
+        'vendor_name': vendor_name or business_name,
+        'whatsapp_number': whatsapp_number,
+        'email': email,
+        'category': category,
+        'currency': currency,
+        'tagline': tagline,
+        'about_text': about_text,
+        'address': address,
+        'instagram': instagram,
+        'facebook': facebook,
+        'tiktok': tiktok,
+        'products_json': json.dumps(products),
+        'status': 'submitted',
+        'website_url': '',
+        'publish_mode': 'countdown',
+        'is_published': 0
+    }
+    create_order(order_dict)
 
     return redirect(url_for('status', order_id=order_id, new='1'))
 
 @app.route('/status/<order_id>')
 def status(order_id):
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM orders WHERE id = ?", (order_id,))
-    row = cursor.fetchone()
-    conn.close()
+    row = get_order(order_id)
 
     if not row:
         flash("Order ID not found. Please check your reference code.", "error")
@@ -343,11 +315,10 @@ def status(order_id):
 
 @app.route('/api/status/<order_id>')
 def api_status(order_id):
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM orders WHERE id = ?", (order_id,))
-    row = cursor.fetchone()
-    conn.close()
+    row = get_order(order_id)
+    if not row:
+        return jsonify({'error': 'Order not found'}), 404
+    return jsonify(parse_order_row(row))
 
     if not row:
         return jsonify({'error': 'Order not found'}), 404
@@ -373,16 +344,9 @@ def track():
             flash("Please enter an Order ID or your WhatsApp Number.", "error")
             return render_template('track.html')
 
-        conn = get_db()
-        cursor = conn.cursor()
-        # Search by ID or WhatsApp number
-        cursor.execute("SELECT id FROM orders WHERE id = ? OR whatsapp_number LIKE ? ORDER BY created_at DESC LIMIT 1", 
-                       (query, f"%{query}%"))
-        result = cursor.fetchone()
-        conn.close()
-
-        if result:
-            return redirect(url_for('status', order_id=result['id']))
+        orders = search_orders(query)
+        if orders:
+            return redirect(url_for('status', order_id=orders[0]['id']))
         else:
             flash("No order found matching your inquiry. Please double-check your Order ID or phone number.", "error")
 
@@ -397,13 +361,7 @@ def admin_login():
 
     if request.method == 'POST':
         password = request.form.get('password', '')
-        conn = get_db()
-        cursor = conn.cursor()
-        cursor.execute("SELECT value FROM settings WHERE key = 'admin_password'")
-        row = cursor.fetchone()
-        conn.close()
-
-        saved_pass = row['value'] if row else 'admin123'
+        saved_pass = get_setting('admin_password', 'admin123')
         if password == saved_pass:
             session['is_admin'] = True
             flash("Welcome to the Admin Portal!", "success")
@@ -424,12 +382,7 @@ def admin_dashboard():
     if not session.get('is_admin'):
         return redirect(url_for('admin_login'))
 
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM orders ORDER BY created_at DESC")
-    rows = cursor.fetchall()
-    conn.close()
-
+    rows = get_all_orders()
     orders = [parse_order_row(r) for r in rows]
 
     # Metrics
@@ -462,30 +415,16 @@ def admin_order_update(order_id):
     vendor_admin_pass = request.form.get('vendor_admin_pass', '').strip()
     admin_notes = request.form.get('admin_notes', '').strip()
 
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute('''
-    UPDATE orders SET
-        website_url = ?,
-        status = ?,
-        publish_mode = ?,
-        vendor_admin_url = ?,
-        vendor_admin_user = ?,
-        vendor_admin_pass = ?,
-        admin_notes = ?
-    WHERE id = ?
-    ''', (
-        website_url,
-        status,
-        publish_mode,
-        vendor_admin_url,
-        vendor_admin_user,
-        vendor_admin_pass,
-        admin_notes,
-        order_id
-    ))
-    conn.commit()
-    conn.close()
+    update_data = {
+        'website_url': website_url,
+        'status': status,
+        'publish_mode': publish_mode,
+        'vendor_admin_url': vendor_admin_url,
+        'vendor_admin_user': vendor_admin_user,
+        'vendor_admin_pass': vendor_admin_pass,
+        'admin_notes': admin_notes
+    }
+    update_order(order_id, update_data)
 
     flash(f"Order {order_id} updated successfully! Website link submitted.", "success")
     return redirect(url_for('admin_dashboard'))
@@ -500,20 +439,14 @@ def admin_simulate_time(order_id):
         return jsonify({'error': 'Unauthorized'}), 403
 
     action = request.form.get('action', 'expire') # 'expire' or 'reset'
-    conn = get_db()
-    cursor = conn.cursor()
 
     if action == 'expire':
-        # Set target_delivery_at to 10 seconds ago
         past_time = (datetime.now(timezone.utc) - timedelta(minutes=5)).isoformat()
-        cursor.execute("UPDATE orders SET target_delivery_at = ? WHERE id = ?", (past_time, order_id))
+        update_order(order_id, {'target_delivery_at': past_time})
     else:
-        # Reset to 24 hours from now
         future_time = (datetime.now(timezone.utc) + timedelta(hours=24)).isoformat()
-        cursor.execute("UPDATE orders SET target_delivery_at = ? WHERE id = ?", (future_time, order_id))
+        update_order(order_id, {'target_delivery_at': future_time})
 
-    conn.commit()
-    conn.close()
     flash(f"24-hour timer simulation updated for order {order_id} ({action})!", "info")
     return redirect(url_for('admin_dashboard'))
 
@@ -522,12 +455,7 @@ def admin_order_delete(order_id):
     if not session.get('is_admin'):
         return redirect(url_for('admin_login'))
 
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute("DELETE FROM orders WHERE id = ?", (order_id,))
-    conn.commit()
-    conn.close()
-
+    delete_order(order_id)
     flash(f"Order {order_id} has been deleted.", "info")
     return redirect(url_for('admin_dashboard'))
 
@@ -541,12 +469,7 @@ def preview_store(order_id):
     This allows the admin or vendor to immediately test their website with
     1-click WhatsApp order formatting.
     """
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM orders WHERE id = ?", (order_id,))
-    row = cursor.fetchone()
-    conn.close()
-
+    row = get_order(order_id)
     if not row:
         return "Store not found", 404
 
@@ -559,12 +482,7 @@ def preview_vendor_admin(order_id):
     Demonstrates the $10 Pro Plan Admin Login capability!
     Allows the vendor to log in to manage their products and orders.
     """
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM orders WHERE id = ?", (order_id,))
-    row = cursor.fetchone()
-    conn.close()
-
+    row = get_order(order_id)
     if not row:
         return "Store not found", 404
 
