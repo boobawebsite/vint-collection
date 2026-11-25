@@ -1,93 +1,16 @@
 {% extends 'base.html' %}
 
-{% block title %}Custom Studio - Bespoke Polos & Archival Shirts - Vent Collection{% endblock %}
+{% block title %}Custom Studio Polos - Bespoke Polos & Archival Shirts - Vent Collection{% endblock %}
 
 {% block content %}
 <!-- ===================================================
-     APPLE-STYLE ANNOUNCEMENT BANNER
+     POLOS SHOWCASE GRID
      =================================================== -->
-<div class="bg-[#f5f5f7] border-b border-[#d2d2d7]/60 py-3 px-4 text-center text-xs text-[#1d1d1f]">
-    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-2 font-normal">
-        <span>Bespoke luxury piqué polos, textured knits & tailored studio shirts.</span>
-        <span class="hidden sm:inline text-[#86868b]">•</span>
-        <span class="font-medium flex items-center gap-1.5">
-            <span class="w-2 h-2 rounded-full bg-black animate-ping"></span>
-            <span>24-Hour Studio Precision Customisation & Worldwide Dispatch</span>
-        </span>
-    </div>
-</div>
-
-<!-- ===================================================
-     APPLE-STYLE STICKY CATEGORY NAV BAR
-     =================================================== -->
-<div class="sticky top-0 z-30 bg-white/90 backdrop-blur-xl border-b border-[#d2d2d7]/50 py-3.5 shadow-sm">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
-        
-        <!-- Horizontal Category Pills -->
-        <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
-            <button type="button" onclick="filterPolos('all')" class="polo-pill active text-xs font-semibold px-4 py-2 rounded-full bg-black text-white cursor-pointer transition-all duration-200 shrink-0">
-                All Polos (18)
-            </button>
-            <button type="button" onclick="filterPolos('pique')" class="polo-pill text-xs font-medium px-4 py-2 rounded-full bg-[#f5f5f7] text-[#1d1d1f] hover:bg-black/10 cursor-pointer transition-all duration-200 shrink-0">
-                Heavyweight Piqué
-            </button>
-            <button type="button" onclick="filterPolos('knit')" class="polo-pill text-xs font-medium px-4 py-2 rounded-full bg-[#f5f5f7] text-[#1d1d1f] hover:bg-black/10 cursor-pointer transition-all duration-200 shrink-0">
-                Textured Knits
-            </button>
-            <button type="button" onclick="filterPolos('club')" class="polo-pill text-xs font-medium px-4 py-2 rounded-full bg-[#f5f5f7] text-[#1d1d1f] hover:bg-black/10 cursor-pointer transition-all duration-200 shrink-0">
-                Heritage & Club
-            </button>
-            <button type="button" onclick="filterPolos('resort')" class="polo-pill text-xs font-medium px-4 py-2 rounded-full bg-[#f5f5f7] text-[#1d1d1f] hover:bg-black/10 cursor-pointer transition-all duration-200 shrink-0">
-                Riviera & Resort
-            </button>
-            <button type="button" onclick="filterPolos('longsleeve')" class="polo-pill text-xs font-medium px-4 py-2 rounded-full bg-[#f5f5f7] text-[#1d1d1f] hover:bg-black/10 cursor-pointer transition-all duration-200 shrink-0">
-                Long Sleeve & Zips
-            </button>
-            <button type="button" onclick="filterPolos('minimalist')" class="polo-pill text-xs font-medium px-4 py-2 rounded-full bg-[#f5f5f7] text-[#1d1d1f] hover:bg-black/10 cursor-pointer transition-all duration-200 shrink-0">
-                Minimalist Solids
-            </button>
-        </div>
-
-        <!-- Right Quick Action -->
-        <a href="{{ url_for('order') }}" class="hidden lg:inline-flex items-center gap-2 text-xs font-semibold bg-[#0071e3] hover:bg-[#0077ed] text-white px-4 py-2 rounded-full transition shadow-sm shrink-0">
-            <span>Request Custom Polo</span>
-            <i class="fa-solid fa-chevron-right text-[10px]"></i>
-        </a>
-    </div>
-</div>
-
-<!-- ===================================================
-     HERO HEADER
-     =================================================== -->
-<section class="pt-12 pb-8 sm:pt-16 sm:pb-12 text-center px-4 max-w-4xl mx-auto font-['Plus_Jakarta_Sans']">
-    <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-black/5 text-[#1d1d1f] text-xs font-semibold uppercase tracking-widest mb-3">
-        <i class="fa-solid fa-shirt text-black"></i>
-        <span>Vent Bespoke Custom Studio</span>
-    </div>
-    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-[#1d1d1f] leading-tight">
-        Custom Studio Polos.
-    </h1>
-    <p class="text-base sm:text-lg text-[#86868b] font-normal mt-3 max-w-2xl mx-auto leading-relaxed font-['Space_Grotesk']">
-        Tailored archival piqué, open-weave knit textiles, and luxury heavyweight combed cotton polos—hand-finished with bespoke monograms and 24-hour studio precision.
-    </p>
-</section>
-
-<!-- ===================================================
-     3-PER-ROW EXACT BOX SIZE POLOS SHOWCASE GRID
-     Matching the exact portrait box size and ratio from the Vintage Drops page:
-     - 3 boxes per row on desktop (lg:grid-cols-3)
-     - High vertical portrait aspect ratio (h-[470px] sm:h-[510px] lg:h-[540px])
-     - Smooth rounded-3xl borders, shadow, and grayscale image reveal
-     - Scrolling down reveals more rows of 3!
-     =================================================== -->
-<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-28">
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 lg:pt-10 pb-28">
     <div id="polosGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 lg:gap-8">
 
         <!-- 1: Archival Heavyweight Piqué Polo -->
         <div class="polo-item group relative h-[470px] sm:h-[510px] lg:h-[540px] rounded-3xl overflow-hidden bg-white border border-black/15 shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer" data-cat="pique" onclick="quickViewPolo('Archival Heavyweight Piqué Polo', '₦24,500', '$28', 'https://images.unsplash.com/photo-1586363104862-3a5e2ab60d99?w=900&auto=format&fit=crop&q=80', 'Woven from double-ply combed cotton with an archival waffle-piqué texture, structured non-curl rib collar, and genuine mother-of-pearl buttons.', '260GSM Double-Piqué Cotton', 'Onyx Black, Chalk White, Vintage Navy, Forest Green')">
-            <span class="absolute top-4 left-4 z-20 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-white text-[10px] font-bold tracking-widest uppercase border border-white/20">
-                260GSM Double-Piqué
-            </span>
             <img src="https://images.unsplash.com/photo-1586363104862-3a5e2ab60d99?w=900&auto=format&fit=crop&q=80" alt="Archival Heavyweight Piqué Polo" class="w-full h-full object-cover grayscale contrast-105 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500">
             <div class="absolute inset-x-0 bottom-0 z-10 p-5 sm:p-6 bg-gradient-to-t from-black/90 via-black/55 to-transparent flex flex-col justify-end text-white">
                 <h3 class="text-xl sm:text-2xl font-black font-['Plus_Jakarta_Sans'] tracking-tight text-white mb-2.5 drop-shadow-sm leading-snug">
@@ -111,9 +34,6 @@
 
         <!-- 2: Retro Stripe Textured Knit Polo -->
         <div class="polo-item group relative h-[470px] sm:h-[510px] lg:h-[540px] rounded-3xl overflow-hidden bg-white border border-black/15 shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer" data-cat="knit" onclick="quickViewPolo('Retro Stripe Textured Knit Polo', '₦28,000', '$32', 'https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=900&auto=format&fit=crop&q=80', 'Bespoke open-knit construction inspired by Mediterranean vintage resort wear. Exceptionally breathable with luxurious natural drape.', 'Mercerized Fine Knit Cotton', 'Terracotta Earth, Sage Green, Midnight Noir')">
-            <span class="absolute top-4 left-4 z-20 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-white text-[10px] font-bold tracking-widest uppercase border border-white/20">
-                Textured Knit
-            </span>
             <img src="https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=900&auto=format&fit=crop&q=80" alt="Retro Stripe Textured Knit Polo" class="w-full h-full object-cover grayscale contrast-105 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500">
             <div class="absolute inset-x-0 bottom-0 z-10 p-5 sm:p-6 bg-gradient-to-t from-black/90 via-black/55 to-transparent flex flex-col justify-end text-white">
                 <h3 class="text-xl sm:text-2xl font-black font-['Plus_Jakarta_Sans'] tracking-tight text-white mb-2.5 drop-shadow-sm leading-snug">
@@ -137,9 +57,6 @@
 
         <!-- 3: British Racing Heritage Club Polo -->
         <div class="polo-item group relative h-[470px] sm:h-[510px] lg:h-[540px] rounded-3xl overflow-hidden bg-white border border-black/15 shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer" data-cat="club" onclick="quickViewPolo('British Racing Heritage Club Polo', '₦25,000', '$29', 'https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=900&auto=format&fit=crop&q=80', 'Deep British Racing Green piqué with hand-guided monogram crest available on the left chest or collar point. Reinforced placket.', '260GSM Combed Honeycomb', 'Racing Green, Royal Navy, Vintage Cream')">
-            <span class="absolute top-4 left-4 z-20 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-white text-[10px] font-bold tracking-widest uppercase border border-white/20">
-                Gold Bullion Crest
-            </span>
             <img src="https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=900&auto=format&fit=crop&q=80" alt="British Racing Heritage Club Polo" class="w-full h-full object-cover grayscale contrast-105 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500">
             <div class="absolute inset-x-0 bottom-0 z-10 p-5 sm:p-6 bg-gradient-to-t from-black/90 via-black/55 to-transparent flex flex-col justify-end text-white">
                 <h3 class="text-xl sm:text-2xl font-black font-['Plus_Jakarta_Sans'] tracking-tight text-white mb-2.5 drop-shadow-sm leading-snug">
@@ -163,9 +80,6 @@
 
         <!-- 4: Minimalist Onyx Monogram Polo -->
         <div class="polo-item group relative h-[470px] sm:h-[510px] lg:h-[540px] rounded-3xl overflow-hidden bg-white border border-black/15 shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer" data-cat="minimalist" onclick="quickViewPolo('Minimalist Onyx Monogram Polo', '₦23,500', '$27', 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=900&auto=format&fit=crop&q=80', 'Clean French placket with tonal matte horn buttons and subtle laser-cut monogram embroidery on sleeve.', '240GSM Mercerized Jersey', 'Onyx Noir, Slate Grey, Dark Olive')">
-            <span class="absolute top-4 left-4 z-20 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-white text-[10px] font-bold tracking-widest uppercase border border-white/20">
-                French Placket
-            </span>
             <img src="https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=900&auto=format&fit=crop&q=80" alt="Minimalist Onyx Monogram Polo" class="w-full h-full object-cover grayscale contrast-105 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500">
             <div class="absolute inset-x-0 bottom-0 z-10 p-5 sm:p-6 bg-gradient-to-t from-black/90 via-black/55 to-transparent flex flex-col justify-end text-white">
                 <h3 class="text-xl sm:text-2xl font-black font-['Plus_Jakarta_Sans'] tracking-tight text-white mb-2.5 drop-shadow-sm leading-snug">
@@ -189,9 +103,6 @@
 
         <!-- 5: Coral Riviera Classic Piqué Polo -->
         <div class="polo-item group relative h-[470px] sm:h-[510px] lg:h-[540px] rounded-3xl overflow-hidden bg-white border border-black/15 shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer" data-cat="resort" onclick="quickViewPolo('Coral Riviera Classic Piqué Polo', '₦24,000', '$28', 'https://images.unsplash.com/photo-1586363104862-3a5e2ab60d99?w=900&auto=format&fit=crop&q=80', 'Enzyme stone-washed coral red cotton piqué with sun-softened hand feel and stepped tennis hem.', '240GSM Stone-Washed Piqué', 'Vintage Coral, Aegean Blue, Limoncello Yellow')">
-            <span class="absolute top-4 left-4 z-20 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-white text-[10px] font-bold tracking-widest uppercase border border-white/20">
-                Stone Enzyme Wash
-            </span>
             <img src="https://images.unsplash.com/photo-1586363104862-3a5e2ab60d99?w=900&auto=format&fit=crop&q=80" alt="Coral Riviera Classic Piqué Polo" class="w-full h-full object-cover grayscale contrast-105 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500">
             <div class="absolute inset-x-0 bottom-0 z-10 p-5 sm:p-6 bg-gradient-to-t from-black/90 via-black/55 to-transparent flex flex-col justify-end text-white">
                 <h3 class="text-xl sm:text-2xl font-black font-['Plus_Jakarta_Sans'] tracking-tight text-white mb-2.5 drop-shadow-sm leading-snug">
@@ -215,9 +126,6 @@
 
         <!-- 6: Seafoam Riviera Tennis Polo -->
         <div class="polo-item group relative h-[470px] sm:h-[510px] lg:h-[540px] rounded-3xl overflow-hidden bg-white border border-black/15 shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer" data-cat="resort" onclick="quickViewPolo('Seafoam Riviera Tennis Polo', '₦26,000', '$30', 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=900&auto=format&fit=crop&q=80', 'Crisp seafoam green piqué with chalk-white twin tipping on the collar and sleeve cuffs. Authentic 70s court silhouette.', '260GSM Combed Cotton Piqué', 'Seafoam Mint, Chalk White, Monaco Blue')">
-            <span class="absolute top-4 left-4 z-20 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-white text-[10px] font-bold tracking-widest uppercase border border-white/20">
-                Twin-Tipped Collar
-            </span>
             <img src="https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=900&auto=format&fit=crop&q=80" alt="Seafoam Riviera Tennis Polo" class="w-full h-full object-cover grayscale contrast-105 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500">
             <div class="absolute inset-x-0 bottom-0 z-10 p-5 sm:p-6 bg-gradient-to-t from-black/90 via-black/55 to-transparent flex flex-col justify-end text-white">
                 <h3 class="text-xl sm:text-2xl font-black font-['Plus_Jakarta_Sans'] tracking-tight text-white mb-2.5 drop-shadow-sm leading-snug">
@@ -241,9 +149,6 @@
 
         <!-- 7: Quarter-Zip Performance Knit Polo -->
         <div class="polo-item group relative h-[470px] sm:h-[510px] lg:h-[540px] rounded-3xl overflow-hidden bg-white border border-black/15 shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer" data-cat="longsleeve" onclick="quickViewPolo('Quarter-Zip Performance Knit Polo', '₦29,500', '$34', 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=900&auto=format&fit=crop&q=80', 'Antiqued brass YKK quarter-zip closure on structured stand collar with seamless rib knitting and temperature-regulating cotton weave.', '270GSM Mercerized Piqué', 'Charcoal Anthracite, Forest Moss, Deep Ink Navy')">
-            <span class="absolute top-4 left-4 z-20 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-white text-[10px] font-bold tracking-widest uppercase border border-white/20">
-                Brass Quarter-Zip
-            </span>
             <img src="https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=900&auto=format&fit=crop&q=80" alt="Quarter-Zip Performance Knit Polo" class="w-full h-full object-cover grayscale contrast-105 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500">
             <div class="absolute inset-x-0 bottom-0 z-10 p-5 sm:p-6 bg-gradient-to-t from-black/90 via-black/55 to-transparent flex flex-col justify-end text-white">
                 <h3 class="text-xl sm:text-2xl font-black font-['Plus_Jakarta_Sans'] tracking-tight text-white mb-2.5 drop-shadow-sm leading-snug">
@@ -267,9 +172,6 @@
 
         <!-- 8: Heavyweight Long Sleeve Rugby Polo -->
         <div class="polo-item group relative h-[470px] sm:h-[510px] lg:h-[540px] rounded-3xl overflow-hidden bg-white border border-black/15 shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer" data-cat="longsleeve" onclick="quickViewPolo('Heavyweight Long Sleeve Rugby Polo', '₦32,000', '$38', 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=900&auto=format&fit=crop&q=80', '340GSM heavy jersey cotton with classic woven white cotton twill collar, rubber safety buttons, and reinforced elbow patches.', '340GSM Heavy Cotton Jersey', 'Vintage Burgundy & Navy, Olive & Black, Heather Slate')">
-            <span class="absolute top-4 left-4 z-20 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-white text-[10px] font-bold tracking-widest uppercase border border-white/20">
-                340GSM Heavy Jersey
-            </span>
             <img src="https://images.unsplash.com/photo-1551028719-00167b16eac5?w=900&auto=format&fit=crop&q=80" alt="Heavyweight Long Sleeve Rugby Polo" class="w-full h-full object-cover grayscale contrast-105 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500">
             <div class="absolute inset-x-0 bottom-0 z-10 p-5 sm:p-6 bg-gradient-to-t from-black/90 via-black/55 to-transparent flex flex-col justify-end text-white">
                 <h3 class="text-xl sm:text-2xl font-black font-['Plus_Jakarta_Sans'] tracking-tight text-white mb-2.5 drop-shadow-sm leading-snug">
@@ -293,9 +195,6 @@
 
         <!-- 9: Archival Heather Slate Piqué Polo -->
         <div class="polo-item group relative h-[470px] sm:h-[510px] lg:h-[540px] rounded-3xl overflow-hidden bg-white border border-black/15 shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer" data-cat="pique" onclick="quickViewPolo('Archival Heather Slate Piqué Polo', '₦24,500', '$28', 'https://images.unsplash.com/photo-1562157873-818bc0726f68?w=900&auto=format&fit=crop&q=80', 'Two-tone melange combed yarn creating rich textural depth. Pre-washed for zero shrinkage and tailored shoulder drape.', '260GSM Melange Piqué', 'Heather Slate, Charcoal Ash, Sand Ecru')">
-            <span class="absolute top-4 left-4 z-20 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-white text-[10px] font-bold tracking-widest uppercase border border-white/20">
-                Melange Yarn
-            </span>
             <img src="https://images.unsplash.com/photo-1562157873-818bc0726f68?w=900&auto=format&fit=crop&q=80" alt="Archival Heather Slate Piqué Polo" class="w-full h-full object-cover grayscale contrast-105 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500">
             <div class="absolute inset-x-0 bottom-0 z-10 p-5 sm:p-6 bg-gradient-to-t from-black/90 via-black/55 to-transparent flex flex-col justify-end text-white">
                 <h3 class="text-xl sm:text-2xl font-black font-['Plus_Jakarta_Sans'] tracking-tight text-white mb-2.5 drop-shadow-sm leading-snug">
@@ -319,9 +218,6 @@
 
         <!-- 10: Bespoke Crest Embroidered Club Polo -->
         <div class="polo-item group relative h-[470px] sm:h-[510px] lg:h-[540px] rounded-3xl overflow-hidden bg-white border border-black/15 shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer" data-cat="club" onclick="quickViewPolo('Bespoke Crest Embroidered Club Polo', '₦27,500', '$32', 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=900&auto=format&fit=crop&q=80', 'Personalized high-density embroidery of your family, business, or atelier monogram crest on luxury Egyptian cotton.', '280GSM Egyptian Cotton Piqué', 'Midnight Black, Optical White, Crimson Red')">
-            <span class="absolute top-4 left-4 z-20 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-white text-[10px] font-bold tracking-widest uppercase border border-white/20">
-                Custom Monogram
-            </span>
             <img src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=900&auto=format&fit=crop&q=80" alt="Bespoke Crest Embroidered Club Polo" class="w-full h-full object-cover grayscale contrast-105 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500">
             <div class="absolute inset-x-0 bottom-0 z-10 p-5 sm:p-6 bg-gradient-to-t from-black/90 via-black/55 to-transparent flex flex-col justify-end text-white">
                 <h3 class="text-xl sm:text-2xl font-black font-['Plus_Jakarta_Sans'] tracking-tight text-white mb-2.5 drop-shadow-sm leading-snug">
@@ -345,9 +241,6 @@
 
         <!-- 11: Washed Indigo Chambray Button-Down Polo -->
         <div class="polo-item group relative h-[470px] sm:h-[510px] lg:h-[540px] rounded-3xl overflow-hidden bg-white border border-black/15 shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer" data-cat="pique" onclick="quickViewPolo('Washed Indigo Chambray Polo', '₦28,500', '$33', 'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=900&auto=format&fit=crop&q=80', 'Lightweight 6.5oz shuttle-loomed indigo chambray with structured button-down collar points and genuine bone buttons.', '6.5oz Shuttle Chambray', 'Raw Indigo, Washed Bleach, Mid Stone')">
-            <span class="absolute top-4 left-4 z-20 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-white text-[10px] font-bold tracking-widest uppercase border border-white/20">
-                Button-Down Collar
-            </span>
             <img src="https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=900&auto=format&fit=crop&q=80" alt="Washed Indigo Chambray Button-Down Polo" class="w-full h-full object-cover grayscale contrast-105 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500">
             <div class="absolute inset-x-0 bottom-0 z-10 p-5 sm:p-6 bg-gradient-to-t from-black/90 via-black/55 to-transparent flex flex-col justify-end text-white">
                 <h3 class="text-xl sm:text-2xl font-black font-['Plus_Jakarta_Sans'] tracking-tight text-white mb-2.5 drop-shadow-sm leading-snug">
@@ -371,9 +264,6 @@
 
         <!-- 12: French Terry Resort Collar Johnny Polo -->
         <div class="polo-item group relative h-[470px] sm:h-[510px] lg:h-[540px] rounded-3xl overflow-hidden bg-white border border-black/15 shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer" data-cat="resort" onclick="quickViewPolo('French Terry Resort Johnny Polo', '₦27,000', '$31', 'https://images.unsplash.com/photo-1509967419530-da38b4704bc6?w=900&auto=format&fit=crop&q=80', 'Buttonless Johnny collar crafted from plush 300GSM micro-loop French terry. Effortless relaxed cut inspired by 60s poolside tailoring.', '300GSM Micro-Loop Terry', 'Warm Ecru, Amalfi Blue, Sage Mist')">
-            <span class="absolute top-4 left-4 z-20 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-white text-[10px] font-bold tracking-widest uppercase border border-white/20">
-                Johnny Open Collar
-            </span>
             <img src="https://images.unsplash.com/photo-1509967419530-da38b4704bc6?w=900&auto=format&fit=crop&q=80" alt="French Terry Resort Johnny Polo" class="w-full h-full object-cover grayscale contrast-105 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500">
             <div class="absolute inset-x-0 bottom-0 z-10 p-5 sm:p-6 bg-gradient-to-t from-black/90 via-black/55 to-transparent flex flex-col justify-end text-white">
                 <h3 class="text-xl sm:text-2xl font-black font-['Plus_Jakarta_Sans'] tracking-tight text-white mb-2.5 drop-shadow-sm leading-snug">
@@ -397,9 +287,6 @@
 
         <!-- 13: Pure Chalk Luxury Mercerized Polo -->
         <div class="polo-item group relative h-[470px] sm:h-[510px] lg:h-[540px] rounded-3xl overflow-hidden bg-white border border-black/15 shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer" data-cat="minimalist" onclick="quickViewPolo('Pure Chalk Luxury Mercerized Polo', '₦25,500', '$29', 'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=900&auto=format&fit=crop&q=80', '100% long-staple Egyptian Giza cotton with double mercerization. Silky smooth touch, deep color retention, and mother-of-pearl buttons.', '240GSM Mercerized Giza Cotton', 'Pure Chalk, Jet Black, Navy Blue')">
-            <span class="absolute top-4 left-4 z-20 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-white text-[10px] font-bold tracking-widest uppercase border border-white/20">
-                Giza Silk Mercerized
-            </span>
             <img src="https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=900&auto=format&fit=crop&q=80" alt="Pure Chalk Luxury Mercerized Polo" class="w-full h-full object-cover grayscale contrast-105 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500">
             <div class="absolute inset-x-0 bottom-0 z-10 p-5 sm:p-6 bg-gradient-to-t from-black/90 via-black/55 to-transparent flex flex-col justify-end text-white">
                 <h3 class="text-xl sm:text-2xl font-black font-['Plus_Jakarta_Sans'] tracking-tight text-white mb-2.5 drop-shadow-sm leading-snug">
@@ -423,9 +310,6 @@
 
         <!-- 14: Vintage Olive Ribbed Collar Polo -->
         <div class="polo-item group relative h-[470px] sm:h-[510px] lg:h-[540px] rounded-3xl overflow-hidden bg-white border border-black/15 shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer" data-cat="pique" onclick="quickViewPolo('Vintage Olive Ribbed Collar Polo', '₦24,500', '$28', 'https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=900&auto=format&fit=crop&q=80', 'Mineral pigment-dyed military olive combed cotton piqué. Contrast ribbed collar with antique brass hardware.', '260GSM Mineral Dyed Piqué', 'Olive Green, Khaki Stone, Slate Grey')">
-            <span class="absolute top-4 left-4 z-20 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-white text-[10px] font-bold tracking-widest uppercase border border-white/20">
-                Pigment Dyed Olive
-            </span>
             <img src="https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=900&auto=format&fit=crop&q=80" alt="Vintage Olive Ribbed Collar Polo" class="w-full h-full object-cover grayscale contrast-105 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500">
             <div class="absolute inset-x-0 bottom-0 z-10 p-5 sm:p-6 bg-gradient-to-t from-black/90 via-black/55 to-transparent flex flex-col justify-end text-white">
                 <h3 class="text-xl sm:text-2xl font-black font-['Plus_Jakarta_Sans'] tracking-tight text-white mb-2.5 drop-shadow-sm leading-snug">
@@ -449,9 +333,6 @@
 
         <!-- 15: Double-Stripe Nautical Heritage Polo -->
         <div class="polo-item group relative h-[470px] sm:h-[510px] lg:h-[540px] rounded-3xl overflow-hidden bg-white border border-black/15 shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer" data-cat="club" onclick="quickViewPolo('Double-Stripe Nautical Heritage Polo', '₦26,500', '$30', 'https://images.unsplash.com/photo-1516762689617-e1cffcef479d?w=900&auto=format&fit=crop&q=80', 'Engineered navy and ecru horizontal stripes with solid contrast collar and laser-engraved wooden buttons.', '250GSM Combed Jersey Knit', 'Navy & Ecru, Breton Red, Emerald Green')">
-            <span class="absolute top-4 left-4 z-20 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-white text-[10px] font-bold tracking-widest uppercase border border-white/20">
-                Engineered Stripe
-            </span>
             <img src="https://images.unsplash.com/photo-1516762689617-e1cffcef479d?w=900&auto=format&fit=crop&q=80" alt="Double-Stripe Nautical Heritage Polo" class="w-full h-full object-cover grayscale contrast-105 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500">
             <div class="absolute inset-x-0 bottom-0 z-10 p-5 sm:p-6 bg-gradient-to-t from-black/90 via-black/55 to-transparent flex flex-col justify-end text-white">
                 <h3 class="text-xl sm:text-2xl font-black font-['Plus_Jakarta_Sans'] tracking-tight text-white mb-2.5 drop-shadow-sm leading-snug">
@@ -475,9 +356,6 @@
 
         <!-- 16: Collarless Mandarin Band Polo -->
         <div class="polo-item group relative h-[470px] sm:h-[510px] lg:h-[540px] rounded-3xl overflow-hidden bg-white border border-black/15 shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer" data-cat="minimalist" onclick="quickViewPolo('Collarless Mandarin Band Polo', '₦27,000', '$31', 'https://images.unsplash.com/photo-1578587018452-892bacefd3f2?w=900&auto=format&fit=crop&q=80', 'Grandad band collar with seamless two-button placket. Lightweight 240GSM cotton piqué with curved hem.', '240GSM Fine Piqué', 'Natural Ecru, Charcoal Black, French Blue')">
-            <span class="absolute top-4 left-4 z-20 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-white text-[10px] font-bold tracking-widest uppercase border border-white/20">
-                Band Collar
-            </span>
             <img src="https://images.unsplash.com/photo-1578587018452-892bacefd3f2?w=900&auto=format&fit=crop&q=80" alt="Collarless Mandarin Band Polo" class="w-full h-full object-cover grayscale contrast-105 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500">
             <div class="absolute inset-x-0 bottom-0 z-10 p-5 sm:p-6 bg-gradient-to-t from-black/90 via-black/55 to-transparent flex flex-col justify-end text-white">
                 <h3 class="text-xl sm:text-2xl font-black font-['Plus_Jakarta_Sans'] tracking-tight text-white mb-2.5 drop-shadow-sm leading-snug">
@@ -501,9 +379,6 @@
 
         <!-- 17: Burnt Ochre Earth Wash Polo -->
         <div class="polo-item group relative h-[470px] sm:h-[510px] lg:h-[540px] rounded-3xl overflow-hidden bg-white border border-black/15 shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer" data-cat="knit" onclick="quickViewPolo('Burnt Ochre Earth Wash Polo', '₦24,000', '$28', 'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=900&auto=format&fit=crop&q=80', 'Heavyweight waffle textured knit dyed with natural ochre mineral pigments. Features horn buttons and stepped hem.', '260GSM Waffle Knit', 'Burnt Ochre, Terracotta, Desert Sand')">
-            <span class="absolute top-4 left-4 z-20 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-white text-[10px] font-bold tracking-widest uppercase border border-white/20">
-                Mineral Pigment Dye
-            </span>
             <img src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=900&auto=format&fit=crop&q=80" alt="Burnt Ochre Earth Wash Polo" class="w-full h-full object-cover grayscale contrast-105 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500">
             <div class="absolute inset-x-0 bottom-0 z-10 p-5 sm:p-6 bg-gradient-to-t from-black/90 via-black/55 to-transparent flex flex-col justify-end text-white">
                 <h3 class="text-xl sm:text-2xl font-black font-['Plus_Jakarta_Sans'] tracking-tight text-white mb-2.5 drop-shadow-sm leading-snug">
@@ -527,9 +402,6 @@
 
         <!-- 18: Atelier Signature Black & Gold Polo -->
         <div class="polo-item group relative h-[470px] sm:h-[510px] lg:h-[540px] rounded-3xl overflow-hidden bg-white border border-black/15 shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer" data-cat="club" onclick="quickViewPolo('Atelier Signature Black & Gold Polo', '₦29,000', '$34', 'https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=900&auto=format&fit=crop&q=80', 'Heavyweight double-piqué in deep pitch black with gold-tipped collar and 3D metallic embroidered atelier signature.', '280GSM Luxury Piqué', 'Pitch Black & Gold, Chalk White & Gold')">
-            <span class="absolute top-4 left-4 z-20 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-white text-[10px] font-bold tracking-widest uppercase border border-white/20">
-                Atelier Signature
-            </span>
             <img src="https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=900&auto=format&fit=crop&q=80" alt="Atelier Signature Black & Gold Polo" class="w-full h-full object-cover grayscale contrast-105 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500">
             <div class="absolute inset-x-0 bottom-0 z-10 p-5 sm:p-6 bg-gradient-to-t from-black/90 via-black/55 to-transparent flex flex-col justify-end text-white">
                 <h3 class="text-xl sm:text-2xl font-black font-['Plus_Jakarta_Sans'] tracking-tight text-white mb-2.5 drop-shadow-sm leading-snug">
