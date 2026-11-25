@@ -425,10 +425,10 @@ def track():
     if request.method == 'POST':
         query = request.form.get('query', '').strip() or query
 
-    user = get_current_user()
+    user_email = session.get('user_email', '').strip()
     # Auto-load orders if user is signed in
-    if not query and user:
-        query = (user.get('phone') or user.get('email') or '').strip()
+    if not query and user_email:
+        query = user_email
 
     orders = []
     has_searched = bool(query)
