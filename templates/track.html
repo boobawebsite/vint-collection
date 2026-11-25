@@ -39,7 +39,7 @@
             <div class="mb-12">
                 <div class="flex items-center justify-between mb-4">
                     <div class="flex items-center gap-2">
-                        <span class="w-2.5 h-2.5 rounded-full bg-[#0071e3] animate-ping"></span>
+                        <span class="w-2.5 h-2.5 rounded-full bg-[#25D366] animate-ping"></span>
                         <h2 class="text-base sm:text-lg font-black text-black tracking-tight">Recent Package In Transit</h2>
                     </div>
                     <span class="text-[11px] font-bold uppercase tracking-wider text-neutral-500">
@@ -68,7 +68,7 @@
 
                         <!-- LIVE REMAINING DELIVERY COUNTDOWN BOX -->
                         <div class="bg-neutral-900 border border-white/15 px-4 py-3 rounded-2xl flex items-center gap-3 self-start sm:self-auto">
-                            <div class="w-9 h-9 rounded-xl bg-white/10 text-[#0071e3] flex items-center justify-center text-lg">
+                            <div class="w-9 h-9 rounded-xl bg-white/10 text-[#25D366] flex items-center justify-center text-lg">
                                 <i class="fa-solid fa-clock"></i>
                             </div>
                             <div>
@@ -92,26 +92,26 @@
                         <!-- Progress Bar & Nodes -->
                         <div class="relative w-full pt-2 pb-1">
                             <div class="h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
-                                <div class="h-full bg-[#0071e3] rounded-full transition-all duration-500" 
+                                <div class="h-full bg-gradient-to-r from-zinc-700 to-[#25D366] rounded-full transition-all duration-500" 
                                      style="width: {% if active.progress_stage == 1 %}25%{% elif active.progress_stage == 2 %}55%{% elif active.progress_stage == 3 %}85%{% else %}100%{% endif %};">
                                 </div>
                             </div>
 
                             <div class="grid grid-cols-4 gap-2 pt-3 text-center">
                                 <div class="space-y-1">
-                                    <span class="inline-block w-4 h-4 rounded-full {% if active.progress_stage >= 1 %}bg-[#0071e3] text-white{% else %}bg-neutral-800 text-neutral-500{% endif %} text-[9px] font-bold leading-4">✓</span>
+                                    <span class="inline-block w-4 h-4 rounded-full {% if active.progress_stage >= 1 %}bg-[#25D366] text-black{% else %}bg-neutral-800 text-neutral-500{% endif %} text-[9px] font-bold leading-4">✓</span>
                                     <p class="text-[10px] font-semibold {% if active.progress_stage >= 1 %}text-white{% else %}text-neutral-500{% endif %}">Confirmed</p>
                                 </div>
                                 <div class="space-y-1">
-                                    <span class="inline-block w-4 h-4 rounded-full {% if active.progress_stage >= 2 %}bg-[#0071e3] text-white{% else %}bg-neutral-800 text-neutral-500{% endif %} text-[9px] font-bold leading-4">✓</span>
+                                    <span class="inline-block w-4 h-4 rounded-full {% if active.progress_stage >= 2 %}bg-[#25D366] text-black{% else %}bg-neutral-800 text-neutral-500{% endif %} text-[9px] font-bold leading-4">✓</span>
                                     <p class="text-[10px] font-semibold {% if active.progress_stage >= 2 %}text-white{% else %}text-neutral-500{% endif %}">Atelier Crafting</p>
                                 </div>
                                 <div class="space-y-1">
-                                    <span class="inline-block w-4 h-4 rounded-full {% if active.progress_stage >= 3 %}bg-[#0071e3] text-white{% else %}bg-neutral-800 text-neutral-500{% endif %} text-[9px] font-bold leading-4">✓</span>
+                                    <span class="inline-block w-4 h-4 rounded-full {% if active.progress_stage >= 3 %}bg-[#25D366] text-black{% else %}bg-neutral-800 text-neutral-500{% endif %} text-[9px] font-bold leading-4">✓</span>
                                     <p class="text-[10px] font-semibold {% if active.progress_stage >= 3 %}text-white{% else %}text-neutral-500{% endif %}">Dispatched</p>
                                 </div>
                                 <div class="space-y-1">
-                                    <span class="inline-block w-4 h-4 rounded-full {% if active.progress_stage >= 4 %}bg-[#0071e3] text-white{% else %}bg-neutral-800 text-neutral-500{% endif %} text-[9px] font-bold leading-4">✓</span>
+                                    <span class="inline-block w-4 h-4 rounded-full {% if active.progress_stage >= 4 %}bg-[#25D366] text-black{% else %}bg-neutral-800 text-neutral-500{% endif %} text-[9px] font-bold leading-4">✓</span>
                                     <p class="text-[10px] font-semibold {% if active.progress_stage >= 4 %}text-white{% else %}text-neutral-500{% endif %}">Delivered</p>
                                 </div>
                             </div>
@@ -145,7 +145,7 @@
                         <div class="text-neutral-400 text-[11px]">
                             <span>Recipient: <strong class="text-white">{{ active.vendor_name or active.business_name }}</strong> ({{ active.whatsapp_number }})</span>
                         </div>
-                        <a href="https://wa.me/2348000000000?text={{ ('Hello Vent Collection, I am tracking my active order #' ~ active.id ~ '. Please update me on delivery dispatch.')|urlencode }}" target="_blank" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-[#0071e3] hover:bg-[#0077ed] text-white font-bold text-xs transition-colors shadow">
+                        <a href="https://wa.me/2348000000000?text={{ ('Hello Vent Collection, I am tracking my active order #' ~ active.id ~ '. Please update me on delivery dispatch.')|urlencode }}" target="_blank" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-black via-[#0d1f14] to-[#25D366] hover:from-zinc-900 hover:to-[#20ba5a] text-white font-bold text-xs transition-colors shadow">
                             <i class="fa-brands fa-whatsapp text-sm"></i>
                             <span>Chat with Atelier Dispatch on WhatsApp</span>
                         </a>
@@ -190,7 +190,7 @@
                                     <i class="fa-solid fa-circle-check text-xs text-emerald-600"></i> Delivered
                                 </span>
                             {% else %}
-                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-100 text-[#0071e3] text-[11px] font-bold border border-blue-200">
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-100 text-[#25D366] text-[11px] font-bold border border-blue-200">
                                     <i class="fa-solid fa-clock text-xs"></i> In Progress ({{ ord.hours_left }}h left)
                                 </span>
                             {% endif %}
@@ -219,7 +219,7 @@
                     <!-- Order Action Link -->
                     <div class="mt-4 pt-3 border-t border-black/5 flex items-center justify-between text-xs text-neutral-600">
                         <span>Recipient: <strong>{{ ord.vendor_name or ord.business_name }}</strong></span>
-                        <a href="https://wa.me/2348000000000?text={{ ('Hello Vent Collection, inquiry regarding Order #' ~ ord.id)|urlencode }}" target="_blank" class="text-black hover:text-[#0071e3] font-bold flex items-center gap-1 transition-colors">
+                        <a href="https://wa.me/2348000000000?text={{ ('Hello Vent Collection, inquiry regarding Order #' ~ ord.id)|urlencode }}" target="_blank" class="text-black hover:text-[#25D366] font-bold flex items-center gap-1 transition-colors">
                             <span>WhatsApp Support / Receipt</span>
                             <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
                         </a>
@@ -266,7 +266,7 @@
                 <a href="{{ url_for('vintage_gallery') }}" class="px-4 py-2 rounded-full border border-black/20 text-xs font-bold text-black hover:border-black transition">
                     Browse Vintage Drops
                 </a>
-                <a href="{{ url_for('order') }}" class="px-4 py-2 rounded-full bg-[#0071e3] text-white text-xs font-bold hover:bg-[#0077ed] transition">
+                <a href="{{ url_for('order') }}" class="px-4 py-2 rounded-full bg-[#25D366] text-black text-xs font-bold hover:bg-[#0077ed] transition">
                     Customise a T-Shirt
                 </a>
             </div>

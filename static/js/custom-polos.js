@@ -150,10 +150,10 @@ function selectPolo(index) {
         const badge = card.querySelector(".polo-active-badge");
         if (idx === index) {
             card.classList.remove("border-white/10", "opacity-80");
-            card.classList.add("border-white/40", "opacity-100", "shadow-2xl", "ring-2", "ring-[#0071e3]", "ring-offset-2", "ring-offset-black", "scale-[1.02]");
+            card.classList.add("border-white/40", "opacity-100", "shadow-2xl", "ring-2", "ring-white", "ring-offset-2", "ring-offset-black", "scale-[1.02]");
             if (badge) badge.classList.remove("hidden");
         } else {
-            card.classList.remove("border-white/40", "opacity-100", "shadow-2xl", "ring-2", "ring-[#0071e3]", "ring-offset-2", "ring-offset-black", "scale-[1.02]");
+            card.classList.remove("border-white/40", "opacity-100", "shadow-2xl", "ring-2", "ring-white", "ring-offset-2", "ring-offset-black", "scale-[1.02]");
             card.classList.add("border-white/10", "opacity-80");
             if (badge) badge.classList.add("hidden");
         }
