@@ -1,393 +1,730 @@
 {% extends 'base.html' %}
 
-{% block title %}Create Your Business Website - Vent Collection{% endblock %}
+{% block title %}Customise Your T-Shirt & Bespoke Apparel - Vent Collection{% endblock %}
 
 {% block content %}
-<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 bg-white">
-    <!-- Header -->
-    <div class="text-center mb-10">
-        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-black text-white mb-3">
-            <i class="fa-solid fa-bolt text-white"></i> 24-Hour Guarantee
-        </span>
-        <h1 class="text-3xl sm:text-5xl font-extrabold text-black tracking-tight font-['Plus_Jakarta_Sans']">Create Your Website</h1>
-        <p class="text-black/70 text-sm sm:text-base mt-2 max-w-xl mx-auto">
-            Fill in your business details below. Your 24-hour countdown will begin immediately, and we'll deliver your ready link!
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 bg-white font-['Space_Grotesk']">
+    
+    <!-- HEADER -->
+    <div class="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-neutral-100 border border-black/10 text-[11px] font-bold uppercase tracking-widest text-neutral-800 mb-3">
+            <span class="w-2 h-2 rounded-full bg-black animate-pulse"></span>
+            <span>Vent Bespoke Studio · 24-Hour Turnaround</span>
+        </div>
+        <h1 class="text-3xl sm:text-5xl font-black text-black tracking-tight font-['Space_Grotesk'] leading-tight">
+            Customise Your T-Shirt
+        </h1>
+        <p class="text-neutral-600 text-sm sm:text-base mt-3 max-w-xl mx-auto font-normal">
+            Drop your artwork, select your garment silhouette or upload your custom blanks, and specify your print technique. Handcrafted and dispatched within 24 hours.
         </p>
     </div>
 
-    <!-- Main Submission Form -->
-    <form action="{{ url_for('order') }}" method="POST" id="vendorOrderForm" class="space-y-10">
+    <!-- MAIN STUDIO WORKSPACE (FORM + LIVE SUMMARY) -->
+    <form action="{{ url_for('order') }}" method="POST" id="customShirtForm" class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
         
-        <!-- STEP 1: PLAN SELECTION -->
-        <div class="p-6 sm:p-8 rounded-3xl bg-white border border-black/15 shadow-md relative">
-            <div class="flex items-center gap-3 mb-6">
-                <span class="w-8 h-8 rounded-xl bg-black text-white font-black text-sm flex items-center justify-center">1</span>
+        <!-- LEFT 7 COLS: STUDIO INPUTS -->
+        <div class="lg:col-span-7 space-y-8">
+            
+            <!-- ================= STEP 1: DROP YOUR ARTWORK ================= -->
+            <div class="p-6 sm:p-8 rounded-3xl bg-[#f5f5f7] border border-neutral-200/80 shadow-sm space-y-6">
+                <div class="flex items-center justify-between pb-3 border-b border-black/10">
+                    <div class="flex items-center gap-3">
+                        <span class="w-7 h-7 rounded-full bg-black text-white text-xs font-bold flex items-center justify-center">1</span>
+                        <h2 class="text-lg sm:text-xl font-black text-black tracking-tight">Drop Your Design</h2>
+                    </div>
+                    <span class="text-[11px] font-semibold text-neutral-500 uppercase tracking-wider">Vector / High-Res</span>
+                </div>
+
+                <!-- Interactive Artwork Dropzone -->
+                <div id="dropzoneContainer" class="relative group">
+                    <label for="artworkFileInput" id="dropzoneLabel" class="flex flex-col items-center justify-center w-full min-h-[190px] p-6 border-2 border-dashed border-neutral-300 group-hover:border-black rounded-2xl bg-white hover:bg-neutral-50/50 cursor-pointer transition-all duration-300 text-center">
+                        <div id="dropzoneDefaultState" class="space-y-3">
+                            <div class="w-12 h-12 rounded-2xl bg-neutral-100 group-hover:bg-black group-hover:text-white text-neutral-600 flex items-center justify-center mx-auto transition-colors duration-300">
+                                <i class="fa-solid fa-cloud-arrow-up text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-bold text-black">
+                                    <span class="text-[#0071e3] underline underline-offset-2">Click to upload</span> or drag and drop your artwork
+                                </p>
+                                <p class="text-[11px] text-neutral-400 mt-1">
+                                    PNG, JPG, SVG, WEBP, PDF, PSD, AI (Transparent background recommended)
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Uploaded Preview State (Hidden initially) -->
+                        <div id="dropzonePreviewState" class="hidden flex-col items-center gap-3 w-full">
+                            <div class="relative w-28 h-28 rounded-xl overflow-hidden bg-neutral-100 border border-black/10 p-2 flex items-center justify-center shadow-inner">
+                                <img id="artworkPreviewImg" src="" alt="Artwork Preview" class="max-w-full max-h-full object-contain">
+                            </div>
+                            <div class="text-center">
+                                <p id="artworkFileName" class="text-xs font-bold text-black truncate max-w-[220px]">design.png</p>
+                                <button type="button" onclick="removeArtwork(event)" class="text-[11px] text-red-500 hover:text-red-700 font-semibold mt-1 transition-colors">
+                                    <i class="fa-solid fa-trash-can mr-1"></i> Replace Artwork
+                                </button>
+                            </div>
+                        </div>
+                    </label>
+                    <input type="file" id="artworkFileInput" accept="image/*,.pdf,.ai,.psd" class="sr-only" onchange="handleArtworkSelected(this)">
+                    <input type="hidden" name="artwork_data" id="artworkDataInput">
+                </div>
+
+                <!-- Artwork Cloud Link (Optional alternative) -->
                 <div>
-                    <h2 class="text-lg sm:text-xl font-bold text-black">Select Your Website Plan</h2>
-                    <p class="text-xs text-black/60">Choose the monthly tier that best fits your business</p>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-neutral-600 mb-1.5">
+                        Or Paste Drive / Cloud Artwork Link (Optional)
+                    </label>
+                    <input type="url" name="artwork_url" id="artworkUrlInput" placeholder="https://drive.google.com/file/... or Dropbox link" class="w-full px-4 py-2.5 rounded-xl bg-white border border-black/15 text-xs text-black placeholder-neutral-400 focus:outline-none focus:border-black transition">
+                </div>
+
+                <!-- Artwork Placement Selection -->
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-neutral-800 mb-2.5">
+                        Artwork Placement
+                    </label>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5" id="placementOptions">
+                        <button type="button" onclick="setPlacement('Center Chest', this)" class="placement-btn active px-3 py-2.5 rounded-xl border-2 border-black bg-black text-white text-xs font-bold transition text-center">
+                            Center Chest
+                        </button>
+                        <button type="button" onclick="setPlacement('Left Pocket', this)" class="placement-btn px-3 py-2.5 rounded-xl border-2 border-neutral-300 bg-white text-neutral-700 hover:border-black text-xs font-bold transition text-center">
+                            Left Pocket
+                        </button>
+                        <button type="button" onclick="setPlacement('Full Back', this)" class="placement-btn px-3 py-2.5 rounded-xl border-2 border-neutral-300 bg-white text-neutral-700 hover:border-black text-xs font-bold transition text-center">
+                            Full Back
+                        </button>
+                        <button type="button" onclick="setPlacement('Front & Back', this)" class="placement-btn px-3 py-2.5 rounded-xl border-2 border-neutral-300 bg-white text-neutral-700 hover:border-black text-xs font-bold transition text-center">
+                            Front & Back
+                        </button>
+                    </div>
+                    <input type="hidden" name="print_placement" id="printPlacementInput" value="Center Chest">
+                </div>
+
+                <!-- Print & Finishing Technique -->
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-neutral-800 mb-2.5">
+                        Print / Finishing Technique
+                    </label>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5" id="techniqueOptions">
+                        <button type="button" onclick="setTechnique('3D Raised Puff Ink', this)" class="technique-btn active flex items-center justify-between p-3 rounded-xl border-2 border-black bg-black text-white text-xs font-bold transition text-left">
+                            <div>
+                                <span class="block">3D Raised Puff Ink</span>
+                                <span class="text-[10px] font-normal opacity-80">Tactile streetwear foam volume</span>
+                            </div>
+                            <i class="fa-solid fa-check text-xs"></i>
+                        </button>
+                        <button type="button" onclick="setTechnique('High-Density Screenprint', this)" class="technique-btn flex items-center justify-between p-3 rounded-xl border-2 border-neutral-300 bg-white text-neutral-800 hover:border-black text-xs font-bold transition text-left">
+                            <div>
+                                <span class="block">High-Density Screenprint</span>
+                                <span class="text-[10px] font-normal text-neutral-500">Crisp, saturated archival color</span>
+                            </div>
+                            <i class="fa-solid fa-check text-xs opacity-0"></i>
+                        </button>
+                        <button type="button" onclick="setTechnique('Vintage Distressed Crackle', this)" class="technique-btn flex items-center justify-between p-3 rounded-xl border-2 border-neutral-300 bg-white text-neutral-800 hover:border-black text-xs font-bold transition text-left">
+                            <div>
+                                <span class="block">Vintage Distressed Crackle</span>
+                                <span class="text-[10px] font-normal text-neutral-500">Authentic 90s aged patina</span>
+                            </div>
+                            <i class="fa-solid fa-check text-xs opacity-0"></i>
+                        </button>
+                        <button type="button" onclick="setTechnique('Luxury Embroidery', this)" class="technique-btn flex items-center justify-between p-3 rounded-xl border-2 border-neutral-300 bg-white text-neutral-800 hover:border-black text-xs font-bold transition text-left">
+                            <div>
+                                <span class="block">Luxury Embroidery</span>
+                                <span class="text-[10px] font-normal text-neutral-500">High-density stitched thread</span>
+                            </div>
+                            <i class="fa-solid fa-check text-xs opacity-0"></i>
+                        </button>
+                    </div>
+                    <input type="hidden" name="print_technique" id="printTechniqueInput" value="3D Raised Puff Ink">
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <!-- Option 1: $2/mo -->
-                <label class="relative flex flex-col p-5 rounded-2xl border-2 cursor-pointer transition-all plan-card
-                    {% if selected_plan == 'basic_2' or not selected_plan %}border-black bg-white shadow-md{% else %}border-black/15 bg-white hover:border-black/30{% endif %}"
-                    id="planCardBasic">
-                    <input type="radio" name="plan_type" value="basic_2" {% if selected_plan == 'basic_2' or not selected_plan %}checked{% endif %} class="sr-only plan-radio" onchange="updatePlanUI('basic_2')">
-                    
-                    <div class="flex items-center justify-between mb-3">
-                        <span class="px-2.5 py-0.5 rounded text-[11px] font-bold bg-black text-white">STARTER</span>
-                        <span class="text-2xl font-black text-black">$2 <span class="text-xs font-normal text-black/60">/mo</span></span>
+            <!-- ================= STEP 2: CHOOSE OR UPLOAD SHIRT ================= -->
+            <div class="p-6 sm:p-8 rounded-3xl bg-[#f5f5f7] border border-neutral-200/80 shadow-sm space-y-6">
+                <div class="flex items-center justify-between pb-3 border-b border-black/10">
+                    <div class="flex items-center gap-3">
+                        <span class="w-7 h-7 rounded-full bg-black text-white text-xs font-bold flex items-center justify-center">2</span>
+                        <h2 class="text-lg sm:text-xl font-black text-black tracking-tight">Garment Silhouette</h2>
                     </div>
-                    <span class="text-base font-bold text-black mb-1">Basic Website (No Admin Login)</span>
-                    <p class="text-xs text-black/70 leading-relaxed">
-                        Clean mobile showcase with direct WhatsApp ordering. Perfect if you just want customers to view items and message you.
-                    </p>
-                    <div class="mt-4 pt-3 border-t border-black/10 flex items-center gap-2 text-xs text-black font-semibold">
-                        <i class="fa-solid fa-check text-black"></i> 24h delivery included
-                    </div>
-                </label>
+                    <span class="text-[11px] font-semibold text-neutral-500 uppercase tracking-wider">Blanks & Cuts</span>
+                </div>
 
-                <!-- Option 2: $10/mo -->
-                <label class="relative flex flex-col p-5 rounded-2xl border-2 cursor-pointer transition-all plan-card
-                    {% if selected_plan == 'pro_10' %}border-black bg-neutral-100 shadow-md{% else %}border-black/15 bg-white hover:border-black/30{% endif %}"
-                    id="planCardPro">
-                    <input type="radio" name="plan_type" value="pro_10" {% if selected_plan == 'pro_10' %}checked{% endif %} class="sr-only plan-radio" onchange="updatePlanUI('pro_10')">
-                    
-                    <div class="flex items-center justify-between mb-3">
-                        <span class="px-2.5 py-0.5 rounded text-[11px] font-bold bg-black text-white">PRO DASHBOARD</span>
-                        <span class="text-2xl font-black text-black">$10 <span class="text-xs font-normal text-black/60">/mo</span></span>
+                <!-- Tabs: Studio Blanks vs Custom Blanks -->
+                <div class="flex border-b border-neutral-300 gap-4">
+                    <button type="button" id="tabStudioBlanks" onclick="switchGarmentMode('studio')" class="pb-2 text-xs font-bold border-b-2 border-black text-black transition-colors">
+                        Vent Studio Blanks (4 Signature Cuts)
+                    </button>
+                    <button type="button" id="tabCustomBlanks" onclick="switchGarmentMode('custom')" class="pb-2 text-xs font-semibold border-b-2 border-transparent text-neutral-400 hover:text-black transition-colors">
+                        Upload Reference / Bring Your Own
+                    </button>
+                </div>
+
+                <!-- MODE A: VENT STUDIO BLANKS -->
+                <div id="studioBlanksContainer" class="space-y-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="garmentCards">
+                        
+                        <!-- Blank 1: Heavyweight Boxy Tee -->
+                        <div class="garment-card active p-4 rounded-2xl border-2 border-black bg-white shadow-sm cursor-pointer transition-all flex gap-3.5 items-center" onclick="selectGarment('heavy_tee', 'Heavyweight Boxy Tee (240 GSM)', 22000, 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=900&auto=format&fit=crop&q=80', this)">
+                            <div class="w-16 h-20 rounded-xl overflow-hidden bg-neutral-100 shrink-0 border border-black/10">
+                                <img src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=900&auto=format&fit=crop&q=80" alt="Heavyweight Boxy Tee" class="w-full h-full object-cover">
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h4 class="font-black text-xs text-black leading-snug">Heavyweight Boxy Tee</h4>
+                                <p class="text-[11px] text-neutral-500 mt-0.5">240 GSM Combed Cotton · Drop Shoulder</p>
+                                <span class="inline-block mt-2 font-black text-xs text-black">₦22,000</span>
+                            </div>
+                            <span class="w-4 h-4 rounded-full border-2 border-black bg-black flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-check text-[8px] text-white"></i>
+                            </span>
+                        </div>
+
+                        <!-- Blank 2: Vintage Single-Stitch Tee -->
+                        <div class="garment-card p-4 rounded-2xl border-2 border-neutral-300 bg-white hover:border-black cursor-pointer transition-all flex gap-3.5 items-center" onclick="selectGarment('vintage_tee', 'Vintage Single-Stitch Tee (260 GSM)', 24500, 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=900&auto=format&fit=crop&q=80', this)">
+                            <div class="w-16 h-20 rounded-xl overflow-hidden bg-neutral-100 shrink-0 border border-black/10">
+                                <img src="https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=900&auto=format&fit=crop&q=80" alt="Vintage Single-Stitch Tee" class="w-full h-full object-cover">
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h4 class="font-black text-xs text-black leading-snug">Single-Stitch Vintage Tee</h4>
+                                <p class="text-[11px] text-neutral-500 mt-0.5">260 GSM Washed Heritage Slub</p>
+                                <span class="inline-block mt-2 font-black text-xs text-black">₦24,500</span>
+                            </div>
+                            <span class="w-4 h-4 rounded-full border-2 border-neutral-300 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-check text-[8px] text-white opacity-0"></i>
+                            </span>
+                        </div>
+
+                        <!-- Blank 3: Luxury Piqué Polo -->
+                        <div class="garment-card p-4 rounded-2xl border-2 border-neutral-300 bg-white hover:border-black cursor-pointer transition-all flex gap-3.5 items-center" onclick="selectGarment('luxury_polo', 'Archival Piqué Polo (260 GSM)', 24500, 'https://images.unsplash.com/photo-1586363104862-3a5e2ab60d99?w=900&auto=format&fit=crop&q=80', this)">
+                            <div class="w-16 h-20 rounded-xl overflow-hidden bg-neutral-100 shrink-0 border border-black/10">
+                                <img src="https://images.unsplash.com/photo-1586363104862-3a5e2ab60d99?w=900&auto=format&fit=crop&q=80" alt="Archival Piqué Polo" class="w-full h-full object-cover">
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h4 class="font-black text-xs text-black leading-snug">Archival Piqué Polo</h4>
+                                <p class="text-[11px] text-neutral-500 mt-0.5">260 GSM Honeycomb Cotton</p>
+                                <span class="inline-block mt-2 font-black text-xs text-black">₦24,500</span>
+                            </div>
+                            <span class="w-4 h-4 rounded-full border-2 border-neutral-300 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-check text-[8px] text-white opacity-0"></i>
+                            </span>
+                        </div>
+
+                        <!-- Blank 4: French Terry Hoodie -->
+                        <div class="garment-card p-4 rounded-2xl border-2 border-neutral-300 bg-white hover:border-black cursor-pointer transition-all flex gap-3.5 items-center" onclick="selectGarment('french_terry_hoodie', 'Heavy French Terry Hoodie (450 GSM)', 38000, 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=900&auto=format&fit=crop&q=80', this)">
+                            <div class="w-16 h-20 rounded-xl overflow-hidden bg-neutral-100 shrink-0 border border-black/10">
+                                <img src="https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=900&auto=format&fit=crop&q=80" alt="Heavy French Terry Hoodie" class="w-full h-full object-cover">
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h4 class="font-black text-xs text-black leading-snug">French Terry Hoodie</h4>
+                                <p class="text-[11px] text-neutral-500 mt-0.5">450 GSM Heavy French Terry</p>
+                                <span class="inline-block mt-2 font-black text-xs text-black">₦38,000</span>
+                            </div>
+                            <span class="w-4 h-4 rounded-full border-2 border-neutral-300 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-check text-[8px] text-white opacity-0"></i>
+                            </span>
+                        </div>
+
                     </div>
-                    <span class="text-base font-bold text-black mb-1">Pro Website (With Admin Login)</span>
-                    <p class="text-xs text-black/70 leading-relaxed">
-                        Includes your private Admin Login Dashboard to change prices, add products, manage stock status, and view customer logs.
-                    </p>
-                    <div class="mt-4 pt-3 border-t border-black/10 flex items-center gap-2 text-xs text-black font-semibold">
-                        <i class="fa-solid fa-shield-halved text-black"></i> Includes Admin Credentials
+                </div>
+
+                <!-- MODE B: CUSTOM GARMENT UPLOAD -->
+                <div id="customBlanksContainer" class="hidden space-y-4">
+                    <label for="customGarmentFileInput" class="flex flex-col items-center justify-center w-full min-h-[160px] p-5 border-2 border-dashed border-neutral-300 hover:border-black rounded-2xl bg-white cursor-pointer transition-all text-center">
+                        <div id="customGarmentDefaultState" class="space-y-2">
+                            <i class="fa-solid fa-shirt text-2xl text-neutral-400"></i>
+                            <p class="text-xs font-bold text-black">Upload a photo or sketch of your desired shirt cut / blanks</p>
+                            <p class="text-[10px] text-neutral-400">Our studio will source or tailor this exact silhouette for you</p>
+                        </div>
+                        <div id="customGarmentPreviewState" class="hidden flex-col items-center gap-2">
+                            <img id="customGarmentPreviewImg" src="" class="max-h-24 object-contain rounded-lg">
+                            <span class="text-xs font-bold text-black" id="customGarmentFileName">blank.jpg</span>
+                        </div>
+                    </label>
+                    <input type="file" id="customGarmentFileInput" accept="image/*" class="sr-only" onchange="handleCustomGarmentSelected(this)">
+                    <input type="hidden" name="custom_garment_data" id="customGarmentDataInput">
+
+                    <div class="flex items-center gap-2 pt-1">
+                        <input type="checkbox" id="bringOwnBlanks" name="bring_own_blanks" value="yes" onchange="toggleBringOwnBlanks(this)" class="w-4 h-4 rounded border-neutral-300 text-black focus:ring-black">
+                        <label for="bringOwnBlanks" class="text-xs font-medium text-neutral-700 cursor-pointer">
+                            I will provide/ship my own garments to the Vent studio for custom printing
+                        </label>
                     </div>
-                </label>
+                </div>
+
+                <input type="hidden" name="garment_type" id="garmentTypeInput" value="heavy_tee">
+                <input type="hidden" name="garment_name" id="garmentNameInput" value="Heavyweight Boxy Tee (240 GSM)">
+                <input type="hidden" name="plan_price" id="planPriceInput" value="22000">
+
+                <!-- Color Selection Swatches -->
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="text-xs font-bold uppercase tracking-wider text-neutral-800">
+                            Colorway: <span id="colorwayLabel" class="text-black font-black">Onyx Black</span>
+                        </label>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-3">
+                        <button type="button" onclick="setColorway('Onyx Black', '#111111', this)" class="color-btn active w-8 h-8 rounded-full border-2 border-black p-0.5 transition-transform scale-110" title="Onyx Black">
+                            <span class="block w-full h-full rounded-full bg-[#111111] shadow-inner"></span>
+                        </button>
+                        <button type="button" onclick="setColorway('Chalk White', '#f5f5f7', this)" class="color-btn w-8 h-8 rounded-full border-2 border-transparent p-0.5 hover:border-black transition-transform" title="Chalk White">
+                            <span class="block w-full h-full rounded-full bg-[#f5f5f7] border border-black/10 shadow-inner"></span>
+                        </button>
+                        <button type="button" onclick="setColorway('Slate Grey', '#7d8285', this)" class="color-btn w-8 h-8 rounded-full border-2 border-transparent p-0.5 hover:border-black transition-transform" title="Vintage Slate Grey">
+                            <span class="block w-full h-full rounded-full bg-[#7d8285] shadow-inner"></span>
+                        </button>
+                        <button type="button" onclick="setColorway('Forest Green', '#1e392a', this)" class="color-btn w-8 h-8 rounded-full border-2 border-transparent p-0.5 hover:border-black transition-transform" title="Faded Forest Green">
+                            <span class="block w-full h-full rounded-full bg-[#1e392a] shadow-inner"></span>
+                        </button>
+                        <button type="button" onclick="setColorway('Washed Navy', '#1d2d44', this)" class="color-btn w-8 h-8 rounded-full border-2 border-transparent p-0.5 hover:border-black transition-transform" title="Washed Navy">
+                            <span class="block w-full h-full rounded-full bg-[#1d2d44] shadow-inner"></span>
+                        </button>
+                        <button type="button" onclick="setColorway('Earth Brown', '#4a3728', this)" class="color-btn w-8 h-8 rounded-full border-2 border-transparent p-0.5 hover:border-black transition-transform" title="Earth Brown">
+                            <span class="block w-full h-full rounded-full bg-[#4a3728] shadow-inner"></span>
+                        </button>
+                    </div>
+                    <input type="hidden" name="garment_color" id="garmentColorInput" value="Onyx Black">
+                </div>
+
+                <!-- Size Selection -->
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-neutral-800 mb-2">
+                        Size Selection
+                    </label>
+                    <div class="grid grid-cols-6 gap-2" id="sizeOptions">
+                        <button type="button" onclick="setSize('S', this)" class="size-btn px-2 py-2.5 rounded-xl border-2 border-neutral-300 bg-white text-xs font-bold text-neutral-800 hover:border-black transition">S</button>
+                        <button type="button" onclick="setSize('M', this)" class="size-btn px-2 py-2.5 rounded-xl border-2 border-neutral-300 bg-white text-xs font-bold text-neutral-800 hover:border-black transition">M</button>
+                        <button type="button" onclick="setSize('L', this)" class="size-btn active px-2 py-2.5 rounded-xl border-2 border-black bg-black text-xs font-bold text-white transition">L</button>
+                        <button type="button" onclick="setSize('XL', this)" class="size-btn px-2 py-2.5 rounded-xl border-2 border-neutral-300 bg-white text-xs font-bold text-neutral-800 hover:border-black transition">XL</button>
+                        <button type="button" onclick="setSize('XXL', this)" class="size-btn px-2 py-2.5 rounded-xl border-2 border-neutral-300 bg-white text-xs font-bold text-neutral-800 hover:border-black transition">XXL</button>
+                        <button type="button" onclick="setSize('Custom', this)" class="size-btn px-2 py-2.5 rounded-xl border-2 border-neutral-300 bg-white text-xs font-bold text-neutral-800 hover:border-black transition">Custom</button>
+                    </div>
+                    <input type="hidden" name="garment_size" id="garmentSizeInput" value="L">
+                </div>
             </div>
-        </div>
 
-        <!-- STEP 2: BUSINESS INFORMATION -->
-        <div class="p-6 sm:p-8 rounded-3xl bg-white border border-black/15 shadow-md space-y-6">
-            <div class="flex items-center gap-3 mb-2">
-                <span class="w-8 h-8 rounded-xl bg-black text-white font-black text-sm flex items-center justify-center">2</span>
-                <div>
-                    <h2 class="text-lg sm:text-xl font-bold text-black">Your Business Information</h2>
-                    <p class="text-xs text-black/60">We'll use this to brand your store and direct customers to your WhatsApp</p>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Business Name -->
-                <div>
-                    <label class="block text-xs font-bold uppercase tracking-wider text-black mb-2">
-                        Business / Store Name *
-                    </label>
-                    <input type="text" name="business_name" required placeholder="e.g. Bella's Chic Boutique" class="w-full px-4 py-3 rounded-xl bg-white border border-black/20 text-black placeholder-black/40 text-sm focus:outline-none focus:border-black transition">
-                </div>
-
-                <!-- Vendor Name -->
-                <div>
-                    <label class="block text-xs font-bold uppercase tracking-wider text-black mb-2">
-                        Your Name (Owner)
-                    </label>
-                    <input type="text" name="vendor_name" placeholder="e.g. Sarah Jenkins" class="w-full px-4 py-3 rounded-xl bg-white border border-black/20 text-black placeholder-black/40 text-sm focus:outline-none focus:border-black transition">
-                </div>
-
-                <!-- WhatsApp Phone Number -->
-                <div>
-                    <label class="block text-xs font-bold uppercase tracking-wider text-black mb-2">
-                        WhatsApp Number (With Country Code) *
-                    </label>
-                    <div class="relative">
-                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-black">
-                            <i class="fa-brands fa-whatsapp text-lg"></i>
-                        </span>
-                        <input type="text" name="whatsapp_number" required placeholder="+1234567890 or +234..." class="w-full pl-11 pr-4 py-3 rounded-xl bg-white border border-black/20 text-black placeholder-black/40 text-sm focus:outline-none focus:border-black transition">
+            <!-- ================= STEP 3: DETAILS & CONTACT ================= -->
+            <div class="p-6 sm:p-8 rounded-3xl bg-[#f5f5f7] border border-neutral-200/80 shadow-sm space-y-6">
+                <div class="flex items-center justify-between pb-3 border-b border-black/10">
+                    <div class="flex items-center gap-3">
+                        <span class="w-7 h-7 rounded-full bg-black text-white text-xs font-bold flex items-center justify-center">3</span>
+                        <h2 class="text-lg sm:text-xl font-black text-black tracking-tight">Studio Specifications & Contact</h2>
                     </div>
-                    <p class="text-[11px] text-black/60 mt-1">Orders from the website will be sent directly to this WhatsApp number.</p>
+                    <span class="text-[11px] font-semibold text-neutral-500 uppercase tracking-wider">Direct Atelier</span>
                 </div>
 
-                <!-- Email -->
+                <!-- Quantity Stepper -->
                 <div>
-                    <label class="block text-xs font-bold uppercase tracking-wider text-black mb-2">
-                        Email Address (Optional)
-                    </label>
-                    <input type="email" name="email" placeholder="sarah@example.com" class="w-full px-4 py-3 rounded-xl bg-white border border-black/20 text-black placeholder-black/40 text-sm focus:outline-none focus:border-black transition">
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="text-xs font-bold uppercase tracking-wider text-neutral-800">
+                            Quantity
+                        </label>
+                        <span class="text-[11px] text-neutral-500 font-medium">No Minimum Order · 1 piece or bulk</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="inline-flex items-center rounded-xl border-2 border-black/20 bg-white overflow-hidden p-1">
+                            <button type="button" onclick="changeQty(-1)" class="w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold text-black hover:bg-neutral-100 transition-colors">-</button>
+                            <input type="number" name="quantity" id="quantityInput" value="1" min="1" max="500" class="w-12 text-center font-black text-sm text-black border-none focus:outline-none" oninput="updateSummary()">
+                            <button type="button" onclick="changeQty(1)" class="w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold text-black hover:bg-neutral-100 transition-colors">+</button>
+                        </div>
+                        <span class="text-xs text-neutral-600 font-medium">Custom studio batch</span>
+                    </div>
                 </div>
 
-                <!-- Business Category -->
+                <!-- Custom Design Notes -->
                 <div>
-                    <label class="block text-xs font-bold uppercase tracking-wider text-black mb-2">
-                        Business Category
+                    <label class="block text-xs font-bold uppercase tracking-wider text-neutral-800 mb-1.5">
+                        Special Instructions & Placement Notes
                     </label>
-                    <select name="category" class="w-full px-4 py-3 rounded-xl bg-white border border-black/20 text-black text-sm focus:outline-none focus:border-black transition">
-                        <option value="Fashion & Clothing">Fashion & Clothing</option>
-                        <option value="Beauty & Skincare">Beauty & Skincare</option>
-                        <option value="Food & Bakery">Food, Bakery & Drinks</option>
-                        <option value="Jewelry & Accessories">Jewelry & Watches</option>
-                        <option value="Electronics & Gadgets">Electronics & Gadgets</option>
-                        <option value="Perfumes & Scents">Perfumes & Scents</option>
-                        <option value="Shoes & Bags">Shoes & Handbags</option>
-                        <option value="Home & Decor">Home & Decor</option>
-                        <option value="Groceries & Essentials">Groceries & Essentials</option>
-                        <option value="Other">Other Retail / Services</option>
-                    </select>
+                    <textarea name="design_notes" id="designNotesInput" rows="2" placeholder="e.g. Graphic should be 11 inches wide, distressed look on washed fabric, white puff ink..." class="w-full px-4 py-3 rounded-xl bg-white border border-black/20 text-xs text-black placeholder-neutral-400 focus:outline-none focus:border-black transition" oninput="updateSummary()"></textarea>
                 </div>
 
-                <!-- Currency -->
-                <div>
-                    <label class="block text-xs font-bold uppercase tracking-wider text-black mb-2">
-                        Store Currency
-                    </label>
-                    <select name="currency" class="w-full px-4 py-3 rounded-xl bg-white border border-black/20 text-black text-sm focus:outline-none focus:border-black transition">
-                        <option value="$">USD ($)</option>
-                        <option value="₦">NGN (₦)</option>
-                        <option value="KSh">KES (KSh)</option>
-                        <option value="GH₵">GHS (GH₵)</option>
-                        <option value="R">ZAR (R)</option>
-                        <option value="₹">INR (₹)</option>
-                        <option value="£">GBP (£)</option>
-                        <option value="€">EUR (€)</option>
-                        <option value="C$">CAD (C$)</option>
-                        <option value="A$">AUD (A$)</option>
-                    </select>
-                </div>
-
-                <!-- Tagline -->
-                <div class="md:col-span-2">
-                    <label class="block text-xs font-bold uppercase tracking-wider text-black mb-2">
-                        Store Tagline / Bio (One sentence)
-                    </label>
-                    <input type="text" name="tagline" placeholder="e.g. Trendy women fashion, luxury perfumes & fast delivery nationwide" class="w-full px-4 py-3 rounded-xl bg-white border border-black/20 text-black placeholder-black/40 text-sm focus:outline-none focus:border-black transition">
-                </div>
-
-                <!-- Location & Delivery info -->
-                <div class="md:col-span-2">
-                    <label class="block text-xs font-bold uppercase tracking-wider text-black mb-2">
-                        Location / Delivery Terms
-                    </label>
-                    <input type="text" name="address" placeholder="e.g. Based in Downtown | Same-day delivery available" class="w-full px-4 py-3 rounded-xl bg-white border border-black/20 text-black placeholder-black/40 text-sm focus:outline-none focus:border-black transition">
-                </div>
-            </div>
-        </div>
-
-        <!-- STEP 3: INITIAL PRODUCTS -->
-        <div class="p-6 sm:p-8 rounded-3xl bg-white border border-black/15 shadow-md space-y-6">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-black/10">
-                <div class="flex items-center gap-3">
-                    <span class="w-8 h-8 rounded-xl bg-black text-white font-black text-sm flex items-center justify-center">3</span>
+                <!-- Contact Inputs -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <h2 class="text-lg sm:text-xl font-bold text-black">Your Products / Services</h2>
-                        <p class="text-xs text-black/60">Add a few items now. You can add more later or anytime in Pro!</p>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-neutral-800 mb-1.5">
+                            Full Name *
+                        </label>
+                        <input type="text" name="customer_name" id="customerNameInput" required placeholder="e.g. Jordan Miller" class="w-full px-4 py-3 rounded-xl bg-white border border-black/20 text-xs text-black placeholder-neutral-400 focus:outline-none focus:border-black transition" oninput="updateSummary()">
                     </div>
-                </div>
-                <button type="button" onclick="addProductRow()" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-white hover:bg-black/5 text-black border border-black/20 transition">
-                    <i class="fa-solid fa-plus text-black"></i> Add Another Product
-                </button>
-            </div>
-
-            <!-- Dynamic Product Container -->
-            <div id="productsContainer" class="space-y-4">
-                <!-- Product Card 1 (Default) -->
-                <div class="product-item p-5 rounded-2xl bg-white border border-black/15 relative group shadow-sm">
-                    <div class="flex items-center justify-between mb-3">
-                        <span class="text-xs font-bold text-black/70 product-index-label">Product #1</span>
-                        <button type="button" onclick="removeProductRow(this)" class="text-xs text-black/40 hover:text-black transition" title="Remove Item">
-                            <i class="fa-solid fa-trash-can"></i>
-                        </button>
-                    </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <div class="sm:col-span-2">
-                            <label class="block text-[11px] font-semibold text-black/70 mb-1">Product Title</label>
-                            <input type="text" name="product_name[]" placeholder="e.g. Classic Silk Summer Dress" required class="w-full px-3 py-2 rounded-lg bg-white border border-black/20 text-black text-xs placeholder-black/40 focus:outline-none focus:border-black">
-                        </div>
-
-                        <div>
-                            <label class="block text-[11px] font-semibold text-black/70 mb-1">Price (Numbers only)</label>
-                            <input type="text" name="product_price[]" placeholder="e.g. 25.00" required class="w-full px-3 py-2 rounded-lg bg-white border border-black/20 text-black text-xs placeholder-black/40 focus:outline-none focus:border-black">
-                        </div>
-
-                        <div class="sm:col-span-2">
-                            <label class="block text-[11px] font-semibold text-black/70 mb-1">Brief Description</label>
-                            <input type="text" name="product_desc[]" placeholder="e.g. Available in sizes S, M, L. 100% pure silk." class="w-full px-3 py-2 rounded-lg bg-white border border-black/20 text-black text-xs placeholder-black/40 focus:outline-none focus:border-black">
-                        </div>
-
-                        <div>
-                            <label class="block text-[11px] font-semibold text-black/70 mb-1">Image URL or Photo Link</label>
-                            <input type="text" name="product_image[]" placeholder="https://... (or leave blank)" class="w-full px-3 py-2 rounded-lg bg-white border border-black/20 text-black text-xs placeholder-black/40 focus:outline-none focus:border-black">
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-neutral-800 mb-1.5">
+                            WhatsApp Number *
+                        </label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-neutral-400">
+                                <i class="fa-brands fa-whatsapp text-sm text-green-600"></i>
+                            </span>
+                            <input type="text" name="whatsapp_number" id="whatsappNumberInput" required placeholder="+234... or +1..." class="w-full pl-9 pr-4 py-3 rounded-xl bg-white border border-black/20 text-xs text-black placeholder-neutral-400 focus:outline-none focus:border-black transition" oninput="updateSummary()">
                         </div>
                     </div>
                 </div>
 
-                <!-- Product Card 2 (Pre-added) -->
-                <div class="product-item p-5 rounded-2xl bg-white border border-black/15 relative group shadow-sm">
-                    <div class="flex items-center justify-between mb-3">
-                        <span class="text-xs font-bold text-black/70 product-index-label">Product #2</span>
-                        <button type="button" onclick="removeProductRow(this)" class="text-xs text-black/40 hover:text-black transition" title="Remove Item">
-                            <i class="fa-solid fa-trash-can"></i>
-                        </button>
-                    </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <div class="sm:col-span-2">
-                            <label class="block text-[11px] font-semibold text-black/70 mb-1">Product Title</label>
-                            <input type="text" name="product_name[]" placeholder="e.g. Vintage Leather Handbag" class="w-full px-3 py-2 rounded-lg bg-white border border-black/20 text-black text-xs placeholder-black/40 focus:outline-none focus:border-black">
-                        </div>
-
-                        <div>
-                            <label class="block text-[11px] font-semibold text-black/70 mb-1">Price (Numbers only)</label>
-                            <input type="text" name="product_price[]" placeholder="e.g. 45.00" class="w-full px-3 py-2 rounded-lg bg-white border border-black/20 text-black text-xs placeholder-black/40 focus:outline-none focus:border-black">
-                        </div>
-
-                        <div class="sm:col-span-2">
-                            <label class="block text-[11px] font-semibold text-black/70 mb-1">Brief Description</label>
-                            <input type="text" name="product_desc[]" placeholder="e.g. Premium leather with gold buckle. Brown and Black." class="w-full px-3 py-2 rounded-lg bg-white border border-black/20 text-black text-xs placeholder-black/40 focus:outline-none focus:border-black">
-                        </div>
-
-                        <div>
-                            <label class="block text-[11px] font-semibold text-black/70 mb-1">Image URL or Photo Link</label>
-                            <input type="text" name="product_image[]" placeholder="https://... (or leave blank)" class="w-full px-3 py-2 rounded-lg bg-white border border-black/20 text-black text-xs placeholder-black/40 focus:outline-none focus:border-black">
-                        </div>
-                    </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-neutral-800 mb-1.5">
+                        Delivery Address / City (Optional)
+                    </label>
+                    <input type="text" name="address" id="addressInput" placeholder="e.g. Victoria Island, Lagos or London UK" class="w-full px-4 py-3 rounded-xl bg-white border border-black/20 text-xs text-black placeholder-neutral-400 focus:outline-none focus:border-black transition">
                 </div>
             </div>
 
-            <div class="pt-2 text-center">
-                <button type="button" onclick="addProductRow()" class="text-xs font-semibold text-black hover:underline inline-flex items-center gap-1.5 transition">
-                    <i class="fa-solid fa-circle-plus"></i> Need to add more items? Click here to add another
-                </button>
-            </div>
         </div>
 
-        <!-- STEP 4: SOCIAL LINKS & CONFIRMATION -->
-        <div class="p-6 sm:p-8 rounded-3xl bg-white border border-black/15 shadow-md space-y-6">
-            <div class="flex items-center gap-3 mb-2">
-                <span class="w-8 h-8 rounded-xl bg-black text-white font-black text-sm flex items-center justify-center">4</span>
-                <div>
-                    <h2 class="text-lg sm:text-xl font-bold text-black">Social Media & Final Check</h2>
-                    <p class="text-xs text-black/60">Optional social links to display in your website header and footer</p>
+        <!-- RIGHT 5 COLS: STICKY LIVE STUDIO SPECIFICATION & ACTIONS -->
+        <div class="lg:col-span-5 sticky top-24 space-y-6">
+            
+            <div class="p-6 sm:p-7 rounded-3xl bg-[#121212] text-white border border-white/10 shadow-2xl space-y-6">
+                
+                <div class="flex items-center justify-between pb-4 border-b border-white/10">
+                    <div>
+                        <span class="text-[10px] font-bold text-neutral-400 uppercase tracking-widest block">Vent Studio Spec</span>
+                        <h3 class="text-base sm:text-lg font-black text-white tracking-tight">Live Order Summary</h3>
+                    </div>
+                    <span class="px-2.5 py-1 rounded-full bg-white/10 text-white text-[10px] font-bold tracking-wider uppercase border border-white/10">
+                        24h Queue
+                    </span>
                 </div>
+
+                <!-- LIVE VISUAL MOCKUP PREVIEW -->
+                <div class="relative w-full aspect-square max-h-[260px] rounded-2xl bg-neutral-900 border border-white/10 overflow-hidden flex items-center justify-center p-4">
+                    <img id="summaryGarmentImg" src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=900&auto=format&fit=crop&q=80" alt="Garment Preview" class="w-full h-full object-contain filter transition-all duration-300">
+                    
+                    <!-- Live Artwork Overlay Preview -->
+                    <div id="summaryArtworkOverlay" class="absolute inset-0 flex items-center justify-center pointer-events-none p-12 hidden">
+                        <img id="summaryArtworkImg" src="" alt="Artwork on shirt" class="max-w-[45%] max-h-[45%] object-contain drop-shadow-md">
+                    </div>
+
+                    <div class="absolute bottom-2.5 right-2.5 px-2 py-0.5 rounded bg-black/80 backdrop-blur text-[10px] text-neutral-300 font-mono">
+                        <span id="summaryBadgeText">Heavyweight Boxy Tee</span>
+                    </div>
+                </div>
+
+                <!-- SPEC DETAILS BREAKDOWN -->
+                <div class="space-y-2.5 text-xs">
+                    <div class="flex justify-between py-1.5 border-b border-white/10">
+                        <span class="text-neutral-400">Garment</span>
+                        <span class="font-bold text-white text-right" id="summaryGarmentName">Heavyweight Boxy Tee (240 GSM)</span>
+                    </div>
+                    <div class="flex justify-between py-1.5 border-b border-white/10">
+                        <span class="text-neutral-400">Colorway & Size</span>
+                        <span class="font-bold text-white" id="summaryColorSize">Onyx Black · Size L</span>
+                    </div>
+                    <div class="flex justify-between py-1.5 border-b border-white/10">
+                        <span class="text-neutral-400">Print Technique</span>
+                        <span class="font-bold text-white" id="summaryTechnique">3D Raised Puff Ink</span>
+                    </div>
+                    <div class="flex justify-between py-1.5 border-b border-white/10">
+                        <span class="text-neutral-400">Placement</span>
+                        <span class="font-bold text-white" id="summaryPlacement">Center Chest</span>
+                    </div>
+                    <div class="flex justify-between py-1.5 border-b border-white/10">
+                        <span class="text-neutral-400">Quantity</span>
+                        <span class="font-bold text-white" id="summaryQty">1 Piece</span>
+                    </div>
+                    <div class="flex justify-between items-baseline pt-2">
+                        <span class="text-sm font-bold text-neutral-300">Estimated Total</span>
+                        <span class="text-2xl font-black text-white tracking-tight" id="summaryTotal">₦22,000</span>
+                    </div>
+                </div>
+
+                <!-- DUAL ORDER ACTIONS -->
+                <div class="space-y-3 pt-2">
+                    
+                    <!-- ACTION 1: ORDER ON WHATSAPP (INSTANT ATELIER PROOF) -->
+                    <button type="button" onclick="submitToWhatsApp()" class="w-full flex items-center justify-center gap-2.5 py-3.5 px-5 rounded-full bg-[#0071e3] hover:bg-[#0077ed] text-white font-bold text-xs shadow-lg hover:shadow-blue-500/25 active:scale-95 transition-all duration-300 cursor-pointer">
+                        <i class="fa-brands fa-whatsapp text-base"></i>
+                        <span>Order via WhatsApp (Instant Studio Proof)</span>
+                    </button>
+
+                    <!-- ACTION 2: SUBMIT ORDER & START 24H TRACKING -->
+                    <button type="submit" class="w-full flex items-center justify-center gap-2 py-3 px-5 rounded-full bg-white hover:bg-neutral-200 text-black font-extrabold text-xs shadow transition-all duration-300 cursor-pointer">
+                        <i class="fa-solid fa-bolt text-xs"></i>
+                        <span>Submit Order & Track 24h Queue</span>
+                    </button>
+                    
+                    <p class="text-[10px] text-center text-neutral-400 pt-1 leading-normal">
+                        <i class="fa-solid fa-shield-halved mr-1"></i> Digital proof confirmed on WhatsApp before printing. 100% bespoke quality guarantee.
+                    </p>
+                </div>
+
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div>
-                    <label class="block text-[11px] font-semibold text-black/70 mb-1 flex items-center gap-1">
-                        <i class="fa-brands fa-instagram text-black"></i> Instagram Handle
-                    </label>
-                    <input type="text" name="instagram" placeholder="@yourstore" class="w-full px-3 py-2.5 rounded-xl bg-white border border-black/20 text-black text-xs placeholder-black/40 focus:outline-none focus:border-black">
-                </div>
-
-                <div>
-                    <label class="block text-[11px] font-semibold text-black/70 mb-1 flex items-center gap-1">
-                        <i class="fa-brands fa-tiktok text-black"></i> TikTok Handle
-                    </label>
-                    <input type="text" name="tiktok" placeholder="@yourstore" class="w-full px-3 py-2.5 rounded-xl bg-white border border-black/20 text-black text-xs placeholder-black/40 focus:outline-none focus:border-black">
-                </div>
-
-                <div>
-                    <label class="block text-[11px] font-semibold text-black/70 mb-1 flex items-center gap-1">
-                        <i class="fa-brands fa-facebook text-black"></i> Facebook Page
-                    </label>
-                    <input type="text" name="facebook" placeholder="facebook.com/yourstore" class="w-full px-3 py-2.5 rounded-xl bg-white border border-black/20 text-black text-xs placeholder-black/40 focus:outline-none focus:border-black">
-                </div>
-            </div>
-
-            <!-- Summary Box -->
-            <div class="p-5 rounded-2xl bg-neutral-100 border border-black/15 flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div class="space-y-1 text-center sm:text-left">
-                    <span class="text-xs font-bold text-black uppercase tracking-wider">What happens next?</span>
-                    <p class="text-sm text-black font-semibold">Your 24-Hour Countdown starts the instant you submit!</p>
-                    <p class="text-xs text-black/70">You will be redirected to your live countdown page where your site link will appear when ready.</p>
-                </div>
-                <div class="text-right">
-                    <span class="text-xs text-black/60">Selected Plan:</span>
-                    <div id="summaryPlanPrice" class="text-2xl font-black text-black font-['Plus_Jakarta_Sans']">$2 / month</div>
-                </div>
-            </div>
-
-            <!-- Submit Button -->
-            <button type="submit" class="w-full py-4 rounded-2xl text-white font-extrabold text-base sm:text-lg bg-black hover:bg-neutral-800 shadow-xl shadow-black/20 transition-all transform hover:-translate-y-0.5 border border-black flex items-center justify-center gap-3">
-                <i class="fa-solid fa-clock text-white"></i>
-                <span>Submit Details & Start 24-Hour Countdown</span>
-            </button>
         </div>
+
     </form>
 </div>
+{% endblock %}
 
+{% block scripts %}
 <script>
-    function updatePlanUI(plan) {
-        const basicCard = document.getElementById('planCardBasic');
-        const proCard = document.getElementById('planCardPro');
-        const summaryPrice = document.getElementById('summaryPlanPrice');
+    // Studio State
+    const studio = {
+        garmentId: 'heavy_tee',
+        garmentName: 'Heavyweight Boxy Tee (240 GSM)',
+        garmentImg: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=900&auto=format&fit=crop&q=80',
+        unitPrice: 22000,
+        color: 'Onyx Black',
+        size: 'L',
+        placement: 'Center Chest',
+        technique: '3D Raised Puff Ink',
+        qty: 1,
+        mode: 'studio',
+        artworkData: '',
+        artworkName: ''
+    };
 
-        if (plan === 'basic_2') {
-            basicCard.classList.add('border-black', 'bg-white', 'shadow-md');
-            basicCard.classList.remove('border-black/15', 'shadow-none');
-            proCard.classList.remove('border-black', 'bg-neutral-100', 'shadow-md');
-            proCard.classList.add('border-black/15', 'bg-white');
-            summaryPrice.innerHTML = "$2 <span class='text-xs font-normal text-black/60'>/ month</span>";
-            summaryPrice.className = "text-2xl font-black text-black font-['Plus_Jakarta_Sans']";
-        } else {
-            proCard.classList.add('border-black', 'bg-neutral-100', 'shadow-md');
-            proCard.classList.remove('border-black/15');
-            basicCard.classList.remove('border-black', 'shadow-md');
-            basicCard.classList.add('border-black/15', 'bg-white');
-            summaryPrice.innerHTML = "$10 <span class='text-xs font-normal text-black/60'>/ month</span>";
-            summaryPrice.className = "text-2xl font-black text-black font-['Plus_Jakarta_Sans']";
-        }
-    }
-
-    let productCount = 2;
-    function addProductRow() {
-        productCount++;
-        const container = document.getElementById('productsContainer');
-        const div = document.createElement('div');
-        div.className = "product-item p-5 rounded-2xl bg-white border border-black/15 relative group animate-fade-in shadow-sm";
-        div.innerHTML = `
-            <div class="flex items-center justify-between mb-3">
-                <span class="text-xs font-bold text-black/70 product-index-label">Product #${productCount}</span>
-                <button type="button" onclick="removeProductRow(this)" class="text-xs text-black/40 hover:text-black transition" title="Remove Item">
-                    <i class="fa-solid fa-trash-can"></i>
-                </button>
-            </div>
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div class="sm:col-span-2">
-                    <label class="block text-[11px] font-semibold text-black/70 mb-1">Product Title</label>
-                    <input type="text" name="product_name[]" placeholder="e.g. Item Name" required class="w-full px-3 py-2 rounded-lg bg-white border border-black/20 text-black text-xs placeholder-black/40 focus:outline-none focus:border-black">
-                </div>
-                <div>
-                    <label class="block text-[11px] font-semibold text-black/70 mb-1">Price (Numbers only)</label>
-                    <input type="text" name="product_price[]" placeholder="e.g. 19.99" required class="w-full px-3 py-2 rounded-lg bg-white border border-black/20 text-black text-xs placeholder-black/40 focus:outline-none focus:border-black">
-                </div>
-                <div class="sm:col-span-2">
-                    <label class="block text-[11px] font-semibold text-black/70 mb-1">Brief Description</label>
-                    <input type="text" name="product_desc[]" placeholder="e.g. Color, size, specifications..." class="w-full px-3 py-2 rounded-lg bg-white border border-black/20 text-black text-xs placeholder-black/40 focus:outline-none focus:border-black">
-                </div>
-                <div>
-                    <label class="block text-[11px] font-semibold text-black/70 mb-1">Image URL or Photo Link</label>
-                    <input type="text" name="product_image[]" placeholder="https://... (or leave blank)" class="w-full px-3 py-2 rounded-lg bg-white border border-black/20 text-black text-xs placeholder-black/40 focus:outline-none focus:border-black">
-                </div>
-            </div>
-        `;
-        container.appendChild(div);
-    }
-
-    function removeProductRow(button) {
-        const items = document.querySelectorAll('.product-item');
-        if (items.length <= 1) {
-            alert("You need to keep at least one product.");
-            return;
-        }
-        button.closest('.product-item').remove();
-        
-        document.querySelectorAll('.product-item').forEach((item, idx) => {
-            item.querySelector('.product-index-label').textContent = `Product #${idx + 1}`;
+    // 1. Placement Selection
+    function setPlacement(placement, btn) {
+        studio.placement = placement;
+        document.getElementById('printPlacementInput').value = placement;
+        document.querySelectorAll('.placement-btn').forEach(b => {
+            b.classList.remove('border-black', 'bg-black', 'text-white', 'active');
+            b.classList.add('border-neutral-300', 'bg-white', 'text-neutral-700');
         });
-        productCount = document.querySelectorAll('.product-item').length;
+        btn.classList.add('border-black', 'bg-black', 'text-white', 'active');
+        btn.classList.remove('border-neutral-300', 'bg-white', 'text-neutral-700');
+        updateSummary();
+    }
+
+    // 2. Technique Selection
+    function setTechnique(tech, btn) {
+        studio.technique = tech;
+        document.getElementById('printTechniqueInput').value = tech;
+        document.querySelectorAll('.technique-btn').forEach(b => {
+            b.classList.remove('border-black', 'bg-black', 'text-white', 'active');
+            b.classList.add('border-neutral-300', 'bg-white', 'text-neutral-800');
+            const icon = b.querySelector('i');
+            if (icon) icon.classList.add('opacity-0');
+        });
+        btn.classList.add('border-black', 'bg-black', 'text-white', 'active');
+        btn.classList.remove('border-neutral-300', 'bg-white', 'text-neutral-800');
+        const activeIcon = btn.querySelector('i');
+        if (activeIcon) activeIcon.classList.remove('opacity-0');
+        updateSummary();
+    }
+
+    // 3. Garment Selection
+    function selectGarment(id, name, price, img, card) {
+        studio.garmentId = id;
+        studio.garmentName = name;
+        studio.unitPrice = price;
+        studio.garmentImg = img;
+
+        document.getElementById('garmentTypeInput').value = id;
+        document.getElementById('garmentNameInput').value = name;
+        document.getElementById('planPriceInput').value = price;
+
+        document.querySelectorAll('.garment-card').forEach(c => {
+            c.classList.remove('border-black', 'active');
+            c.classList.add('border-neutral-300');
+            const check = c.querySelector('span.rounded-full');
+            if (check) {
+                check.classList.remove('bg-black', 'border-black');
+                check.classList.add('border-neutral-300');
+                const i = check.querySelector('i');
+                if (i) i.classList.add('opacity-0');
+            }
+        });
+
+        card.classList.add('border-black', 'active');
+        card.classList.remove('border-neutral-300');
+        const activeCheck = card.querySelector('span.rounded-full');
+        if (activeCheck) {
+            activeCheck.classList.add('bg-black', 'border-black');
+            activeCheck.classList.remove('border-neutral-300');
+            const i = activeCheck.querySelector('i');
+            if (i) i.classList.remove('opacity-0');
+        }
+
+        updateSummary();
+    }
+
+    // 4. Colorway Selection
+    function setColorway(colorName, hex, btn) {
+        studio.color = colorName;
+        document.getElementById('garmentColorInput').value = colorName;
+        document.getElementById('colorwayLabel').textContent = colorName;
+
+        document.querySelectorAll('.color-btn').forEach(b => {
+            b.classList.remove('border-black', 'scale-110', 'active');
+            b.classList.add('border-transparent');
+        });
+        btn.classList.add('border-black', 'scale-110', 'active');
+        btn.classList.remove('border-transparent');
+
+        updateSummary();
+    }
+
+    // 5. Size Selection
+    function setSize(sz, btn) {
+        studio.size = sz;
+        document.getElementById('garmentSizeInput').value = sz;
+
+        document.querySelectorAll('.size-btn').forEach(b => {
+            b.classList.remove('border-black', 'bg-black', 'text-white', 'active');
+            b.classList.add('border-neutral-300', 'bg-white', 'text-neutral-800');
+        });
+        btn.classList.add('border-black', 'bg-black', 'text-white', 'active');
+        btn.classList.remove('border-neutral-300', 'bg-white', 'text-neutral-800');
+
+        updateSummary();
+    }
+
+    // 6. Quantity Stepper
+    function changeQty(delta) {
+        const input = document.getElementById('quantityInput');
+        let current = parseInt(input.value) || 1;
+        current = Math.max(1, current + delta);
+        input.value = current;
+        studio.qty = current;
+        updateSummary();
+    }
+
+    // 7. Garment Mode Switching (Studio vs Custom)
+    function switchGarmentMode(mode) {
+        studio.mode = mode;
+        const tabStudio = document.getElementById('tabStudioBlanks');
+        const tabCustom = document.getElementById('tabCustomBlanks');
+        const containerStudio = document.getElementById('studioBlanksContainer');
+        const containerCustom = document.getElementById('customBlanksContainer');
+
+        if (mode === 'studio') {
+            tabStudio.className = "pb-2 text-xs font-bold border-b-2 border-black text-black transition-colors";
+            tabCustom.className = "pb-2 text-xs font-semibold border-b-2 border-transparent text-neutral-400 hover:text-black transition-colors";
+            containerStudio.classList.remove('hidden');
+            containerCustom.classList.add('hidden');
+        } else {
+            tabCustom.className = "pb-2 text-xs font-bold border-b-2 border-black text-black transition-colors";
+            tabStudio.className = "pb-2 text-xs font-semibold border-b-2 border-transparent text-neutral-400 hover:text-black transition-colors";
+            containerCustom.classList.remove('hidden');
+            containerStudio.classList.add('hidden');
+            studio.garmentName = "Custom Sourced Blanks / Client Blanks";
+            studio.unitPrice = 20000;
+            document.getElementById('garmentNameInput').value = studio.garmentName;
+            document.getElementById('planPriceInput').value = studio.unitPrice;
+        }
+        updateSummary();
+    }
+
+    function toggleBringOwnBlanks(checkbox) {
+        if (checkbox.checked) {
+            studio.garmentName = "Client Provided Own Blanks";
+            studio.unitPrice = 15000;
+        } else {
+            studio.garmentName = "Custom Sourced Blanks";
+            studio.unitPrice = 20000;
+        }
+        document.getElementById('garmentNameInput').value = studio.garmentName;
+        document.getElementById('planPriceInput').value = studio.unitPrice;
+        updateSummary();
+    }
+
+    // 8. Artwork Upload Handling
+    function handleArtworkSelected(input) {
+        if (!input.files || !input.files[0]) return;
+        const file = input.files[0];
+        studio.artworkName = file.name;
+        document.getElementById('artworkFileName').textContent = file.name;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const dataUrl = e.target.result;
+            studio.artworkData = dataUrl;
+            document.getElementById('artworkDataInput').value = dataUrl;
+            document.getElementById('artworkPreviewImg').src = dataUrl;
+            document.getElementById('summaryArtworkImg').src = dataUrl;
+
+            document.getElementById('dropzoneDefaultState').classList.add('hidden');
+            document.getElementById('dropzonePreviewState').classList.remove('hidden');
+            document.getElementById('dropzonePreviewState').classList.add('flex');
+            document.getElementById('summaryArtworkOverlay').classList.remove('hidden');
+        };
+        reader.readAsDataURL(file);
+        updateSummary();
+    }
+
+    function removeArtwork(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        document.getElementById('artworkFileInput').value = '';
+        document.getElementById('artworkDataInput').value = '';
+        studio.artworkData = '';
+        studio.artworkName = '';
+
+        document.getElementById('dropzoneDefaultState').classList.remove('hidden');
+        document.getElementById('dropzonePreviewState').classList.add('hidden');
+        document.getElementById('dropzonePreviewState').classList.remove('flex');
+        document.getElementById('summaryArtworkOverlay').classList.add('hidden');
+        updateSummary();
+    }
+
+    // 9. Custom Garment Upload Handling
+    function handleCustomGarmentSelected(input) {
+        if (!input.files || !input.files[0]) return;
+        const file = input.files[0];
+        document.getElementById('customGarmentFileName').textContent = file.name;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const dataUrl = e.target.result;
+            document.getElementById('customGarmentDataInput').value = dataUrl;
+            document.getElementById('customGarmentPreviewImg').src = dataUrl;
+            document.getElementById('summaryGarmentImg').src = dataUrl;
+
+            document.getElementById('customGarmentDefaultState').classList.add('hidden');
+            document.getElementById('customGarmentPreviewState').classList.remove('hidden');
+            document.getElementById('customGarmentPreviewState').classList.add('flex');
+        };
+        reader.readAsDataURL(file);
+        updateSummary();
+    }
+
+    // 10. Update Live Summary Box
+    function updateSummary() {
+        const qty = parseInt(document.getElementById('quantityInput').value) || 1;
+        studio.qty = qty;
+
+        document.getElementById('summaryGarmentName').textContent = studio.garmentName;
+        document.getElementById('summaryBadgeText').textContent = studio.garmentName.split('(')[0].trim();
+        document.getElementById('summaryColorSize').textContent = `${studio.color} · Size ${studio.size}`;
+        document.getElementById('summaryTechnique').textContent = studio.technique;
+        document.getElementById('summaryPlacement').textContent = studio.placement;
+        document.getElementById('summaryQty').textContent = `${qty} Piece${qty > 1 ? 's' : ''}`;
+
+        if (studio.mode === 'studio') {
+            document.getElementById('summaryGarmentImg').src = studio.garmentImg;
+        }
+
+        const total = studio.unitPrice * qty;
+        document.getElementById('summaryTotal').textContent = '₦' + total.toLocaleString();
+    }
+
+    // 11. Instant WhatsApp Submission
+    function submitToWhatsApp() {
+        const name = document.getElementById('customerNameInput').value.trim() || 'Valued Client';
+        const phone = document.getElementById('whatsappNumberInput').value.trim();
+        const notes = document.getElementById('designNotesInput').value.trim();
+        const artworkLink = document.getElementById('artworkUrlInput').value.trim();
+        const total = (studio.unitPrice * studio.qty).toLocaleString();
+
+        const messageLines = [
+            `*VENT BESPOKE STUDIO - CUSTOM ORDER*`,
+            `----------------------------------`,
+            `• *Client Name*: ${name}`,
+            phone ? `• *Client Phone*: ${phone}` : '',
+            `• *Garment*: ${studio.garmentName}`,
+            `• *Colorway*: ${studio.color}`,
+            `• *Size*: ${studio.size}`,
+            `• *Print Technique*: ${studio.technique}`,
+            `• *Placement*: ${studio.placement}`,
+            `• *Quantity*: ${studio.qty}`,
+            `• *Estimated Total*: ₦${total}`,
+            artworkLink ? `• *Artwork Link*: ${artworkLink}` : (studio.artworkName ? `• *Artwork File*: ${studio.artworkName} (attaching in chat)` : '• *Artwork*: Uploading in this chat'),
+            notes ? `• *Special Notes*: ${notes}` : '',
+            `----------------------------------`,
+            `Please confirm my digital mockup proof and 24-hour atelier queue.`
+        ].filter(Boolean).join('\n');
+
+        const studioPhone = "2348000000000";
+        const url = `https://wa.me/${studioPhone}?text=${encodeURI(messageLines)}`;
+        window.open(url, '_blank');
     }
 </script>
 {% endblock %}

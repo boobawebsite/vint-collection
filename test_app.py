@@ -49,13 +49,12 @@ class TestVentCollectionPlatform(unittest.TestCase):
         self.assertIn(b'Custom Studio Polos', response_polos.data)
 
     def test_order_page_get(self):
-        response = self.client.get('/order?plan=basic_2')
+        response = self.client.get('/order')
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b'Basic Website', response.data)
-
-        response_pro = self.client.get('/order?plan=pro_10')
-        self.assertEqual(response_pro.status_code, 200)
-        self.assertIn(b'Pro Website', response_pro.data)
+        self.assertIn(b'Customise Your T-Shirt', response.data)
+        self.assertIn(b'Drop Your Design', response.data)
+        self.assertIn(b'Heavyweight Boxy Tee', response.data)
+        self.assertIn(b'Order via WhatsApp', response.data)
 
     def test_order_submission_and_countdown_flow(self):
         # 1. Vendor submits their business info

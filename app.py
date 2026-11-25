@@ -211,29 +211,66 @@ def logo_preview():
 @app.route('/order', methods=['GET', 'POST'])
 def order():
     if request.method == 'GET':
-        prefill_plan = request.args.get('plan', 'basic_2')
-        return render_template('order.html', selected_plan=prefill_plan)
+        prefill_garment = request.args.get('garment', 'heavy_tee')
+        return render_template('order.html', selected_garment=prefill_garment)
     
     # Process Order Submission
-    plan_type = request.form.get('plan_type', 'basic_2')
-    business_name = request.form.get('business_name', '').strip()
-    vendor_name = request.form.get('vendor_name', '').strip()
+    # Support both custom apparel studio submissions and legacy vendor forms
+    customer_name = request.form.get('customer_name', '').strip()
+    business_name = request.form.get('business_name', '').strip() or customer_name or 'Custom Apparel Client'
+    vendor_name = request.form.get('vendor_name', '').strip() or customer_name or business_name
     whatsapp_number = request.form.get('whatsapp_number', '').strip()
     email = request.form.get('email', '').strip()
-    category = request.form.get('category', 'Retail')
-    currency = request.form.get('currency', '$')
-    tagline = request.form.get('tagline', '').strip()
-    about_text = request.form.get('about_text', '').strip()
     address = request.form.get('address', '').strip()
-    instagram = request.form.get('instagram', '').strip()
-    facebook = request.form.get('facebook', '').strip()
-    tiktok = request.form.get('tiktok', '').strip()
 
-    if not business_name or not whatsapp_number:
-        flash("Please provide at least your Business Name and WhatsApp Number.", "error")
-        return redirect(url_for('order', plan=plan_type))
+    # Custom Garment & Artwork details
+    garment_type = request.form.get('garment_type', 'heavy_tee').strip()
+    garment_name = request.form.get('garment_name', 'Heavyweight Boxy Tee (240 GSM)').strip()
+    garment_size = request.form.get('garment_size', 'L').strip()
+    garment_color = request.form.get('garment_color', 'Onyx Black').strip()
+    print_technique = request.form.get('print_technique', '3D Raised Puff Ink').strip()
+    print_placement = request.form.get('print_placement', 'Center Chest').strip()
+    quantity = request.form.get('quantity', '1').strip()
+    artwork_url = request.form.get('artwork_url', '').strip()
+    artwork_data = request.form.get('artwork_data', '').strip()
+    custom_garment_url = request.form.get('custom_garment_url', '').strip()
+    custom_garment_data = request.form.get('custom_garment_data', '').strip()
+    design_notes = request.form.get('design_notes', '').strip() or request.form.get('about_text', '').strip()
+    tagline_input = request.form.get('tagline', '').strip()
+    category = request.form.get('category', 'Custom T-Shirt Studio')
+    currency = request.form.get('currency', '₦')
 
-    # Parse dynamic products submitted from form
+    if not customer_name and not business_name:
+        flash("Please provide your name.", "error")
+        return redirect(url_for('order'))
+    if not whatsapp_number:
+        flash("Please provide your WhatsApp number so our atelier can send your digital mockup proof.", "error")
+        return redirect(url_for('order'))
+
+    # Determine plan price and naming
+    price_val = request.form.get('plan_price')
+    try:
+        if price_val:
+            plan_price = float(price_val)
+        else:
+            price_map = {
+                'heavy_tee': 22000.0,
+                'vintage_tee': 24500.0,
+                'luxury_polo': 24500.0,
+                'french_terry_hoodie': 38000.0,
+                'washed_crewneck': 32000.0,
+                'custom_blank': 20000.0,
+                'basic_2': 2.0,
+                'pro_10': 10.0
+            }
+            plan_price = price_map.get(garment_type, 22000.0)
+    except Exception:
+        plan_price = 22000.0
+
+    plan_type = request.form.get('plan_type') or garment_type
+    plan_name = request.form.get('plan_name') or f"Custom {garment_name} · {print_technique}"
+
+    # Check for legacy product arrays (for backward compatibility)
     product_names = request.form.getlist('product_name[]')
     product_prices = request.form.getlist('product_price[]')
     product_descs = request.form.getlist('product_desc[]')
@@ -241,37 +278,41 @@ def order():
     product_cats = request.form.getlist('product_category[]')
 
     products = []
-    for i in range(len(product_names)):
-        name = product_names[i].strip()
-        if name:
-            price = product_prices[i].strip() if i < len(product_prices) else '0'
-            desc = product_descs[i].strip() if i < len(product_descs) else ''
-            img = product_images[i].strip() if i < len(product_images) else ''
-            cat = product_cats[i].strip() if i < len(product_cats) else 'General'
-            products.append({
-                'id': i + 1,
-                'name': name,
-                'price': price,
-                'desc': desc,
-                'image': img or 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&auto=format&fit=crop&q=60',
-                'category': cat
-            })
-
-    # Fallback product if vendor submitted none
-    if not products:
-        products = [
-            {
-                'id': 1,
-                'name': f"{business_name} Featured Product",
-                'price': "15.00",
-                'desc': "Best quality product tailored for our customers.",
-                'image': "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&auto=format&fit=crop&q=60",
-                'category': "Featured"
-            }
-        ]
-
-    plan_name = "Starter Showcase ($2/mo)" if plan_type == 'basic_2' else "Pro Store with Admin ($10/mo)"
-    plan_price = 2.0 if plan_type == 'basic_2' else 10.0
+    if product_names and product_names[0].strip():
+        for i in range(len(product_names)):
+            name = product_names[i].strip()
+            if name:
+                p_price = product_prices[i].strip() if i < len(product_prices) else '0'
+                p_desc = product_descs[i].strip() if i < len(product_descs) else ''
+                p_img = product_images[i].strip() if i < len(product_images) else ''
+                p_cat = product_cats[i].strip() if i < len(product_cats) else 'General'
+                products.append({
+                    'id': i + 1,
+                    'name': name,
+                    'price': p_price,
+                    'desc': p_desc,
+                    'image': p_img or 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500&auto=format&fit=crop&q=60',
+                    'category': p_cat
+                })
+    else:
+        preview_img = artwork_url or (artwork_data if len(artwork_data) < 200000 else '') or custom_garment_url or 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=900&auto=format&fit=crop&q=80'
+        products.append({
+            'id': 1,
+            'name': f"{garment_name} ({garment_size} / {garment_color})",
+            'price': str(plan_price),
+            'desc': f"Placement: {print_placement} | Print: {print_technique} | Qty: {quantity} | Notes: {design_notes}",
+            'image': preview_img,
+            'category': 'Custom Studio Apparel',
+            'garment_type': garment_type,
+            'garment_size': garment_size,
+            'garment_color': garment_color,
+            'print_technique': print_technique,
+            'print_placement': print_placement,
+            'quantity': quantity,
+            'design_notes': design_notes,
+            'artwork_url': artwork_url,
+            'custom_garment_url': custom_garment_url
+        })
 
     order_id = generate_order_id()
     created_at = datetime.now(timezone.utc)
@@ -290,18 +331,21 @@ def order():
         'email': email,
         'category': category,
         'currency': currency,
-        'tagline': tagline,
-        'about_text': about_text,
+        'tagline': tagline_input or f"Size {garment_size} · {garment_color} · {print_placement} · {print_technique}",
+        'about_text': design_notes,
         'address': address,
-        'instagram': instagram,
-        'facebook': facebook,
-        'tiktok': tiktok,
+        'instagram': request.form.get('instagram', '').strip(),
+        'facebook': request.form.get('facebook', '').strip(),
+        'tiktok': request.form.get('tiktok', '').strip(),
         'products_json': json.dumps(products),
         'status': 'submitted',
         'website_url': '',
         'publish_mode': 'countdown',
         'is_published': 0
     }
+    create_order(order_dict)
+
+    return redirect(url_for('status', order_id=order_id, new='1'))
     create_order(order_dict)
 
     return redirect(url_for('status', order_id=order_id, new='1'))
