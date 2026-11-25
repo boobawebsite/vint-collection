@@ -6,15 +6,15 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 bg-white font-['Space_Grotesk']">
     
     <!-- HEADER -->
-    <div class="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
-        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-neutral-100 border border-black/10 text-[11px] font-bold uppercase tracking-widest text-neutral-800 mb-3">
-            <span class="w-2 h-2 rounded-full bg-black animate-pulse"></span>
-            <span>Vent Bespoke Studio · 24-Hour Turnaround</span>
+    <div class="text-center max-w-3xl mx-auto mb-8 sm:mb-12 px-2 sm:px-0">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-neutral-100 border border-black/10 text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-neutral-800 mb-3 max-w-[85%] truncate">
+            <span class="w-2 h-2 rounded-full bg-black shrink-0 animate-pulse"></span>
+            <span class="truncate">Vent Bespoke Studio · 24h Queue</span>
         </div>
-        <h1 class="text-3xl sm:text-5xl font-black text-black tracking-tight font-['Space_Grotesk'] leading-tight">
+        <h1 class="text-2xl sm:text-5xl font-black text-black tracking-tight font-['Space_Grotesk'] leading-tight">
             Customise Your T-Shirt
         </h1>
-        <p class="text-neutral-600 text-sm sm:text-base mt-3 max-w-xl mx-auto font-normal">
+        <p class="text-neutral-600 text-xs sm:text-base mt-2 max-w-xl mx-auto font-normal">
             Drop your artwork, select your garment silhouette or upload your custom blanks, and specify your print technique. Handcrafted and dispatched within 24 hours.
         </p>
     </div>
@@ -288,13 +288,13 @@
                     <label class="block text-xs font-bold uppercase tracking-wider text-neutral-800 mb-2">
                         Size Selection
                     </label>
-                    <div class="grid grid-cols-6 gap-2" id="sizeOptions">
-                        <button type="button" onclick="setSize('S', this)" class="size-btn px-2 py-2.5 rounded-xl border-2 border-neutral-300 bg-white text-xs font-bold text-neutral-800 hover:border-black transition">S</button>
-                        <button type="button" onclick="setSize('M', this)" class="size-btn px-2 py-2.5 rounded-xl border-2 border-neutral-300 bg-white text-xs font-bold text-neutral-800 hover:border-black transition">M</button>
-                        <button type="button" onclick="setSize('L', this)" class="size-btn active px-2 py-2.5 rounded-xl border-2 border-black bg-black text-xs font-bold text-white transition">L</button>
-                        <button type="button" onclick="setSize('XL', this)" class="size-btn px-2 py-2.5 rounded-xl border-2 border-neutral-300 bg-white text-xs font-bold text-neutral-800 hover:border-black transition">XL</button>
-                        <button type="button" onclick="setSize('XXL', this)" class="size-btn px-2 py-2.5 rounded-xl border-2 border-neutral-300 bg-white text-xs font-bold text-neutral-800 hover:border-black transition">XXL</button>
-                        <button type="button" onclick="setSize('Custom', this)" class="size-btn px-2 py-2.5 rounded-xl border-2 border-neutral-300 bg-white text-xs font-bold text-neutral-800 hover:border-black transition">Custom</button>
+                    <div class="grid grid-cols-3 sm:grid-cols-6 gap-2" id="sizeOptions">
+                        <button type="button" onclick="setSize('S', this)" class="size-btn py-2.5 rounded-xl border-2 border-neutral-300 bg-white text-xs font-bold text-neutral-800 hover:border-black transition text-center">S</button>
+                        <button type="button" onclick="setSize('M', this)" class="size-btn py-2.5 rounded-xl border-2 border-neutral-300 bg-white text-xs font-bold text-neutral-800 hover:border-black transition text-center">M</button>
+                        <button type="button" onclick="setSize('L', this)" class="size-btn active py-2.5 rounded-xl border-2 border-black bg-black text-xs font-bold text-white transition text-center">L</button>
+                        <button type="button" onclick="setSize('XL', this)" class="size-btn py-2.5 rounded-xl border-2 border-neutral-300 bg-white text-xs font-bold text-neutral-800 hover:border-black transition text-center">XL</button>
+                        <button type="button" onclick="setSize('XXL', this)" class="size-btn py-2.5 rounded-xl border-2 border-neutral-300 bg-white text-xs font-bold text-neutral-800 hover:border-black transition text-center">XXL</button>
+                        <button type="button" onclick="setSize('Custom', this)" class="size-btn py-2.5 rounded-xl border-2 border-neutral-300 bg-white text-xs font-bold text-neutral-800 hover:border-black transition text-center">Custom</button>
                     </div>
                     <input type="hidden" name="garment_size" id="garmentSizeInput" value="L">
                 </div>
@@ -368,7 +368,7 @@
         </div>
 
         <!-- RIGHT 5 COLS: STICKY LIVE STUDIO SPECIFICATION & ACTIONS -->
-        <div class="lg:col-span-5 sticky top-24 space-y-6">
+        <div class="lg:col-span-5 lg:sticky lg:top-24 space-y-6 lg:pr-1">
             
             <div class="p-6 sm:p-7 rounded-3xl bg-[#121212] text-white border border-white/10 shadow-2xl space-y-6">
                 
