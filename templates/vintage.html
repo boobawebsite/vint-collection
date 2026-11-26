@@ -513,8 +513,10 @@
 
         // Filter Grid Cards
         const cards = document.querySelectorAll('.vintage-item');
+        const targetCat = cat.toLowerCase().trim();
         cards.forEach(c => {
-            if (cat === 'all' || c.getAttribute('data-cat') === cat) {
+            const itemCat = (c.getAttribute('data-cat') || '').toLowerCase().trim();
+            if (targetCat === 'all' || itemCat === targetCat || itemCat.includes(targetCat) || targetCat.includes(itemCat)) {
                 c.classList.remove('hidden');
             } else {
                 c.classList.add('hidden');
