@@ -2,16 +2,53 @@ import os
 import json
 import random
 import string
+import base64
 from datetime import datetime, timedelta, timezone
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify, flash
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
 from db import (
     get_db, init_db, create_user, get_user_by_email, get_user_by_id,
     create_order, get_order, get_all_orders, update_order, delete_order, search_orders,
-    get_setting, set_setting, is_supabase_enabled
+    get_setting, set_setting, is_supabase_enabled,
+    create_product, get_product, get_all_products, get_products_by_section, update_product, delete_product
 )
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+UPLOAD_FOLDER = os.path.join(BASE_DIR, 'static', 'uploads')
+os.makedirs(os.path.join(UPLOAD_FOLDER, 'products'), exist_ok=True)
+os.makedirs(os.path.join(UPLOAD_FOLDER, 'artworks'), exist_ok=True)
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp', 'gif', 'svg'}
+
+def allowed_image_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def handle_image_storage(file_storage, fallback_url=''):
+    """Saves uploaded image file to static/uploads/products and returns the URL or base64 URI, or fallback_url."""
+    if file_storage and file_storage.filename and allowed_image_file(file_storage.filename):
+        sec_name = secure_filename(file_storage.filename)
+        timestamp = datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')
+        rand_suffix = ''.join(random.choices(string.ascii_lowercase + string.digits, k=6))
+        filename = f"{timestamp}_{rand_suffix}_{sec_name}"
+        upload_dir = os.path.join(UPLOAD_FOLDER, 'products')
+        os.makedirs(upload_dir, exist_ok=True)
+        file_path = os.path.join(upload_dir, filename)
+        file_storage.save(file_path)
+        
+        # Check file size for base64 data URI resilience in serverless
+        try:
+            size = os.path.getsize(file_path)
+            if size <= 600 * 1024: # Under 600KB
+                ext = sec_name.rsplit('.', 1)[1].lower()
+                mime = 'image/svg+xml' if ext == 'svg' else f'image/{ext}'
+                if ext == 'jpg': mime = 'image/jpeg'
+                with open(file_path, 'rb') as f:
+                    b64 = base64.b64encode(f.read()).decode('utf-8')
+                    return f"data:{mime};base64,{b64}"
+        except Exception:
+            pass
+        return f"/static/uploads/products/{filename}"
+    return fallback_url
 app = Flask(
     __name__,
     template_folder=os.path.join(BASE_DIR, 'templates'),
@@ -120,12 +157,14 @@ def index():
 @app.route('/collection')
 @app.route('/vintage')
 def vintage_gallery():
-    return render_template('vintage.html')
+    dynamic_products = get_products_by_section('vintage', include_inactive=False)
+    return render_template('vintage.html', dynamic_products=dynamic_products)
 
 @app.route('/custom-studio')
 @app.route('/polos')
 def custom_studio():
-    return render_template('custom_studio.html')
+    dynamic_products = get_products_by_section('studio', include_inactive=False)
+    return render_template('custom_studio.html', dynamic_products=dynamic_products)
 
 @app.route('/cart')
 def cart_view():
@@ -477,25 +516,240 @@ def admin_dashboard():
     if not session.get('is_admin'):
         return redirect(url_for('admin_login'))
 
+    active_tab = request.args.get('tab', 'submissions')
+    status_filter = request.args.get('status', 'all')
+    section_filter = request.args.get('section', 'all')
+    search_q = request.args.get('q', '').strip().lower()
+
+    # Inbound Orders & Customer Submissions
     rows = get_all_orders()
-    orders = [parse_order_row(r) for r in rows]
+    all_orders = [parse_order_row(r) for r in rows if r]
+
+    # Filter Orders
+    orders = all_orders
+    if search_q and active_tab == 'submissions':
+        orders = [
+            o for o in orders 
+            if search_q in o.get('id', '').lower() 
+            or search_q in o.get('business_name', '').lower() 
+            or search_q in o.get('vendor_name', '').lower() 
+            or search_q in o.get('whatsapp_number', '').lower() 
+            or search_q in o.get('email', '').lower()
+        ]
+    if status_filter != 'all':
+        if status_filter == 'active':
+            orders = [o for o in orders if not o.get('is_delivered')]
+        elif status_filter == 'delivered':
+            orders = [o for o in orders if o.get('is_delivered')]
+        elif status_filter in ('submitted', 'in_progress', 'dispatched'):
+            orders = [o for o in orders if o.get('status') == status_filter]
+
+    # Goods / Products Catalog
+    all_products = get_all_products(include_inactive=True)
+    products = all_products
+    if section_filter != 'all':
+        products = [p for p in products if p.get('section') == section_filter]
+    if search_q and active_tab == 'goods':
+        products = [
+            p for p in products 
+            if search_q in p.get('title', '').lower() 
+            or search_q in p.get('category', '').lower() 
+            or search_q in p.get('badge', '').lower()
+        ]
 
     # Metrics
-    total_orders = len(orders)
-    basic_orders = sum(1 for o in orders if o['plan_type'] == 'basic_2')
-    pro_orders = sum(1 for o in orders if o['plan_type'] == 'pro_10')
-    completed_orders = sum(1 for o in orders if o['status'] == 'completed' or (o['website_url'] and o['website_url'].strip()))
-    active_countdowns = sum(1 for o in orders if not o['is_expired'] and o['status'] != 'completed')
+    total_orders = len(all_orders)
+    pending_orders = sum(1 for o in all_orders if o.get('status') in ('submitted', None, ''))
+    crafting_orders = sum(1 for o in all_orders if o.get('status') in ('in_progress', 'printing', 'ready'))
+    delivered_orders = sum(1 for o in all_orders if o.get('is_delivered'))
+    basic_orders = sum(1 for o in all_orders if o.get('plan_type') == 'basic_2')
+    pro_orders = sum(1 for o in all_orders if o.get('plan_type') == 'pro_10')
+    completed_orders = sum(1 for o in all_orders if o.get('status') == 'completed' or (o.get('website_url') and o.get('website_url').strip()))
+    active_countdowns = sum(1 for o in all_orders if not o.get('is_expired') and o.get('status') not in ('delivered', 'completed'))
     total_revenue = (basic_orders * 2) + (pro_orders * 10)
 
+    total_products = len(all_products)
+    vintage_count = sum(1 for p in all_products if p.get('section') == 'vintage')
+    studio_count = sum(1 for p in all_products if p.get('section') == 'studio')
+    active_goods_count = sum(1 for p in all_products if p.get('is_active', 1) == 1)
+
+    platform_whatsapp = get_setting('platform_whatsapp', '+2348000000000')
+
     return render_template('admin_dashboard.html', 
-                           orders=orders, 
+                           active_tab=active_tab,
+                           status_filter=status_filter,
+                           section_filter=section_filter,
+                           search_q=search_q,
+                           orders=orders,
+                           all_orders=all_orders,
+                           products=products,
+                           all_products=all_products,
                            total_orders=total_orders,
+                           pending_orders=pending_orders,
+                           crafting_orders=crafting_orders,
+                           delivered_orders=delivered_orders,
                            basic_orders=basic_orders,
                            pro_orders=pro_orders,
                            completed_orders=completed_orders,
                            active_countdowns=active_countdowns,
-                           total_revenue=total_revenue)
+                           total_revenue=total_revenue,
+                           total_products=total_products,
+                           vintage_count=vintage_count,
+                           studio_count=studio_count,
+                           active_goods_count=active_goods_count,
+                           platform_whatsapp=platform_whatsapp)
+
+@app.route('/admin/product/add', methods=['POST'])
+def admin_product_add():
+    if not session.get('is_admin'):
+        return redirect(url_for('admin_login'))
+
+    title = request.form.get('title', '').strip()
+    section = request.form.get('section', 'vintage').strip()
+    category = request.form.get('category', 'tees').strip()
+    price = request.form.get('price', '').strip()
+    currency = request.form.get('currency', '$').strip()
+    badge = request.form.get('badge', '').strip()
+    size = request.form.get('size', 'L').strip()
+    condition = request.form.get('condition', '').strip()
+    measurements = request.form.get('measurements', '').strip()
+    description = request.form.get('description', '').strip()
+    image_url_input = request.form.get('image_url', '').strip()
+    image_file = request.files.get('image_file')
+
+    if not title:
+        flash("Product title is required.", "error")
+        return redirect(url_for('admin_dashboard', tab='goods'))
+
+    final_image = handle_image_storage(image_file, image_url_input)
+    if not final_image:
+        final_image = "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=900&auto=format&fit=crop&q=80"
+
+    product_id = f"PRD-{''.join(random.choices(string.ascii_uppercase + string.digits, k=6))}"
+    product_dict = {
+        'id': product_id,
+        'created_at': datetime.now(timezone.utc).isoformat(),
+        'title': title,
+        'section': section,
+        'category': category,
+        'price': price or '0',
+        'currency': currency,
+        'badge': badge,
+        'size': size,
+        'condition': condition,
+        'measurements': measurements,
+        'description': description,
+        'image_url': final_image,
+        'is_active': 1,
+        'sort_order': 0
+    }
+    create_product(product_dict)
+    flash(f"Successfully published '{title}' to {section.title()} catalog!", "success")
+    return redirect(url_for('admin_dashboard', tab='goods'))
+
+@app.route('/admin/product/<product_id>/update', methods=['POST'])
+def admin_product_update(product_id):
+    if not session.get('is_admin'):
+        return redirect(url_for('admin_login'))
+
+    existing = get_product(product_id)
+    if not existing:
+        flash("Product not found.", "error")
+        return redirect(url_for('admin_dashboard', tab='goods'))
+
+    title = request.form.get('title', existing.get('title', '')).strip()
+    section = request.form.get('section', existing.get('section', 'vintage')).strip()
+    category = request.form.get('category', existing.get('category', 'tees')).strip()
+    price = request.form.get('price', existing.get('price', '')).strip()
+    currency = request.form.get('currency', existing.get('currency', '$')).strip()
+    badge = request.form.get('badge', existing.get('badge', '')).strip()
+    size = request.form.get('size', existing.get('size', 'L')).strip()
+    condition = request.form.get('condition', existing.get('condition', '')).strip()
+    measurements = request.form.get('measurements', existing.get('measurements', '')).strip()
+    description = request.form.get('description', existing.get('description', '')).strip()
+    is_active = 1 if request.form.get('is_active') == '1' else 0
+
+    image_url_input = request.form.get('image_url', '').strip()
+    image_file = request.files.get('image_file')
+    final_image = handle_image_storage(image_file, image_url_input or existing.get('image_url'))
+
+    update_dict = {
+        'title': title,
+        'section': section,
+        'category': category,
+        'price': price,
+        'currency': currency,
+        'badge': badge,
+        'size': size,
+        'condition': condition,
+        'measurements': measurements,
+        'description': description,
+        'image_url': final_image,
+        'is_active': is_active
+    }
+    update_product(product_id, update_dict)
+    flash(f"Product '{title}' updated successfully!", "success")
+    return redirect(url_for('admin_dashboard', tab='goods'))
+
+@app.route('/admin/product/<product_id>/toggle-status', methods=['POST'])
+def admin_product_toggle_status(product_id):
+    if not session.get('is_admin'):
+        return redirect(url_for('admin_login'))
+
+    existing = get_product(product_id)
+    if existing:
+        current_state = int(existing.get('is_active', 1))
+        new_status = 0 if current_state == 1 else 1
+        update_product(product_id, {'is_active': new_status})
+        status_label = "Visible" if new_status == 1 else "Hidden"
+        flash(f"Product visibility set to {status_label}.", "info")
+    return redirect(url_for('admin_dashboard', tab='goods'))
+
+@app.route('/admin/product/<product_id>/delete', methods=['POST'])
+def admin_product_delete(product_id):
+    if not session.get('is_admin'):
+        return redirect(url_for('admin_login'))
+
+    delete_product(product_id)
+    flash("Product removed from catalog.", "info")
+    return redirect(url_for('admin_dashboard', tab='goods'))
+
+@app.route('/admin/order/<order_id>/update-status', methods=['POST'])
+def admin_order_update_status(order_id):
+    if not session.get('is_admin'):
+        return redirect(url_for('admin_login'))
+
+    status = request.form.get('status', 'submitted').strip()
+    admin_notes = request.form.get('admin_notes', '').strip()
+    website_url = request.form.get('website_url', '').strip()
+    publish_mode = request.form.get('publish_mode', 'countdown').strip()
+
+    update_dict = {
+        'status': status,
+        'admin_notes': admin_notes,
+        'website_url': website_url,
+        'publish_mode': publish_mode
+    }
+    update_order(order_id, update_dict)
+    flash(f"Submission {order_id} updated (Status: {status}).", "success")
+    return redirect(url_for('admin_dashboard', tab='submissions'))
+
+@app.route('/admin/settings/update', methods=['POST'])
+def admin_settings_update():
+    if not session.get('is_admin'):
+        return redirect(url_for('admin_login'))
+
+    new_password = request.form.get('admin_password', '').strip()
+    platform_whatsapp = request.form.get('platform_whatsapp', '').strip()
+
+    if new_password:
+        set_setting('admin_password', new_password)
+        flash("Admin portal password updated successfully.", "success")
+    if platform_whatsapp:
+        set_setting('platform_whatsapp', platform_whatsapp)
+        flash("Atelier WhatsApp contact number updated.", "success")
+
+    return redirect(url_for('admin_dashboard', tab='settings'))
 
 @app.route('/admin/order/<order_id>/update', methods=['POST'])
 def admin_order_update(order_id):

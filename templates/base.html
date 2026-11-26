@@ -86,6 +86,13 @@
                         <span>Track Order</span>
                         <i class="fa-solid fa-chevron-right text-[10px] text-neutral-300 group-hover:text-black group-hover:translate-x-0.5 transition-all"></i>
                     </a>
+                    <a href="{{ url_for('admin_dashboard') }}" class="nav-close-link group flex items-center justify-between py-2.5 px-3 rounded-lg text-sm font-semibold text-neutral-800 hover:text-black hover:bg-neutral-100 transition-all duration-200">
+                        <span class="flex items-center gap-2">
+                            <i class="fa-solid fa-shield-halved text-xs text-neutral-400 group-hover:text-black transition-colors"></i>
+                            <span>Admin Portal</span>
+                        </span>
+                        <i class="fa-solid fa-chevron-right text-[10px] text-neutral-300 group-hover:text-black group-hover:translate-x-0.5 transition-all"></i>
+                    </a>
                 </nav>
             </div>
 
@@ -231,6 +238,7 @@
                         <li><a href="{{ url_for('vintage_gallery') }}?cat=fabrics" class="hover:text-black transition-colors flex items-center gap-2"><i class="fa-solid fa-angle-right text-[10px] text-black/30"></i> Sourced Vintage Materials</a></li>
                         <li><a href="{{ url_for('order') }}" class="hover:text-black transition-colors flex items-center gap-2"><i class="fa-solid fa-angle-right text-[10px] text-black/30"></i> Customise Your T-Shirt</a></li>
                         <li><a href="{{ url_for('track') }}" class="hover:text-black transition-colors flex items-center gap-2"><i class="fa-solid fa-angle-right text-[10px] text-black/30"></i> Track Studio Order</a></li>
+                        <li><a href="{{ url_for('admin_dashboard') }}" class="hover:text-black transition-colors flex items-center gap-2"><i class="fa-solid fa-shield-halved text-[10px] text-black/30"></i> Atelier Admin Portal</a></li>
                     </ul>
                 </div>
             </div>

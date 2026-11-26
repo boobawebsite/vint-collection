@@ -300,6 +300,131 @@ def delete_order(order_id):
     conn.close()
 
 # ===================================================
+# PRODUCTS / GOODS API (SUPABASE + SQLITE DUAL SYNC)
+# ===================================================
+def create_product(product_dict):
+    # 1. Supabase
+    _supabase_request('POST', 'vent_products', json_data=product_dict)
+
+    # 2. SQLite
+    conn = get_db()
+    cursor = conn.cursor()
+    try:
+        cursor.execute('''
+        INSERT OR REPLACE INTO products (
+            id, created_at, title, price, currency, category, section,
+            image_url, badge, size, description, condition, measurements,
+            is_active, sort_order
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (
+            product_dict['id'],
+            product_dict.get('created_at', datetime.now(timezone.utc).isoformat()),
+            product_dict['title'],
+            str(product_dict['price']),
+            product_dict.get('currency', '$'),
+            product_dict.get('category', 'tees'),
+            product_dict.get('section', 'vintage'),
+            product_dict['image_url'],
+            product_dict.get('badge', ''),
+            product_dict.get('size', 'L'),
+            product_dict.get('description', ''),
+            product_dict.get('condition', ''),
+            product_dict.get('measurements', ''),
+            int(product_dict.get('is_active', 1)),
+            int(product_dict.get('sort_order', 0))
+        ))
+        conn.commit()
+    except Exception as e:
+        logger.error("SQLite product write error: %s", e)
+    finally:
+        conn.close()
+    return product_dict['id']
+
+def get_product(product_id):
+    # 1. Supabase
+    sb_result = _supabase_request('GET', f'vent_products?id=eq.{product_id}&select=*')
+    if sb_result and isinstance(sb_result, list) and len(sb_result) > 0:
+        return sb_result[0]
+
+    # 2. SQLite
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM products WHERE id = ?", (product_id,))
+    row = cursor.fetchone()
+    conn.close()
+    if row:
+        return dict(row)
+    return None
+
+def get_all_products(include_inactive=False):
+    # 1. Supabase
+    query = 'vent_products?select=*&order=sort_order.desc,created_at.desc'
+    if not include_inactive:
+        query = 'vent_products?is_active=eq.1&select=*&order=sort_order.desc,created_at.desc'
+    sb_result = _supabase_request('GET', query)
+    if sb_result and isinstance(sb_result, list) and len(sb_result) > 0:
+        return sb_result
+
+    # 2. SQLite
+    conn = get_db()
+    cursor = conn.cursor()
+    if include_inactive:
+        cursor.execute("SELECT * FROM products ORDER BY sort_order DESC, created_at DESC")
+    else:
+        cursor.execute("SELECT * FROM products WHERE is_active = 1 ORDER BY sort_order DESC, created_at DESC")
+    rows = cursor.fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+def get_products_by_section(section, include_inactive=False):
+    # 1. Supabase
+    query = f'vent_products?section=eq.{section}&order=sort_order.desc,created_at.desc'
+    if not include_inactive:
+        query = f'vent_products?section=eq.{section}&is_active=eq.1&order=sort_order.desc,created_at.desc'
+    sb_result = _supabase_request('GET', query)
+    if sb_result and isinstance(sb_result, list) and len(sb_result) > 0:
+        return sb_result
+
+    # 2. SQLite
+    conn = get_db()
+    cursor = conn.cursor()
+    if include_inactive:
+        cursor.execute("SELECT * FROM products WHERE section = ? ORDER BY sort_order DESC, created_at DESC", (section,))
+    else:
+        cursor.execute("SELECT * FROM products WHERE section = ? AND is_active = 1 ORDER BY sort_order DESC, created_at DESC", (section,))
+    rows = cursor.fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+def update_product(product_id, update_dict):
+    # 1. Supabase
+    _supabase_request('PATCH', f'vent_products?id=eq.{product_id}', json_data=update_dict)
+
+    # 2. SQLite
+    conn = get_db()
+    cursor = conn.cursor()
+    set_clauses = [f"{k} = ?" for k in update_dict.keys()]
+    values = list(update_dict.values()) + [product_id]
+    try:
+        cursor.execute(f"UPDATE products SET {', '.join(set_clauses)} WHERE id = ?", values)
+        conn.commit()
+    except Exception as e:
+        logger.error("SQLite product update error: %s", e)
+    finally:
+        conn.close()
+
+def delete_product(product_id):
+    # 1. Supabase
+    _supabase_request('DELETE', f'vent_products?id=eq.{product_id}')
+
+    # 2. SQLite
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM products WHERE id = ?", (product_id,))
+    conn.commit()
+    conn.close()
+
+# ===================================================
 # SETTINGS API (SUPABASE + SQLITE DUAL SYNC)
 # ===================================================
 def get_setting(key, default=None):
@@ -381,6 +506,26 @@ def init_db():
             phone TEXT DEFAULT '',
             password_hash TEXT NOT NULL,
             created_at TEXT NOT NULL
+        )
+        ''')
+
+        cursor.execute('''
+        CREATE TABLE IF NOT EXISTS products (
+            id TEXT PRIMARY KEY,
+            created_at TEXT NOT NULL,
+            title TEXT NOT NULL,
+            price TEXT NOT NULL,
+            currency TEXT DEFAULT '$',
+            category TEXT NOT NULL,          -- 'tees', 'pique', 'knit', 'custom', 'denim', 'hoodies', 'fabrics', 'accessories'
+            section TEXT NOT NULL,           -- 'vintage' or 'studio'
+            image_url TEXT NOT NULL,
+            badge TEXT DEFAULT '',           -- e.g. 'Single Stitch', 'Double-Piqué'
+            size TEXT DEFAULT 'L',           -- e.g. 'L', 'XL', 'S-XXL'
+            description TEXT DEFAULT '',
+            condition TEXT DEFAULT '',       -- e.g. '9.5/10 Prime Archival'
+            measurements TEXT DEFAULT '',
+            is_active INTEGER DEFAULT 1,
+            sort_order INTEGER DEFAULT 0
         )
         ''')
 

@@ -243,5 +243,57 @@ class TestVentCollectionPlatform(unittest.TestCase):
         home_res = self.client.get('/')
         self.assertIn(b'max-w-[85vw]', home_res.data)
 
+    def test_admin_portal_goods_and_submissions(self):
+        # 1. Sign in to admin portal
+        login_res = self.client.post('/admin/login', data={'password': 'admin123'}, follow_redirects=True)
+        self.assertEqual(login_res.status_code, 200)
+        self.assertIn(b'Vent Collection Studio Admin', login_res.data)
+        self.assertIn(b'Goods & Catalog Manager', login_res.data)
+
+        # 2. Upload a new vintage piece to the catalog
+        add_res = self.client.post('/admin/product/add', data={
+            'title': '1995 Nirvana In Utero Tour Tee',
+            'section': 'vintage',
+            'category': 'tees',
+            'price': '85',
+            'currency': '$',
+            'badge': 'Single Stitch',
+            'size': 'XL',
+            'condition': '9.5/10 Prime Archival',
+            'measurements': 'Pit to Pit: 23", Length: 30"',
+            'description': 'Original 90s band tour tee with authentic single stitch.',
+            'image_url': 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=900'
+        }, follow_redirects=True)
+        self.assertEqual(add_res.status_code, 200)
+        self.assertIn(b'1995 Nirvana In Utero Tour Tee', add_res.data)
+
+        # 3. Verify it shows up live on the /vintage page
+        v_res = self.client.get('/vintage')
+        self.assertEqual(v_res.status_code, 200)
+        self.assertIn(b'1995 Nirvana In Utero Tour Tee', v_res.data)
+        self.assertIn(b'Single Stitch', v_res.data)
+        self.assertIn(b'XL', v_res.data)
+
+        # 4. Upload a new polo to the studio catalog
+        polo_res = self.client.post('/admin/product/add', data={
+            'title': 'Bespoke Honeycomb Double-Pique Polo',
+            'section': 'studio',
+            'category': 'pique',
+            'price': '26500',
+            'currency': '\xe2\x82\xa6',
+            'badge': 'Tailored Piqu\xc3\xa9',
+            'size': 'S-XXL',
+            'condition': '10/10 Atelier Made',
+            'measurements': 'Onyx Black, Chalk White',
+            'description': 'Handcrafted archival luxury polo.',
+            'image_url': 'https://images.unsplash.com/photo-1586363104862-3a5e2ab60d99?w=900'
+        }, follow_redirects=True)
+        self.assertEqual(polo_res.status_code, 200)
+
+        # 5. Verify it shows up live on /custom-studio
+        studio_res = self.client.get('/custom-studio')
+        self.assertEqual(studio_res.status_code, 200)
+        self.assertIn(b'Bespoke Honeycomb Double-Pique Polo', studio_res.data)
+
 if __name__ == '__main__':
     unittest.main()

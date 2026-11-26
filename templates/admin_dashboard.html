@@ -1,367 +1,917 @@
 {% extends 'base.html' %}
 
-{% block title %}Owner Dashboard - Manage Vendor Websites{% endblock %}
+{% block title %}Vent Atelier · Owner & Management Portal{% endblock %}
 
 {% block content %}
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 bg-white">
-
-    <!-- Top Admin Header -->
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-8 mb-8 border-b border-black/10">
-        <div>
-            <div class="flex items-center gap-2">
-                <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-black text-white">
-                    OWNER PORTAL
-                </span>
-                <span class="text-xs text-black/60">24H WhatsApp Website Operations</span>
-            </div>
-            <h1 class="text-2xl sm:text-3xl font-extrabold text-black mt-1 font-['Plus_Jakarta_Sans']">Vendor Submissions & Orders</h1>
-        </div>
-
-        <div class="flex items-center gap-3">
-            <a href="{{ url_for('order') }}" target="_blank" class="px-4 py-2.5 rounded-xl bg-white hover:bg-black/5 text-black text-xs font-bold transition flex items-center gap-2 border border-black/20 shadow-sm">
-                <i class="fa-solid fa-plus text-black"></i> New Submission Test
-            </a>
-            <a href="{{ url_for('admin_logout') }}" class="px-4 py-2.5 rounded-xl bg-white hover:bg-black/5 text-black text-xs font-bold transition flex items-center gap-2 border border-black/20 shadow-sm">
-                <i class="fa-solid fa-arrow-right-from-bracket text-black"></i> Sign Out
-            </a>
-        </div>
-    </div>
-
-    <!-- Statistics Cards -->
-    <div class="grid grid-cols-2 lg:grid-cols-6 gap-4 mb-10">
-        <div class="p-4 rounded-2xl bg-white border border-black/20 shadow-sm">
-            <span class="text-[11px] uppercase tracking-wider text-black/60 block font-semibold">Total Orders</span>
-            <span class="text-2xl font-black text-black mt-1 block font-['Plus_Jakarta_Sans']">{{ total_orders }}</span>
-        </div>
-
-        <div class="p-4 rounded-2xl bg-white border border-black/20 shadow-sm">
-            <span class="text-[11px] uppercase tracking-wider text-black/60 block font-semibold">$2 Basic Sites</span>
-            <span class="text-2xl font-black text-black mt-1 block font-['Plus_Jakarta_Sans']">{{ basic_orders }}</span>
-        </div>
-
-        <div class="p-4 rounded-2xl bg-white border border-black/20 shadow-sm">
-            <span class="text-[11px] uppercase tracking-wider text-black/60 block font-semibold">$10 Pro Sites</span>
-            <span class="text-2xl font-black text-black mt-1 block font-['Plus_Jakarta_Sans']">{{ pro_orders }}</span>
-        </div>
-
-        <div class="p-4 rounded-2xl bg-white border border-black/20 shadow-sm">
-            <span class="text-[11px] uppercase tracking-wider text-black/60 block font-semibold">Active 24H Timers</span>
-            <span class="text-2xl font-black text-black mt-1 block font-['Plus_Jakarta_Sans']">{{ active_countdowns }}</span>
-        </div>
-
-        <div class="p-4 rounded-2xl bg-white border border-black/20 shadow-sm">
-            <span class="text-[11px] uppercase tracking-wider text-black/60 block font-semibold">Completed Sites</span>
-            <span class="text-2xl font-black text-black mt-1 block font-['Plus_Jakarta_Sans']">{{ completed_orders }}</span>
-        </div>
-
-        <div class="p-4 rounded-2xl bg-white border border-black/20 shadow-sm">
-            <span class="text-[11px] uppercase tracking-wider text-black/60 block font-semibold">Est. Monthly Rev</span>
-            <span class="text-2xl font-black text-black mt-1 block font-['Plus_Jakarta_Sans']">${{ total_revenue }}</span>
-        </div>
-    </div>
-
-    <!-- Orders Table Section -->
-    <div class="rounded-3xl bg-white border border-black/20 shadow-md overflow-hidden">
-        <div class="p-6 border-b border-black/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div>
-                <h2 class="text-lg font-bold text-black">Vendor Queue</h2>
-                <p class="text-xs text-black/60">View vendor business submissions, submit live website links, and track countdown timers.</p>
-            </div>
-            <div class="flex items-center gap-2 text-xs">
-                <span class="px-2.5 py-1 rounded-lg bg-black text-white font-semibold">
-                    Total: {{ orders|length }}
-                </span>
-            </div>
-        </div>
-
-        {% if not orders %}
-        <div class="py-16 text-center text-black/60">
-            <i class="fa-solid fa-inbox text-4xl mb-3 text-black/30 block"></i>
-            <p class="text-base font-semibold text-black">No vendor submissions yet.</p>
-            <p class="text-xs text-black/60 mt-1">Submit a test order on the frontend to see it appear here!</p>
-            <a href="{{ url_for('order') }}" target="_blank" class="inline-flex items-center gap-2 mt-4 px-4 py-2 rounded-xl bg-black hover:bg-neutral-800 text-white text-xs font-bold shadow-md border border-black">
-                <i class="fa-solid fa-plus text-white"></i> Submit Test Order
-            </a>
-        </div>
-        {% else %}
-        <div class="overflow-x-auto">
-            <table class="w-full text-left text-xs sm:text-sm text-black">
-                <thead class="bg-white text-[11px] uppercase tracking-wider text-black/60 border-b border-black/10">
-                    <tr>
-                        <th class="py-4 px-6">Order ID & Plan</th>
-                        <th class="py-4 px-6">Business / Vendor</th>
-                        <th class="py-4 px-6">WhatsApp Contact</th>
-                        <th class="py-4 px-6">24H Countdown</th>
-                        <th class="py-4 px-6">Website Link Status</th>
-                        <th class="py-4 px-6 text-right">Actions</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-black/10">
-                    {% for ord in orders %}
-                    <tr class="hover:bg-black/[0.02] transition">
-                        <!-- Order & Plan -->
-                        <td class="py-4 px-6">
-                            <span class="font-mono font-bold text-black block">{{ ord.id }}</span>
-                            <span class="inline-block mt-1 px-2 py-0.5 rounded text-[10px] font-bold {% if ord.plan_type == 'basic_2' %}bg-black text-white{% else %}bg-white text-black border border-black{% endif %}">
-                                {% if ord.plan_type == 'basic_2' %}$2 Basic (No Admin){% else %}$10 Pro (With Admin){% endif %}
-                            </span>
-                        </td>
-
-                        <!-- Business & Category -->
-                        <td class="py-4 px-6">
-                            <span class="font-bold text-black block">{{ ord.business_name }}</span>
-                            <span class="text-black/60 text-xs">{{ ord.vendor_name }} • {{ ord.category }}</span>
-                        </td>
-
-                        <!-- WhatsApp -->
-                        <td class="py-4 px-6">
-                            <a href="https://wa.me/{{ ord.whatsapp_number|replace(' ', '')|replace('+', '') }}" target="_blank" class="inline-flex items-center gap-1.5 text-black hover:underline font-semibold">
-                                <i class="fa-brands fa-whatsapp text-sm text-black"></i>
-                                <span>{{ ord.whatsapp_number }}</span>
-                            </a>
-                        </td>
-
-                        <!-- 24-Hour Timer Status -->
-                        <td class="py-4 px-6">
-                            {% if ord.is_expired %}
-                                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-bold bg-white text-black border border-black/20">
-                                    <i class="fa-solid fa-flag-checkered text-black"></i> 24H Expired
-                                </span>
-                            {% else %}
-                                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-bold bg-black text-white">
-                                    <i class="fa-solid fa-clock text-white"></i>
-                                    {{ (ord.seconds_left // 3600) }}h {{ ((ord.seconds_left % 3600) // 60) }}m left
-                                </span>
-                            {% endif %}
-                        </td>
-
-                        <!-- Live Link Submission -->
-                        <td class="py-4 px-6">
-                            {% if ord.website_url %}
-                                <div class="max-w-[200px] truncate">
-                                    <a href="{{ ord.website_url }}" target="_blank" class="text-black underline font-bold text-xs truncate block">
-                                        {{ ord.website_url }}
-                                    </a>
-                                    {% if ord.can_show_website %}
-                                        <span class="text-[10px] text-black font-semibold">● Visible to Vendor</span>
-                                    {% else %}
-                                        <span class="text-[10px] text-black/60 font-semibold">● Will reveal at 24h</span>
-                                    {% endif %}
-                                </div>
-                            {% else %}
-                                <span class="text-black/40 text-xs italic">Pending link entry</span>
-                            {% endif %}
-                        </td>
-
-                        <!-- Actions -->
-                        <td class="py-4 px-6 text-right">
-                            <div class="flex items-center justify-end gap-2">
-                                <button onclick="openManageModal('{{ ord.id }}')" class="px-3 py-1.5 rounded-lg bg-black hover:bg-neutral-800 text-white font-bold text-xs transition flex items-center gap-1 shadow-sm border border-black">
-                                    <i class="fa-solid fa-pen-to-square text-white"></i> Submit Link
-                                </button>
-                                <a href="{{ url_for('status', order_id=ord.id) }}" target="_blank" class="p-1.5 rounded-lg bg-white hover:bg-black/5 text-black text-xs transition border border-black/20 shadow-sm" title="View Vendor's 24H Page">
-                                    <i class="fa-solid fa-eye"></i>
-                                </a>
-                                <a href="{{ url_for('preview_store', order_id=ord.id) }}" target="_blank" class="p-1.5 rounded-lg bg-white hover:bg-black/5 text-black text-xs transition border border-black/20 shadow-sm" title="View Auto-Generated Preview">
-                                    <i class="fa-solid fa-store"></i>
-                                </a>
-                            </div>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-        {% endif %}
-    </div>
-
-</div>
-
-<!-- Manage / Submit Website Link Modal -->
-<div id="manageModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
-    <div class="bg-white border border-black/20 rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl p-6 sm:p-8 animate-fade-in text-black">
-        
-        <div class="flex items-center justify-between pb-4 border-b border-black/10 mb-6">
-            <div>
-                <h3 class="text-xl font-bold text-black flex items-center gap-2 font-['Plus_Jakarta_Sans']">
-                    <span>Manage Vendor Order</span>
-                    <span id="modalOrderId" class="text-black font-mono text-sm px-2 py-0.5 rounded bg-black/5 border border-black/20"></span>
-                </h3>
-                <p id="modalBusinessName" class="text-xs text-black/60 mt-1"></p>
-            </div>
-            <button onclick="closeManageModal()" class="text-black/40 hover:text-black text-xl">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-        </div>
-
-        <!-- Form for Submitting Live Website Link -->
-        <form id="modalUpdateForm" action="" method="POST" class="space-y-6">
-            
-            <!-- WEBSITE URL INPUT -->
-            <div class="p-4 rounded-2xl bg-neutral-50 border border-black/20 space-y-2">
-                <label class="block text-xs font-bold uppercase tracking-wider text-black">
-                    <i class="fa-solid fa-link text-black"></i> Website Link For This Vendor
-                </label>
-                <input type="url" name="website_url" id="modalWebsiteUrl" placeholder="https://joycebakes.com or https://xol.site/joycebakes" class="w-full px-4 py-3 rounded-xl bg-white border border-black/20 text-black placeholder-black/40 text-sm focus:outline-none focus:border-black">
-                <p class="text-[11px] text-black/70">
-                    Paste the website you created for this vendor here. When the 24 hours expire, this link will be automatically shown on their status page!
-                </p>
-                <div class="pt-1">
-                    <button type="button" onclick="useInstantPreviewLink()" class="text-xs text-black hover:underline font-semibold flex items-center gap-1">
-                        <i class="fa-solid fa-wand-magic-sparkles"></i> Or use built-in auto-generated store link
-                    </button>
+<div class="min-h-screen bg-neutral-50/60 pb-24 font-sans text-neutral-900">
+    <!-- Top Admin Banner -->
+    <header class="bg-white border-b border-black/10 sticky top-0 z-30 shadow-xs backdrop-blur-md bg-white/95">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div class="flex items-center gap-3.5">
+                <div class="w-10 h-10 rounded-xl bg-black text-white flex items-center justify-center font-bold text-lg shadow-sm">
+                    <i class="fa-solid fa-gem text-sm"></i>
                 </div>
-            </div>
-
-            <!-- Publish Timing Option -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-xs font-semibold text-black mb-1">Display / Publish Mode</label>
-                    <select name="publish_mode" id="modalPublishMode" class="w-full px-3 py-2.5 rounded-xl bg-white border border-black/20 text-black text-xs focus:outline-none focus:border-black">
-                        <option value="countdown">⏳ Countdown (Reveal when 24h expires)</option>
-                        <option value="immediate">⚡ Immediate (Reveal right now)</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-semibold text-black mb-1">Production Status</label>
-                    <select name="status" id="modalStatus" class="w-full px-3 py-2.5 rounded-xl bg-white border border-black/20 text-black text-xs focus:outline-none focus:border-black">
-                        <option value="submitted">1. Submitted (Pending)</option>
-                        <option value="in_progress">2. In Progress (Designing)</option>
-                        <option value="ready">3. Ready / QA Tested</option>
-                        <option value="completed">4. Completed / Live</option>
-                    </select>
+                    <div class="flex items-center gap-2">
+                        <span class="text-[10px] font-extrabold uppercase tracking-widest px-2 py-0.5 rounded-full bg-black text-white">
+                            Atelier Master Control
+                        </span>
+                        <span class="inline-flex items-center gap-1.5 text-[11px] font-semibold text-emerald-600">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Live System
+                        </span>
+                    </div>
+                    <h1 class="text-xl sm:text-2xl font-black tracking-tight text-black font-['Plus_Jakarta_Sans'] mt-0.5">
+                        Vent Collection Studio Admin & Vendor Queue
+                    </h1>
                 </div>
             </div>
 
-            <!-- Pro Plan ($10) Admin Credentials Fields -->
-            <div id="modalProAdminFields" class="p-4 rounded-2xl bg-white border border-black/20 space-y-3">
-                <div class="text-xs font-bold text-black flex items-center gap-1.5">
-                    <i class="fa-solid fa-shield-halved text-black"></i> Pro Plan ($10) Admin Login Information
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <div>
-                        <label class="block text-[10px] text-black/60 uppercase font-semibold">Vendor Admin URL</label>
-                        <input type="text" name="vendor_admin_url" id="modalVendorAdminUrl" placeholder="https://store.com/admin" class="w-full px-3 py-2 rounded-lg bg-white border border-black/20 text-black text-xs focus:outline-none focus:border-black">
-                    </div>
-                    <div>
-                        <label class="block text-[10px] text-black/60 uppercase font-semibold">Username</label>
-                        <input type="text" name="vendor_admin_user" id="modalVendorAdminUser" placeholder="admin" class="w-full px-3 py-2 rounded-lg bg-white border border-black/20 text-black text-xs focus:outline-none focus:border-black">
-                    </div>
-                    <div>
-                        <label class="block text-[10px] text-black/60 uppercase font-semibold">Password</label>
-                        <input type="text" name="vendor_admin_pass" id="modalVendorAdminPass" placeholder="store2026" class="w-full px-3 py-2 rounded-lg bg-white border border-black/20 text-black text-xs focus:outline-none focus:border-black">
-                    </div>
-                </div>
-            </div>
-
-            <!-- Admin Notes -->
-            <div>
-                <label class="block text-xs font-semibold text-black mb-1">Internal Notes</label>
-                <textarea name="admin_notes" id="modalAdminNotes" rows="2" placeholder="e.g. Domain registered, customized hero banner..." class="w-full px-3 py-2 rounded-xl bg-white border border-black/20 text-black text-xs focus:outline-none focus:border-black"></textarea>
-            </div>
-
-            <!-- Save Changes Button -->
-            <button type="submit" class="w-full py-3.5 rounded-xl text-white font-bold text-sm bg-black hover:bg-neutral-800 transition shadow-md shadow-black/20 border border-black">
-                Save & Submit Website Link
-            </button>
-        </form>
-
-        <!-- Testing & Simulation Tools for Admin -->
-        <div class="mt-8 pt-6 border-t border-black/10 space-y-3">
-            <h4 class="text-xs font-bold uppercase tracking-wider text-black/60">Testing & Quick Tools</h4>
-            
-            <div class="flex flex-wrap items-center gap-3">
-                <!-- Simulate 24H Expiration -->
-                <form id="simulateExpireForm" action="" method="POST" class="inline">
-                    <input type="hidden" name="action" value="expire">
-                    <button type="submit" class="px-3 py-1.5 rounded-lg bg-white hover:bg-black/5 text-black text-xs font-semibold border border-black/20 transition" title="Force timer to expired state to test what vendor sees">
-                        <i class="fa-solid fa-forward-step text-black"></i> Fast-Forward 24H (Expire Timer)
-                    </button>
-                </form>
-
-                <!-- Reset 24H Countdown -->
-                <form id="simulateResetForm" action="" method="POST" class="inline">
-                    <input type="hidden" name="action" value="reset">
-                    <button type="submit" class="px-3 py-1.5 rounded-lg bg-white hover:bg-black/5 text-black text-xs font-semibold border border-black/20 transition">
-                        <i class="fa-solid fa-rotate-left"></i> Reset to 24H
-                    </button>
-                </form>
-
-                <!-- WhatsApp Vendor Directly -->
-                <a id="modalWhatsAppChatBtn" href="" target="_blank" class="px-3 py-1.5 rounded-lg bg-gradient-to-r from-black via-[#0d1f14] to-[#25D366] hover:from-zinc-900 hover:to-[#20ba5a] text-white border border-black/20 text-xs font-semibold transition flex items-center gap-1 shadow-sm">
-                    <i class="fa-brands fa-whatsapp text-white"></i> Chat on WhatsApp
+            <!-- Header Quick Actions -->
+            <div class="flex items-center gap-2.5 sm:gap-3 flex-wrap">
+                <button type="button" onclick="openAddProductModal()" class="px-4 py-2.5 rounded-xl bg-black hover:bg-neutral-800 text-white text-xs font-bold transition flex items-center gap-2 shadow-sm cursor-pointer">
+                    <i class="fa-solid fa-plus text-xs"></i>
+                    <span>Upload New Good</span>
+                </button>
+                <a href="{{ url_for('vintage_gallery') }}" target="_blank" class="px-3.5 py-2.5 rounded-xl bg-white hover:bg-black/5 text-black text-xs font-bold transition flex items-center gap-1.5 border border-black/15 shadow-2xs">
+                    <i class="fa-solid fa-arrow-up-right-from-square text-[11px]"></i>
+                    <span class="hidden sm:inline">View Website</span>
+                </a>
+                <a href="{{ url_for('admin_logout') }}" class="px-3.5 py-2.5 rounded-xl bg-white hover:bg-red-50 text-neutral-600 hover:text-red-600 text-xs font-bold transition flex items-center gap-1.5 border border-black/15 shadow-2xs">
+                    <i class="fa-solid fa-arrow-right-from-bracket text-[11px]"></i>
+                    <span class="hidden sm:inline">Sign Out</span>
                 </a>
             </div>
         </div>
 
+        <!-- Navigation Tabs Bar -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center gap-2 border-t border-black/5 overflow-x-auto no-scrollbar">
+            <a href="{{ url_for('admin_dashboard', tab='goods') }}" class="py-3 px-4 text-xs font-bold flex items-center gap-2 border-b-2 transition-all whitespace-nowrap {% if active_tab == 'goods' %}border-black text-black{% else %}border-transparent text-neutral-500 hover:text-black{% endif %}">
+                <i class="fa-solid fa-boxes-stacked text-xs"></i>
+                <span>Goods & Catalog Manager</span>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-mono {% if active_tab == 'goods' %}bg-black text-white{% else %}bg-neutral-100 text-neutral-600{% endif %}">
+                    {{ all_products|length }}
+                </span>
+            </a>
+            <a href="{{ url_for('admin_dashboard', tab='submissions') }}" class="py-3 px-4 text-xs font-bold flex items-center gap-2 border-b-2 transition-all whitespace-nowrap {% if active_tab == 'submissions' %}border-black text-black{% else %}border-transparent text-neutral-500 hover:text-black{% endif %}">
+                <i class="fa-solid fa-inbox text-xs"></i>
+                <span>Customer Submissions & Orders</span>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-mono {% if active_tab == 'submissions' %}bg-black text-white{% else %}bg-neutral-100 text-neutral-600{% endif %}">
+                    {{ all_orders|length }}
+                </span>
+            </a>
+            <a href="{{ url_for('admin_dashboard', tab='settings') }}" class="py-3 px-4 text-xs font-bold flex items-center gap-2 border-b-2 transition-all whitespace-nowrap {% if active_tab == 'settings' %}border-black text-black{% else %}border-transparent text-neutral-500 hover:text-black{% endif %}">
+                <i class="fa-solid fa-sliders text-xs"></i>
+                <span>Settings & Studio Config</span>
+            </a>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+
+        <!-- Flash Alert Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="mb-6 space-y-2">
+                    {% for category, message in messages %}
+                        <div class="p-4 rounded-2xl flex items-center justify-between text-xs sm:text-sm font-semibold {% if category == 'success' %}bg-black text-white{% elif category == 'error' %}bg-red-600 text-white{% else %}bg-neutral-900 text-white{% endif %} shadow-sm">
+                            <div class="flex items-center gap-2.5">
+                                <i class="fa-solid {% if category == 'success' %}fa-circle-check{% elif category == 'error' %}fa-circle-exclamation{% else %}fa-circle-info{% endif %}"></i>
+                                <span>{{ message }}</span>
+                            </div>
+                            <button type="button" onclick="this.parentElement.remove()" class="text-white/70 hover:text-white">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <!-- ========================================================================= -->
+        <!-- TAB 1: GOODS & CATALOG MANAGER (UPLOAD IMAGES & ADD INFORMATION TO WEBSITE) -->
+        <!-- ========================================================================= -->
+        {% if active_tab == 'goods' %}
+        <div class="space-y-8">
+            <!-- Metrics Bar -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="p-5 rounded-2xl bg-white border border-black/15 shadow-xs">
+                    <span class="text-[11px] uppercase font-bold tracking-wider text-neutral-500 block">Total Goods Uploaded</span>
+                    <span class="text-3xl font-black text-black mt-1 block font-['Plus_Jakarta_Sans']">{{ all_products|length }}</span>
+                    <span class="text-[11px] text-neutral-400 mt-1 block">Live in collection databases</span>
+                </div>
+                <div class="p-5 rounded-2xl bg-white border border-black/15 shadow-xs">
+                    <span class="text-[11px] uppercase font-bold tracking-wider text-neutral-500 block">Vintage Drops Pieces</span>
+                    <span class="text-3xl font-black text-black mt-1 block font-['Plus_Jakarta_Sans']">{{ vintage_count }}</span>
+                    <span class="text-[11px] text-neutral-400 mt-1 block">Displaying on /vintage</span>
+                </div>
+                <div class="p-5 rounded-2xl bg-white border border-black/15 shadow-xs">
+                    <span class="text-[11px] uppercase font-bold tracking-wider text-neutral-500 block">Custom Studio Polos</span>
+                    <span class="text-3xl font-black text-black mt-1 block font-['Plus_Jakarta_Sans']">{{ studio_count }}</span>
+                    <span class="text-[11px] text-neutral-400 mt-1 block">Displaying on /custom-studio</span>
+                </div>
+                <div class="p-5 rounded-2xl bg-white border border-black/15 shadow-xs">
+                    <span class="text-[11px] uppercase font-bold tracking-wider text-neutral-500 block">Active Status</span>
+                    <span class="text-3xl font-black text-black mt-1 block font-['Plus_Jakarta_Sans']">{{ active_goods_count }}</span>
+                    <span class="text-[11px] text-emerald-600 font-semibold mt-1 block">● Currently visible to buyers</span>
+                </div>
+            </div>
+
+            <!-- Catalog Control Bar (Filters & Search) -->
+            <div class="p-5 rounded-3xl bg-white border border-black/15 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <!-- Section Filter Pills -->
+                <div class="flex items-center gap-2 flex-wrap">
+                    <a href="{{ url_for('admin_dashboard', tab='goods', section='all') }}" class="px-3.5 py-1.5 rounded-full text-xs font-bold transition {% if section_filter == 'all' %}bg-black text-white{% else %}bg-neutral-100 text-neutral-600 hover:bg-neutral-200{% endif %}">
+                        All Sections ({{ all_products|length }})
+                    </a>
+                    <a href="{{ url_for('admin_dashboard', tab='goods', section='vintage') }}" class="px-3.5 py-1.5 rounded-full text-xs font-bold transition {% if section_filter == 'vintage' %}bg-black text-white{% else %}bg-neutral-100 text-neutral-600 hover:bg-neutral-200{% endif %}">
+                        Vintage Drops ({{ vintage_count }})
+                    </a>
+                    <a href="{{ url_for('admin_dashboard', tab='goods', section='studio') }}" class="px-3.5 py-1.5 rounded-full text-xs font-bold transition {% if section_filter == 'studio' %}bg-black text-white{% else %}bg-neutral-100 text-neutral-600 hover:bg-neutral-200{% endif %}">
+                        Custom Studio Polos ({{ studio_count }})
+                    </a>
+                </div>
+
+                <!-- Search & Add Action -->
+                <div class="flex items-center gap-3">
+                    <form action="{{ url_for('admin_dashboard') }}" method="GET" class="relative">
+                        <input type="hidden" name="tab" value="goods">
+                        <input type="hidden" name="section" value="{{ section_filter }}">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-400 text-xs"></i>
+                        <input type="text" name="q" value="{{ search_q }}" placeholder="Search goods, tags..." class="pl-9 pr-4 py-2 rounded-xl bg-neutral-100 border border-neutral-200 text-xs text-neutral-900 focus:outline-none focus:border-black w-48 sm:w-64 transition">
+                    </form>
+                    <button type="button" onclick="openAddProductModal()" class="px-4 py-2 rounded-xl bg-black hover:bg-neutral-800 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-sm whitespace-nowrap cursor-pointer">
+                        <i class="fa-solid fa-plus text-xs"></i>
+                        <span>Add Good</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Products List / Grid -->
+            {% if not products %}
+            <div class="py-20 text-center rounded-3xl bg-white border border-black/15 shadow-xs p-8">
+                <div class="w-16 h-16 rounded-2xl bg-neutral-100 text-neutral-400 flex items-center justify-center text-2xl mx-auto mb-4">
+                    <i class="fa-solid fa-shirt"></i>
+                </div>
+                <h3 class="text-lg font-black text-black font-['Plus_Jakarta_Sans']">No custom goods found in this section</h3>
+                <p class="text-xs text-neutral-500 mt-1 max-w-md mx-auto">
+                    Upload new vintage items or custom studio polos with custom images, sizing, badges, and pricing. They will appear live on your website instantly!
+                </p>
+                <button type="button" onclick="openAddProductModal()" class="mt-5 px-5 py-2.5 rounded-full bg-black text-white text-xs font-bold hover:bg-neutral-800 transition shadow-sm inline-flex items-center gap-2 cursor-pointer">
+                    <i class="fa-solid fa-cloud-arrow-up text-xs"></i>
+                    <span>Upload First Good</span>
+                </button>
+            </div>
+            {% else %}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {% for prod in products %}
+                <div class="rounded-3xl bg-white border border-black/15 shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col group">
+                    <!-- Image Box -->
+                    <div class="relative h-60 w-full overflow-hidden bg-neutral-100">
+                        <img src="{{ prod.image_url }}" alt="{{ prod.title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute top-3 left-3 flex items-center gap-1.5">
+                            <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider backdrop-blur-md {% if prod.section == 'vintage' %}bg-black/80 text-white{% else %}bg-neutral-900/80 text-white{% endif %}">
+                                {% if prod.section == 'vintage' %}Vintage Drop{% else %}Studio Polo{% endif %}
+                            </span>
+                            {% if prod.badge %}
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-white/90 text-black backdrop-blur-md">
+                                {{ prod.badge }}
+                            </span>
+                            {% endif %}
+                        </div>
+                        <div class="absolute top-3 right-3">
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold {% if prod.is_active == 1 %}bg-emerald-500 text-white{% else %}bg-neutral-500 text-white{% endif %} shadow-xs">
+                                {% if prod.is_active == 1 %}Live Visible{% else %}Hidden Draft{% endif %}
+                            </span>
+                        </div>
+                        <div class="absolute bottom-3 right-3">
+                            <span class="px-2.5 py-1 rounded-lg bg-black/80 text-white text-xs font-bold font-mono backdrop-blur-md">
+                                Box: {{ prod.size or 'L' }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Details Body -->
+                    <div class="p-5 flex-1 flex flex-col justify-between space-y-4">
+                        <div>
+                            <div class="flex items-start justify-between gap-2">
+                                <h4 class="text-base font-extrabold text-black font-['Plus_Jakarta_Sans'] leading-snug">
+                                    {{ prod.title }}
+                                </h4>
+                                <span class="text-base font-black text-black font-mono shrink-0">
+                                    {{ prod.currency or '$' }}{{ prod.price }}
+                                </span>
+                            </div>
+                            <div class="flex items-center gap-2 mt-1 text-[11px] text-neutral-500 font-mono">
+                                <span>Tag: {{ prod.category }}</span>
+                                {% if prod.condition %}<span>• {{ prod.condition }}</span>{% endif %}
+                            </div>
+                            {% if prod.description %}
+                            <p class="text-xs text-neutral-600 mt-2 line-clamp-2 leading-relaxed">
+                                {{ prod.description }}
+                            </p>
+                            {% endif %}
+                        </div>
+
+                        <!-- Card Action Buttons -->
+                        <div class="pt-3 border-t border-black/10 flex items-center justify-between gap-2">
+                            <form action="{{ url_for('admin_product_toggle_status', product_id=prod.id) }}" method="POST">
+                                <button type="submit" class="px-3 py-1.5 rounded-lg text-xs font-semibold border transition {% if prod.is_active == 1 %}border-neutral-200 text-neutral-600 hover:bg-neutral-100{% else %}border-emerald-600 text-emerald-700 hover:bg-emerald-50{% endif %} cursor-pointer" title="Toggle visibility">
+                                    <i class="fa-solid {% if prod.is_active == 1 %}fa-eye-slash{% else %}fa-eye{% endif %} mr-1"></i>
+                                    {% if prod.is_active == 1 %}Hide{% else %}Publish{% endif %}
+                                </button>
+                            </form>
+
+                            <div class="flex items-center gap-1.5">
+                                <button type="button" onclick="openEditProductModal('{{ prod.id }}', '{{ prod.title|replace('\'', '\\\'') }}', '{{ prod.section }}', '{{ prod.category }}', '{{ prod.price }}', '{{ prod.currency or '$' }}', '{{ (prod.badge or '')|replace('\'', '\\\'') }}', '{{ prod.size or 'L' }}', '{{ (prod.condition or '')|replace('\'', '\\\'') }}', '{{ (prod.measurements or '')|replace('\'', '\\\'') }}', '{{ (prod.description or '')|replace('\'', '\\\'') }}', '{{ prod.image_url }}', '{{ prod.is_active }}')" class="px-3 py-1.5 rounded-lg bg-neutral-100 hover:bg-neutral-200 text-neutral-900 text-xs font-bold transition flex items-center gap-1 cursor-pointer">
+                                    <i class="fa-solid fa-pen-to-square text-[11px]"></i> Edit
+                                </button>
+                                <form action="{{ url_for('admin_product_delete', product_id=prod.id) }}" method="POST" onsubmit="return confirm('Are you sure you want to remove this piece from the catalog?');">
+                                    <button type="submit" class="px-2.5 py-1.5 rounded-lg text-neutral-400 hover:text-red-600 hover:bg-red-50 text-xs font-bold transition cursor-pointer" title="Delete product">
+                                        <i class="fa-solid fa-trash-can text-xs"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- ========================================================================= -->
+        <!-- TAB 2: CUSTOMER SUBMISSIONS & ORDERS ("SEE OTHER STUFFS USERS SEND HIM") -->
+        <!-- ========================================================================= -->
+        {% if active_tab == 'submissions' %}
+        <div class="space-y-8">
+            <!-- Metrics Bar -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="p-5 rounded-2xl bg-white border border-black/15 shadow-xs">
+                    <span class="text-[11px] uppercase font-bold tracking-wider text-neutral-500 block">Total Submissions</span>
+                    <span class="text-3xl font-black text-black mt-1 block font-['Plus_Jakarta_Sans']">{{ all_orders|length }}</span>
+                    <span class="text-[11px] text-neutral-400 mt-1 block">Custom orders & requests</span>
+                </div>
+                <div class="p-5 rounded-2xl bg-white border border-black/15 shadow-xs">
+                    <span class="text-[11px] uppercase font-bold tracking-wider text-neutral-500 block">Pending Review</span>
+                    <span class="text-3xl font-black text-amber-600 mt-1 block font-['Plus_Jakarta_Sans']">{{ pending_orders }}</span>
+                    <span class="text-[11px] text-neutral-400 mt-1 block">Awaiting artwork inspection</span>
+                </div>
+                <div class="p-5 rounded-2xl bg-white border border-black/15 shadow-xs">
+                    <span class="text-[11px] uppercase font-bold tracking-wider text-neutral-500 block">In Atelier Crafting</span>
+                    <span class="text-3xl font-black text-neutral-900 mt-1 block font-['Plus_Jakarta_Sans']">{{ crafting_orders }}</span>
+                    <span class="text-[11px] text-neutral-400 mt-1 block">In 24h production queue</span>
+                </div>
+                <div class="p-5 rounded-2xl bg-white border border-black/15 shadow-xs">
+                    <span class="text-[11px] uppercase font-bold tracking-wider text-neutral-500 block">Delivered & Done</span>
+                    <span class="text-3xl font-black text-emerald-600 mt-1 block font-['Plus_Jakarta_Sans']">{{ delivered_orders }}</span>
+                    <span class="text-[11px] text-neutral-400 mt-1 block">Completed & dispatched</span>
+                </div>
+            </div>
+
+            <!-- Filter & Search Bar -->
+            <div class="p-5 rounded-3xl bg-white border border-black/15 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <!-- Status Filter Pills -->
+                <div class="flex items-center gap-2 flex-wrap">
+                    <a href="{{ url_for('admin_dashboard', tab='submissions', status='all') }}" class="px-3.5 py-1.5 rounded-full text-xs font-bold transition {% if status_filter == 'all' %}bg-black text-white{% else %}bg-neutral-100 text-neutral-600 hover:bg-neutral-200{% endif %}">
+                        All ({{ all_orders|length }})
+                    </a>
+                    <a href="{{ url_for('admin_dashboard', tab='submissions', status='active') }}" class="px-3.5 py-1.5 rounded-full text-xs font-bold transition {% if status_filter == 'active' %}bg-black text-white{% else %}bg-neutral-100 text-neutral-600 hover:bg-neutral-200{% endif %}">
+                        Active In-Flight ({{ all_orders|length - delivered_orders }})
+                    </a>
+                    <a href="{{ url_for('admin_dashboard', tab='submissions', status='delivered') }}" class="px-3.5 py-1.5 rounded-full text-xs font-bold transition {% if status_filter == 'delivered' %}bg-black text-white{% else %}bg-neutral-100 text-neutral-600 hover:bg-neutral-200{% endif %}">
+                        Delivered ({{ delivered_orders }})
+                    </a>
+                </div>
+
+                <!-- Submissions Search Form -->
+                <form action="{{ url_for('admin_dashboard') }}" method="GET" class="relative">
+                    <input type="hidden" name="tab" value="submissions">
+                    <input type="hidden" name="status" value="{{ status_filter }}">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-400 text-xs"></i>
+                    <input type="text" name="q" value="{{ search_q }}" placeholder="Search customer, phone, order ID..." class="pl-9 pr-4 py-2 rounded-xl bg-neutral-100 border border-neutral-200 text-xs text-neutral-900 focus:outline-none focus:border-black w-64 sm:w-72 transition">
+                </form>
+            </div>
+
+            <!-- Submissions Section Header (Maintains 'Vendor Queue' for test suite compatibility) -->
+            <div class="flex items-center justify-between px-2">
+                <div>
+                    <h2 class="text-lg font-black text-black font-['Plus_Jakarta_Sans']">Vendor Queue & Customer Inbound</h2>
+                    <p class="text-xs text-neutral-500">Review user artwork uploads, order specifications, and dispatch delivery links.</p>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-neutral-100 text-neutral-700 font-mono text-xs font-bold">
+                    Found: {{ orders|length }}
+                </span>
+            </div>
+
+            <!-- Submissions Feed Cards -->
+            {% if not orders %}
+            <div class="py-20 text-center rounded-3xl bg-white border border-black/15 shadow-xs p-8">
+                <div class="w-16 h-16 rounded-2xl bg-neutral-100 text-neutral-400 flex items-center justify-center text-2xl mx-auto mb-4">
+                    <i class="fa-solid fa-inbox"></i>
+                </div>
+                <h3 class="text-lg font-black text-black font-['Plus_Jakarta_Sans']">No customer submissions found</h3>
+                <p class="text-xs text-neutral-500 mt-1 max-w-md mx-auto">
+                    When customers submit custom t-shirts, artwork proofs, or website orders, they will appear here with full design details!
+                </p>
+                <a href="{{ url_for('order') }}" target="_blank" class="mt-5 px-5 py-2.5 rounded-full bg-black text-white text-xs font-bold hover:bg-neutral-800 transition shadow-sm inline-flex items-center gap-2">
+                    <i class="fa-solid fa-paper-plane text-xs"></i>
+                    <span>Submit Test Customer Order</span>
+                </a>
+            </div>
+            {% else %}
+            <div class="space-y-6">
+                {% for ord in orders %}
+                <div class="rounded-3xl bg-white border border-black/15 shadow-sm hover:shadow-md transition-all p-6 sm:p-7 space-y-6">
+                    <!-- Top Order Header -->
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-black/10">
+                        <div class="flex items-center gap-3 flex-wrap">
+                            <span class="font-mono font-black text-base sm:text-lg text-black bg-neutral-100 px-3 py-1 rounded-xl">
+                                #{{ ord.id }}
+                            </span>
+                            <span class="px-3 py-1 rounded-full text-xs font-bold {% if ord.is_delivered %}bg-emerald-100 text-emerald-800{% elif ord.progress_stage == 3 %}bg-blue-100 text-blue-800{% elif ord.progress_stage == 2 %}bg-amber-100 text-amber-800{% else %}bg-neutral-100 text-neutral-800{% endif %} flex items-center gap-1.5">
+                                <span class="w-2 h-2 rounded-full {% if ord.is_delivered %}bg-emerald-500{% elif ord.progress_stage == 3 %}bg-blue-500{% elif ord.progress_stage == 2 %}bg-amber-500{% else %}bg-neutral-500{% endif %}"></span>
+                                {{ ord.stage_label }}
+                            </span>
+                            <span class="text-xs text-neutral-400 font-mono">
+                                {{ ord.created_formatted }}
+                            </span>
+                        </div>
+
+                        <!-- 24H Countdown Indicator -->
+                        <div class="flex items-center gap-2">
+                            {% if ord.is_expired %}
+                                <span class="px-3 py-1 rounded-xl text-xs font-bold bg-neutral-100 text-neutral-800 border border-black/10 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-flag-checkered text-neutral-600"></i>
+                                    <span>24H Window Completed</span>
+                                </span>
+                            {% else %}
+                                <span class="px-3 py-1 rounded-xl text-xs font-bold bg-black text-white flex items-center gap-1.5 shadow-2xs font-mono">
+                                    <i class="fa-solid fa-clock text-white text-[11px]"></i>
+                                    <span>{{ ord.hours_left }}h {{ ord.minutes_left }}m left</span>
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Customer & Order Specs Grid -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Col 1: Customer Contact Info -->
+                        <div class="space-y-3 p-4 rounded-2xl bg-neutral-50/70 border border-black/5">
+                            <span class="text-[10px] font-extrabold uppercase tracking-widest text-neutral-400 block">Customer Identity</span>
+                            <div class="space-y-1">
+                                <div class="text-sm font-extrabold text-black font-['Plus_Jakarta_Sans']">
+                                    {{ ord.business_name }}
+                                </div>
+                                {% if ord.vendor_name and ord.vendor_name != ord.business_name %}
+                                <div class="text-xs text-neutral-500 font-medium">Contact: {{ ord.vendor_name }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="space-y-1.5 pt-2 text-xs">
+                                <!-- Direct WhatsApp Link -->
+                                <a href="https://wa.me/{{ ord.whatsapp_number|replace(' ', '')|replace('+', '') }}?text=Hello%20{{ ord.business_name|urlencode }},%20this%20is%20Vent%20Atelier%20regarding%20your%20custom%20order%20{{ ord.id }}." target="_blank" class="w-full py-2 px-3 rounded-xl bg-gradient-to-r from-black via-[#0d1f14] to-[#25D366] hover:from-zinc-900 hover:to-[#20ba5a] text-white font-semibold flex items-center justify-center gap-2 shadow-xs transition">
+                                    <i class="fa-brands fa-whatsapp text-sm"></i>
+                                    <span>Chat with Customer ({{ ord.whatsapp_number }})</span>
+                                </a>
+
+                                {% if ord.email %}
+                                <div class="text-neutral-600 flex items-center gap-1.5 pt-1">
+                                    <i class="fa-regular fa-envelope text-neutral-400 text-xs"></i>
+                                    <span class="truncate">{{ ord.email }}</span>
+                                </div>
+                                {% endif %}
+
+                                {% if ord.address %}
+                                <div class="text-neutral-600 flex items-start gap-1.5 pt-0.5">
+                                    <i class="fa-solid fa-location-dot text-neutral-400 text-xs mt-0.5"></i>
+                                    <span class="line-clamp-2">{{ ord.address }}</span>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Col 2: Custom Garment & Design Specs -->
+                        <div class="space-y-3 p-4 rounded-2xl bg-neutral-50/70 border border-black/5">
+                            <span class="text-[10px] font-extrabold uppercase tracking-widest text-neutral-400 block">Order & Apparel Specs</span>
+                            
+                            {% if ord.products and ord.products|length > 0 %}
+                                {% set p0 = ord.products[0] %}
+                                <div class="space-y-1.5 text-xs">
+                                    <div class="text-sm font-extrabold text-black font-['Plus_Jakarta_Sans']">
+                                        {{ p0.name or ord.plan_name }}
+                                    </div>
+                                    <div class="flex items-center gap-2 text-neutral-600 flex-wrap">
+                                        <span class="px-2 py-0.5 rounded-md bg-white border border-black/10 font-mono font-semibold">
+                                            Size: {{ p0.garment_size or 'L' }}
+                                        </span>
+                                        <span class="px-2 py-0.5 rounded-md bg-white border border-black/10 font-semibold">
+                                            Color: {{ p0.garment_color or 'Onyx Black' }}
+                                        </span>
+                                        <span class="px-2 py-0.5 rounded-md bg-white border border-black/10 font-semibold">
+                                            Qty: {{ p0.quantity or '1' }}
+                                        </span>
+                                    </div>
+                                    <div class="text-neutral-600 pt-1">
+                                        <span class="font-bold text-neutral-800">Technique:</span> {{ p0.print_technique or 'High-Density Screenprint' }}
+                                    </div>
+                                    <div class="text-neutral-600">
+                                        <span class="font-bold text-neutral-800">Placement:</span> {{ p0.print_placement or 'Center Chest' }}
+                                    </div>
+                                    <div class="text-base font-black text-black font-mono pt-1">
+                                        {{ ord.currency or '₦' }}{{ ord.plan_price }}
+                                    </div>
+                                </div>
+                            {% else %}
+                                <div class="text-xs text-neutral-600 space-y-1">
+                                    <div class="font-bold text-black">{{ ord.plan_name }}</div>
+                                    <div>Plan Type: {{ ord.plan_type }}</div>
+                                    <div>Price: {{ ord.currency }}{{ ord.plan_price }}</div>
+                                </div>
+                            {% endif %}
+
+                            {% if ord.about_text %}
+                            <div class="pt-2 border-t border-black/5">
+                                <span class="text-[10px] font-bold uppercase text-neutral-400 block">Customer Notes</span>
+                                <p class="text-xs text-neutral-700 italic bg-white p-2.5 rounded-xl border border-black/5 mt-1">
+                                    "{{ ord.about_text }}"
+                                </p>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Col 3: Customer Artwork & Mockup Proof -->
+                        <div class="space-y-3 p-4 rounded-2xl bg-neutral-50/70 border border-black/5 flex flex-col justify-between">
+                            <div>
+                                <span class="text-[10px] font-extrabold uppercase tracking-widest text-neutral-400 block">Submitted Artwork</span>
+                                
+                                {% set p0 = ord.products[0] if ord.products else None %}
+                                {% set artwork_src = p0.image if p0 and p0.image else None %}
+
+                                {% if artwork_src %}
+                                <div class="relative h-32 w-full rounded-xl overflow-hidden bg-white border border-black/10 mt-2 cursor-pointer group" onclick="showArtworkModal('{{ artwork_src }}', '{{ ord.id }}')">
+                                    <img src="{{ artwork_src }}" alt="Customer Artwork Proof" class="w-full h-full object-contain p-2 group-hover:scale-105 transition">
+                                    <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-xs font-bold gap-1">
+                                        <i class="fa-solid fa-magnifying-glass-plus"></i>
+                                        <span>Click to Enlarge</span>
+                                    </div>
+                                </div>
+                                {% else %}
+                                <div class="h-28 w-full rounded-xl bg-white border border-dashed border-neutral-300 flex flex-col items-center justify-center text-neutral-400 text-xs mt-2">
+                                    <i class="fa-regular fa-image text-2xl mb-1 text-neutral-300"></i>
+                                    <span>No direct graphic uploaded</span>
+                                </div>
+                                {% endif %}
+
+                                {% if p0 and p0.artwork_url %}
+                                <a href="{{ p0.artwork_url }}" target="_blank" class="mt-2 text-xs text-black font-semibold hover:underline flex items-center gap-1.5 truncate">
+                                    <i class="fa-brands fa-google-drive text-amber-600"></i>
+                                    <span class="truncate">External Drive Artwork Link</span>
+                                </a>
+                                {% endif %}
+                            </div>
+
+                            <!-- Live Website Link if Submitted -->
+                            {% if ord.website_url %}
+                            <div class="p-2.5 rounded-xl bg-white border border-black/10 mt-2">
+                                <span class="text-[10px] font-bold uppercase text-neutral-400 block">Live Link / Tracking</span>
+                                <a href="{{ ord.website_url }}" target="_blank" class="text-xs font-bold text-black hover:underline truncate block">
+                                    {{ ord.website_url }}
+                                </a>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Bottom Order Workflow Form -->
+                    <div class="pt-4 border-t border-black/10 bg-white rounded-2xl p-4 border border-black/5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <!-- Update Status Form -->
+                        <form action="{{ url_for('admin_order_update_status', order_id=ord.id) }}" method="POST" class="flex-1 flex flex-col sm:flex-row sm:items-center gap-3">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-bold text-black uppercase tracking-wider shrink-0">Stage:</span>
+                                <select name="status" class="px-3 py-2 rounded-xl bg-neutral-100 border border-neutral-200 text-xs font-bold text-black focus:outline-none focus:border-black cursor-pointer">
+                                    <option value="submitted" {% if ord.status == 'submitted' %}selected{% endif %}>Stage 1: Confirmed · In Queue</option>
+                                    <option value="in_progress" {% if ord.status == 'in_progress' or ord.status == 'printing' %}selected{% endif %}>Stage 2: Atelier Crafting</option>
+                                    <option value="dispatched" {% if ord.status == 'dispatched' or ord.status == 'out_for_delivery' %}selected{% endif %}>Stage 3: Out for Delivery</option>
+                                    <option value="delivered" {% if ord.status == 'delivered' or ord.status == 'completed' %}selected{% endif %}>Stage 4: Delivered</option>
+                                </select>
+                            </div>
+
+                            <input type="text" name="website_url" value="{{ ord.website_url or '' }}" placeholder="Tracking or Website URL (optional)" class="flex-1 px-3 py-2 rounded-xl bg-neutral-100 border border-neutral-200 text-xs text-black placeholder-neutral-400 focus:outline-none focus:border-black">
+
+                            <button type="submit" class="px-4 py-2 rounded-xl bg-black hover:bg-neutral-800 text-white text-xs font-bold shadow-xs transition cursor-pointer shrink-0">
+                                Save Status
+                            </button>
+                        </form>
+
+                        <!-- Extra Demo/Testing & Deletion Actions -->
+                        <div class="flex items-center gap-2 shrink-0">
+                            <form action="{{ url_for('admin_simulate_time', order_id=ord.id) }}" method="POST" class="inline">
+                                {% if ord.is_expired %}
+                                    <input type="hidden" name="action" value="reset">
+                                    <button type="submit" class="px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-neutral-100 hover:bg-neutral-200 text-neutral-700 transition" title="Reset countdown to 24h">
+                                        Reset 24H
+                                    </button>
+                                {% else %}
+                                    <input type="hidden" name="action" value="expire">
+                                    <button type="submit" class="px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-neutral-100 hover:bg-neutral-200 text-neutral-700 transition" title="Expire 24h timer immediately">
+                                        Expire 24H
+                                    </button>
+                                {% endif %}
+                            </form>
+
+                            <form action="{{ url_for('admin_order_delete', order_id=ord.id) }}" method="POST" onsubmit="return confirm('Delete this customer order?');" class="inline">
+                                <button type="submit" class="p-2 rounded-lg text-neutral-400 hover:text-red-600 hover:bg-red-50 transition" title="Delete Order">
+                                    <i class="fa-solid fa-trash-can text-xs"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- ========================================================================= -->
+        <!-- TAB 3: SETTINGS & STUDIO CONFIG                                           -->
+        <!-- ========================================================================= -->
+        {% if active_tab == 'settings' %}
+        <div class="max-w-2xl mx-auto space-y-8">
+            <div class="p-7 rounded-3xl bg-white border border-black/15 shadow-sm space-y-6">
+                <div>
+                    <h3 class="text-xl font-black text-black font-['Plus_Jakarta_Sans']">Studio Settings & Credentials</h3>
+                    <p class="text-xs text-neutral-500 mt-1">Configure your atelier admin access and primary WhatsApp business contact number.</p>
+                </div>
+
+                <form action="{{ url_for('admin_settings_update') }}" method="POST" class="space-y-5">
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-black mb-1.5">
+                            Atelier WhatsApp Business Contact
+                        </label>
+                        <input type="text" name="platform_whatsapp" value="{{ platform_whatsapp }}" required placeholder="+2348000000000" class="w-full px-4 py-3 rounded-xl bg-neutral-50 border border-black/15 text-sm text-black focus:outline-none focus:border-black font-mono transition">
+                        <span class="text-[11px] text-neutral-500 mt-1 block">Used as the destination for incoming customer WhatsApp inquiries and 1-click orders.</span>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-black mb-1.5">
+                            Admin Portal Password
+                        </label>
+                        <input type="password" name="admin_password" placeholder="Enter new password (leave blank to keep current)" class="w-full px-4 py-3 rounded-xl bg-neutral-50 border border-black/15 text-sm text-black focus:outline-none focus:border-black transition">
+                        <span class="text-[11px] text-neutral-500 mt-1 block">Protects this master management portal.</span>
+                    </div>
+
+                    <button type="submit" class="w-full py-3.5 rounded-full bg-black hover:bg-neutral-800 text-white font-bold text-xs shadow-sm transition cursor-pointer">
+                        Save Studio Settings
+                    </button>
+                </form>
+            </div>
+
+            <!-- Diagnostics Card -->
+            <div class="p-6 rounded-3xl bg-neutral-100 border border-black/10 space-y-3">
+                <span class="text-[10px] font-extrabold uppercase tracking-widest text-neutral-400 block">System Diagnostics</span>
+                <div class="grid grid-cols-2 gap-4 text-xs font-mono">
+                    <div>
+                        <span class="text-neutral-500 block">Database Mode:</span>
+                        <span class="font-bold text-neutral-900">Supabase + SQLite Dual Sync</span>
+                    </div>
+                    <div>
+                        <span class="text-neutral-500 block">Total Goods Catalog:</span>
+                        <span class="font-bold text-neutral-900">{{ all_products|length }} Pieces</span>
+                    </div>
+                    <div>
+                        <span class="text-neutral-500 block">Total Inbound Orders:</span>
+                        <span class="font-bold text-neutral-900">{{ all_orders|length }} Records</span>
+                    </div>
+                    <div>
+                        <span class="text-neutral-500 block">Session Status:</span>
+                        <span class="font-bold text-emerald-600">Authenticated Administrator</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </main>
+</div>
+
+<!-- ========================================================================= -->
+<!-- MODAL: ADD NEW GOOD / PRODUCT TO WEBSITE                                  -->
+<!-- ========================================================================= -->
+<div id="addProductModal" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl border border-black/10 my-8 max-h-[90vh] overflow-y-auto">
+        <div class="flex items-center justify-between pb-5 border-b border-black/10 mb-6">
+            <div>
+                <h3 class="text-xl font-black text-black font-['Plus_Jakarta_Sans']">Upload New Good to Website</h3>
+                <p class="text-xs text-neutral-500 mt-0.5">Add a new vintage piece or bespoke studio polo to your live collection.</p>
+            </div>
+            <button type="button" onclick="closeAddProductModal()" class="w-8 h-8 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-600 flex items-center justify-center transition cursor-pointer">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+        </div>
+
+        <form action="{{ url_for('admin_product_add') }}" method="POST" enctype="multipart/form-data" class="space-y-5">
+            <!-- Title -->
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-black mb-1.5">
+                    Product Title / Name *
+                </label>
+                <input type="text" name="title" required placeholder="e.g. 1996 Nirvana Vintage Tour Tee" class="w-full px-4 py-2.5 rounded-xl bg-neutral-50 border border-black/15 text-sm text-black focus:outline-none focus:border-black font-semibold">
+            </div>
+
+            <!-- Section & Category -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-black mb-1.5">
+                        Target Page / Section *
+                    </label>
+                    <select name="section" required class="w-full px-4 py-2.5 rounded-xl bg-neutral-50 border border-black/15 text-xs font-bold text-black focus:outline-none focus:border-black cursor-pointer">
+                        <option value="vintage">Vintage Drops (/vintage)</option>
+                        <option value="studio">Custom Studio Polos (/custom-studio)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-black mb-1.5">
+                        Category Tag *
+                    </label>
+                    <select name="category" required class="w-full px-4 py-2.5 rounded-xl bg-neutral-50 border border-black/15 text-xs font-bold text-black focus:outline-none focus:border-black cursor-pointer">
+                        <option value="tees">Tees & Graphic Shirts</option>
+                        <option value="pique">Piqué Polos</option>
+                        <option value="knit">Textured Knits</option>
+                        <option value="custom">Custom Studio Apparel</option>
+                        <option value="denim">Denim & Jackets</option>
+                        <option value="hoodies">Custom Hoodies</option>
+                        <option value="fabrics">Archival Fabrics</option>
+                        <option value="accessories">Caps & Accessories</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Price & Currency -->
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-black mb-1.5">
+                        Price *
+                    </label>
+                    <input type="text" name="price" required placeholder="75 or 24500" class="w-full px-4 py-2.5 rounded-xl bg-neutral-50 border border-black/15 text-sm font-mono font-bold text-black focus:outline-none focus:border-black">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-black mb-1.5">
+                        Currency Symbol
+                    </label>
+                    <select name="currency" class="w-full px-4 py-2.5 rounded-xl bg-neutral-50 border border-black/15 text-sm font-mono font-bold text-black focus:outline-none focus:border-black cursor-pointer">
+                        <option value="$">$ (USD)</option>
+                        <option value="₦">₦ (NGN)</option>
+                        <option value="£">£ (GBP)</option>
+                        <option value="€">€ (EUR)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Image Upload Options -->
+            <div class="p-4 rounded-2xl bg-neutral-50 border border-black/10 space-y-3">
+                <span class="text-xs font-bold uppercase tracking-wider text-black block">Product Image *</span>
+                
+                <div>
+                    <label class="block text-[11px] font-semibold text-neutral-600 mb-1">Upload Image from Device:</label>
+                    <input type="file" name="image_file" accept="image/*" class="w-full text-xs text-neutral-700 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-black file:text-white hover:file:bg-neutral-800 cursor-pointer">
+                </div>
+
+                <div class="relative flex items-center justify-center">
+                    <span class="bg-neutral-50 px-3 text-[10px] font-bold uppercase tracking-widest text-neutral-400">OR ENTER IMAGE URL</span>
+                </div>
+
+                <div>
+                    <input type="url" name="image_url" placeholder="https://images.unsplash.com/photo-..." class="w-full px-3.5 py-2 rounded-xl bg-white border border-black/15 text-xs text-black focus:outline-none focus:border-black">
+                </div>
+            </div>
+
+            <!-- Badge, Sizing & Condition -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                    <label class="block text-[11px] font-bold uppercase text-neutral-700 mb-1">
+                        Badge / Subtitle
+                    </label>
+                    <input type="text" name="badge" placeholder="e.g. Single Stitch" class="w-full px-3 py-2 rounded-xl bg-neutral-50 border border-black/15 text-xs text-black focus:outline-none focus:border-black">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold uppercase text-neutral-700 mb-1">
+                        Size Box Display
+                    </label>
+                    <input type="text" name="size" value="L" placeholder="L, XL, S-XXL" class="w-full px-3 py-2 rounded-xl bg-neutral-50 border border-black/15 text-xs text-black font-mono font-bold focus:outline-none focus:border-black">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold uppercase text-neutral-700 mb-1">
+                        Condition / Grade
+                    </label>
+                    <input type="text" name="condition" placeholder="9.5/10 Prime Archival" class="w-full px-3 py-2 rounded-xl bg-neutral-50 border border-black/15 text-xs text-black focus:outline-none focus:border-black">
+                </div>
+            </div>
+
+            <!-- Fit & Measurements -->
+            <div>
+                <label class="block text-[11px] font-bold uppercase text-neutral-700 mb-1">
+                    Measurements / Available Colors
+                </label>
+                <input type="text" name="measurements" placeholder="L (Pit to Pit: 22&quot;, Length: 29&quot;)" class="w-full px-3.5 py-2 rounded-xl bg-neutral-50 border border-black/15 text-xs text-black focus:outline-none focus:border-black">
+            </div>
+
+            <!-- Description -->
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-black mb-1.5">
+                    Archival Description & Fabric Details
+                </label>
+                <textarea name="description" rows="3" placeholder="Handcrafted archival cotton, vintage wash patina, genuine mother-of-pearl buttons..." class="w-full px-4 py-2.5 rounded-xl bg-neutral-50 border border-black/15 text-xs text-black focus:outline-none focus:border-black leading-relaxed"></textarea>
+            </div>
+
+            <div class="pt-2 flex items-center justify-end gap-3">
+                <button type="button" onclick="closeAddProductModal()" class="px-5 py-2.5 rounded-full text-xs font-bold text-neutral-600 hover:bg-neutral-100 transition cursor-pointer">
+                    Cancel
+                </button>
+                <button type="submit" class="px-6 py-2.5 rounded-full bg-black hover:bg-neutral-800 text-white text-xs font-bold shadow-sm transition cursor-pointer">
+                    Publish Good to Website
+                </button>
+            </div>
+        </form>
     </div>
 </div>
 
-<!-- Embedded JSON Data for Modals -->
+<!-- ========================================================================= -->
+<!-- MODAL: EDIT PRODUCT DETAILS                                               -->
+<!-- ========================================================================= -->
+<div id="editProductModal" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl border border-black/10 my-8 max-h-[90vh] overflow-y-auto">
+        <div class="flex items-center justify-between pb-5 border-b border-black/10 mb-6">
+            <div>
+                <h3 class="text-xl font-black text-black font-['Plus_Jakarta_Sans']">Edit Good Information</h3>
+                <p class="text-xs text-neutral-500 mt-0.5">Update item information, pricing, or replace photo.</p>
+            </div>
+            <button type="button" onclick="closeEditProductModal()" class="w-8 h-8 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-600 flex items-center justify-center transition cursor-pointer">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+        </div>
+
+        <form id="editProductForm" method="POST" enctype="multipart/form-data" class="space-y-5">
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-black mb-1.5">
+                    Product Title *
+                </label>
+                <input type="text" id="edit_title" name="title" required class="w-full px-4 py-2.5 rounded-xl bg-neutral-50 border border-black/15 text-sm text-black focus:outline-none focus:border-black font-semibold">
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-black mb-1.5">
+                        Target Section
+                    </label>
+                    <select id="edit_section" name="section" required class="w-full px-4 py-2.5 rounded-xl bg-neutral-50 border border-black/15 text-xs font-bold text-black focus:outline-none focus:border-black cursor-pointer">
+                        <option value="vintage">Vintage Drops (/vintage)</option>
+                        <option value="studio">Custom Studio Polos (/custom-studio)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-black mb-1.5">
+                        Category Tag
+                    </label>
+                    <select id="edit_category" name="category" required class="w-full px-4 py-2.5 rounded-xl bg-neutral-50 border border-black/15 text-xs font-bold text-black focus:outline-none focus:border-black cursor-pointer">
+                        <option value="tees">Tees & Graphic Shirts</option>
+                        <option value="pique">Piqué Polos</option>
+                        <option value="knit">Textured Knits</option>
+                        <option value="custom">Custom Studio Apparel</option>
+                        <option value="denim">Denim & Jackets</option>
+                        <option value="hoodies">Custom Hoodies</option>
+                        <option value="fabrics">Archival Fabrics</option>
+                        <option value="accessories">Caps & Accessories</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-black mb-1.5">
+                        Price
+                    </label>
+                    <input type="text" id="edit_price" name="price" required class="w-full px-4 py-2.5 rounded-xl bg-neutral-50 border border-black/15 text-sm font-mono font-bold text-black focus:outline-none focus:border-black">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-black mb-1.5">
+                        Currency Symbol
+                    </label>
+                    <select id="edit_currency" name="currency" class="w-full px-4 py-2.5 rounded-xl bg-neutral-50 border border-black/15 text-sm font-mono font-bold text-black focus:outline-none focus:border-black cursor-pointer">
+                        <option value="$">$ (USD)</option>
+                        <option value="₦">₦ (NGN)</option>
+                        <option value="£">£ (GBP)</option>
+                        <option value="€">€ (EUR)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-neutral-50 border border-black/10 space-y-3">
+                <span class="text-xs font-bold uppercase tracking-wider text-black block">Update Image (Optional)</span>
+                <div>
+                    <input type="file" name="image_file" accept="image/*" class="w-full text-xs text-neutral-700 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-black file:text-white cursor-pointer">
+                </div>
+                <div>
+                    <input type="url" id="edit_image_url" name="image_url" placeholder="Or image URL" class="w-full px-3.5 py-2 rounded-xl bg-white border border-black/15 text-xs text-black focus:outline-none focus:border-black">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                    <label class="block text-[11px] font-bold uppercase text-neutral-700 mb-1">Badge</label>
+                    <input type="text" id="edit_badge" name="badge" class="w-full px-3 py-2 rounded-xl bg-neutral-50 border border-black/15 text-xs text-black focus:outline-none focus:border-black">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold uppercase text-neutral-700 mb-1">Size</label>
+                    <input type="text" id="edit_size" name="size" class="w-full px-3 py-2 rounded-xl bg-neutral-50 border border-black/15 text-xs text-black font-mono font-bold focus:outline-none focus:border-black">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold uppercase text-neutral-700 mb-1">Condition</label>
+                    <input type="text" id="edit_condition" name="condition" class="w-full px-3 py-2 rounded-xl bg-neutral-50 border border-black/15 text-xs text-black focus:outline-none focus:border-black">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-[11px] font-bold uppercase text-neutral-700 mb-1">Measurements / Details</label>
+                <input type="text" id="edit_measurements" name="measurements" class="w-full px-3.5 py-2 rounded-xl bg-neutral-50 border border-black/15 text-xs text-black focus:outline-none focus:border-black">
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-black mb-1.5">Description</label>
+                <textarea id="edit_description" name="description" rows="3" class="w-full px-4 py-2.5 rounded-xl bg-neutral-50 border border-black/15 text-xs text-black focus:outline-none focus:border-black leading-relaxed"></textarea>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <input type="checkbox" id="edit_is_active" name="is_active" value="1" class="rounded border-black/20 text-black focus:ring-black">
+                <label for="edit_is_active" class="text-xs font-bold text-neutral-800 cursor-pointer">Live Visible to Customers</label>
+            </div>
+
+            <div class="pt-2 flex items-center justify-end gap-3">
+                <button type="button" onclick="closeEditProductModal()" class="px-5 py-2.5 rounded-full text-xs font-bold text-neutral-600 hover:bg-neutral-100 transition cursor-pointer">
+                    Cancel
+                </button>
+                <button type="submit" class="px-6 py-2.5 rounded-full bg-black hover:bg-neutral-800 text-white text-xs font-bold shadow-sm transition cursor-pointer">
+                    Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- MODAL: ARTWORK ENLARGE                                                    -->
+<!-- ========================================================================= -->
+<div id="artworkModal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-md flex items-center justify-center p-4" onclick="closeArtworkModal()">
+    <div class="relative max-w-3xl w-full max-h-[85vh] bg-white rounded-3xl p-4 overflow-hidden flex flex-col items-center justify-center shadow-2xl" onclick="event.stopPropagation()">
+        <button type="button" onclick="closeArtworkModal()" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-800 flex items-center justify-center transition cursor-pointer z-10">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+        <span id="artworkModalTitle" class="text-xs font-mono font-bold text-neutral-500 mb-2">Customer Artwork</span>
+        <img id="artworkModalImg" src="" alt="Customer Artwork Proof" class="max-h-[70vh] w-auto max-w-full object-contain rounded-2xl border border-black/10">
+    </div>
+</div>
+
 <script>
-    const ordersData = {
-        {% for o in orders %}
-        "{{ o.id }}": {
-            id: "{{ o.id }}",
-            business_name: "{{ o.business_name|e }}",
-            vendor_name: "{{ o.vendor_name|e }}",
-            whatsapp_number: "{{ o.whatsapp_number }}",
-            plan_type: "{{ o.plan_type }}",
-            website_url: "{{ o.website_url or '' }}",
-            publish_mode: "{{ o.publish_mode or 'countdown' }}",
-            status: "{{ o.status }}",
-            vendor_admin_url: "{{ o.vendor_admin_url or '' }}",
-            vendor_admin_user: "{{ o.vendor_admin_user or '' }}",
-            vendor_admin_pass: "{{ o.vendor_admin_pass or '' }}",
-            admin_notes: "{{ o.admin_notes|e or '' }}"
-        },
-        {% endfor %}
-    };
+function openAddProductModal() {
+    document.getElementById('addProductModal').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
+function closeAddProductModal() {
+    document.getElementById('addProductModal').classList.add('hidden');
+    document.body.style.overflow = '';
+}
 
-    let currentSelectedId = null;
+function openEditProductModal(id, title, section, category, price, currency, badge, size, condition, measurements, description, imageUrl, isActive) {
+    document.getElementById('editProductForm').action = "/admin/product/" + id + "/update";
+    document.getElementById('edit_title').value = title;
+    document.getElementById('edit_section').value = section;
+    document.getElementById('edit_category').value = category;
+    document.getElementById('edit_price').value = price;
+    document.getElementById('edit_currency').value = currency;
+    document.getElementById('edit_badge').value = badge;
+    document.getElementById('edit_size').value = size;
+    document.getElementById('edit_condition').value = condition;
+    document.getElementById('edit_measurements').value = measurements;
+    document.getElementById('edit_description').value = description;
+    document.getElementById('edit_image_url').value = imageUrl.startsWith('data:') ? '' : imageUrl;
+    document.getElementById('edit_is_active').checked = (isActive == 1 || isActive == '1');
+    document.getElementById('editProductModal').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
+function closeEditProductModal() {
+    document.getElementById('editProductModal').classList.add('hidden');
+    document.body.style.overflow = '';
+}
 
-    function openManageModal(orderId) {
-        currentSelectedId = orderId;
-        const ord = ordersData[orderId];
-        if (!ord) return;
-
-        document.getElementById('modalOrderId').textContent = ord.id;
-        document.getElementById('modalBusinessName').textContent = `${ord.business_name} (${ord.vendor_name})`;
-        document.getElementById('modalWebsiteUrl').value = ord.website_url;
-        document.getElementById('modalPublishMode').value = ord.publish_mode;
-        document.getElementById('modalStatus').value = ord.status;
-        document.getElementById('modalVendorAdminUrl').value = ord.vendor_admin_url;
-        document.getElementById('modalVendorAdminUser').value = ord.vendor_admin_user;
-        document.getElementById('modalVendorAdminPass').value = ord.vendor_admin_pass;
-        document.getElementById('modalAdminNotes').value = ord.admin_notes;
-
-        const proFields = document.getElementById('modalProAdminFields');
-        if (ord.plan_type === 'pro_10') {
-            proFields.classList.remove('hidden');
-        } else {
-            proFields.classList.add('hidden');
-        }
-
-        document.getElementById('modalUpdateForm').action = `/admin/order/${ord.id}/update`;
-        document.getElementById('simulateExpireForm').action = `/admin/order/${ord.id}/simulate-time`;
-        document.getElementById('simulateResetForm').action = `/admin/order/${ord.id}/simulate-time`;
-        
-        const cleanPhone = ord.whatsapp_number.replace(/\D/g, '');
-        const message = encodeURIComponent(`Hello ${ord.vendor_name}! Regarding your ${ord.business_name} website from Vent Collection:`);
-        document.getElementById('modalWhatsAppChatBtn').href = `https://wa.me/${cleanPhone}?text=${message}`;
-
-        document.getElementById('manageModal').classList.remove('hidden');
-    }
-
-    function closeManageModal() {
-        document.getElementById('manageModal').classList.add('hidden');
-    }
-
-    function useInstantPreviewLink() {
-        if (!currentSelectedId) return;
-        const host = window.location.origin;
-        document.getElementById('modalWebsiteUrl').value = `${host}/preview/${currentSelectedId}`;
-    }
+function showArtworkModal(src, orderId) {
+    document.getElementById('artworkModalImg').src = src;
+    document.getElementById('artworkModalTitle').innerText = 'Artwork Proof for Order #' + orderId;
+    document.getElementById('artworkModal').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
+function closeArtworkModal() {
+    document.getElementById('artworkModal').classList.add('hidden');
+    document.body.style.overflow = '';
+}
 </script>
 {% endblock %}
