@@ -15,39 +15,46 @@ from db import (
 )
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-UPLOAD_FOLDER = os.path.join(BASE_DIR, 'static', 'uploads')
-os.makedirs(os.path.join(UPLOAD_FOLDER, 'products'), exist_ok=True)
-os.makedirs(os.path.join(UPLOAD_FOLDER, 'artworks'), exist_ok=True)
+if os.environ.get('VERCEL'):
+    UPLOAD_FOLDER = '/tmp/uploads'
+else:
+    UPLOAD_FOLDER = os.path.join(BASE_DIR, 'static', 'uploads')
+
+try:
+    os.makedirs(os.path.join(UPLOAD_FOLDER, 'products'), exist_ok=True)
+    os.makedirs(os.path.join(UPLOAD_FOLDER, 'artworks'), exist_ok=True)
+except Exception:
+    pass
+
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp', 'gif', 'svg'}
 
 def allowed_image_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def handle_image_storage(file_storage, fallback_url=''):
-    """Saves uploaded image file to static/uploads/products and returns the URL or base64 URI, or fallback_url."""
+    """Saves uploaded image file or converts to base64 data URI for reliable display anywhere."""
     if file_storage and file_storage.filename and allowed_image_file(file_storage.filename):
         sec_name = secure_filename(file_storage.filename)
-        timestamp = datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')
-        rand_suffix = ''.join(random.choices(string.ascii_lowercase + string.digits, k=6))
-        filename = f"{timestamp}_{rand_suffix}_{sec_name}"
-        upload_dir = os.path.join(UPLOAD_FOLDER, 'products')
-        os.makedirs(upload_dir, exist_ok=True)
-        file_path = os.path.join(upload_dir, filename)
-        file_storage.save(file_path)
-        
-        # Check file size for base64 data URI resilience in serverless
+        ext = sec_name.rsplit('.', 1)[1].lower()
+        mime = 'image/svg+xml' if ext == 'svg' else f'image/{ext}'
+        if ext == 'jpg': mime = 'image/jpeg'
         try:
-            size = os.path.getsize(file_path)
-            if size <= 600 * 1024: # Under 600KB
-                ext = sec_name.rsplit('.', 1)[1].lower()
-                mime = 'image/svg+xml' if ext == 'svg' else f'image/{ext}'
-                if ext == 'jpg': mime = 'image/jpeg'
-                with open(file_path, 'rb') as f:
-                    b64 = base64.b64encode(f.read()).decode('utf-8')
-                    return f"data:{mime};base64,{b64}"
+            file_bytes = file_storage.read()
+            if len(file_bytes) <= 1024 * 1024:  # <= 1MB
+                b64 = base64.b64encode(file_bytes).decode('utf-8')
+                return f"data:{mime};base64,{b64}"
+            
+            timestamp = datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')
+            rand_suffix = ''.join(random.choices(string.ascii_lowercase + string.digits, k=6))
+            filename = f"{timestamp}_{rand_suffix}_{sec_name}"
+            upload_dir = os.path.join(UPLOAD_FOLDER, 'products')
+            os.makedirs(upload_dir, exist_ok=True)
+            file_path = os.path.join(upload_dir, filename)
+            with open(file_path, 'wb') as f:
+                f.write(file_bytes)
+            return f"/static/uploads/products/{filename}"
         except Exception:
             pass
-        return f"/static/uploads/products/{filename}"
     return fallback_url
 app = Flask(
     __name__,
